@@ -54,21 +54,23 @@ target 'SakugaMobile' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
+  pod 'RNSVG', :path => '../node_modules/react-native-svg'
+
   target 'SakugaMobileTests' do
     inherit! :complete
     # Pods for testing
   end
 
   use_native_modules!
-
+  # use_frameworks!
   # Enables Flipper.
   #
   # Note that if you have use_frameworks! enabled, Flipper will not work and
   # you should disable these next few lines.
-  add_flipper_pods!
-  post_install do |installer|
-    flipper_post_install(installer)
-  end
+  # add_flipper_pods!
+  # post_install do |installer|
+  #   flipper_post_install(installer)
+  # end
 end
 
 target 'SakugaMobile-tvOS' do
