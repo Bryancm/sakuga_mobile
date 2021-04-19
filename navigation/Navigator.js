@@ -6,30 +6,28 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {
   BottomNavigation,
   BottomNavigationTab,
-  Layout,
-  Text,
   Icon,
 } from '@ui-kitten/components';
 
+import {NewScreen} from '../screens/New';
+import {ExploreScreen} from '../screens/Explore';
 import {HomeScreen} from '../screens/Home';
 import {DetailsScreen} from '../screens/Detail';
 
-const TvIcon = (props) => <Icon {...props} name="tv-outline" />;
-
+const FilmIcon = (props) => <Icon {...props} name="film-outline" />;
 const CompassIcon = (props) => <Icon {...props} name="compass-outline" />;
-
-const SettingsIcon = (props) => <Icon {...props} name="settings-outline" />;
+const TagIcon = (props) => <Icon {...props} name="pricetags-outline" />;
 
 const Stack = createStackNavigator();
 
 const HomeStackNavigator = () => (
   <Stack.Navigator headerMode="none">
-    <Stack.Screen name="Home" component={HomeScreen} />
+    <Stack.Screen name="Home" component={NewScreen} />
   </Stack.Navigator>
 );
 const ExploreStackNavigator = () => (
   <Stack.Navigator headerMode="none">
-    <Stack.Screen name="Home" component={HomeScreen} />
+    <Stack.Screen name="Explore" component={ExploreScreen} />
   </Stack.Navigator>
 );
 
@@ -41,19 +39,22 @@ const SettingsStackNavigator = () => (
 
 const BottomTabBar = ({navigation, state}) => (
   <BottomNavigation
+    appearance="noIndicator"
     style={styles.bottomNavigation}
     selectedIndex={state.index}
     onSelect={(index) => navigation.navigate(state.routeNames[index])}>
-    <BottomNavigationTab title="NEW" icon={TvIcon} />
-    <BottomNavigationTab title="EXPLORE" icon={CompassIcon} />
-    <BottomNavigationTab title="SETTINGS" icon={SettingsIcon} />
+    <BottomNavigationTab title="New" icon={FilmIcon} />
+    <BottomNavigationTab title="Explore" icon={CompassIcon} />
+    <BottomNavigationTab title="Tags" icon={TagIcon} />
   </BottomNavigation>
 );
 
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => (
-  <Tab.Navigator tabBar={(props) => <BottomTabBar {...props} />}>
+  <Tab.Navigator
+    initialRouteName="Explore"
+    tabBar={(props) => <BottomTabBar {...props} />}>
     <Tab.Screen name="Home" component={HomeStackNavigator} />
     <Tab.Screen name="Explore" component={ExploreStackNavigator} />
     <Tab.Screen name="Settings" component={SettingsStackNavigator} />
@@ -72,6 +73,6 @@ export const AppNavigator = () => (
 const styles = StyleSheet.create({
   bottomNavigation: {
     paddingTop: 8,
-    paddingBottom: 22,
+    paddingBottom: 30,
   },
 });
