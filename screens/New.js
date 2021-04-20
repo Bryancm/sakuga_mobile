@@ -11,9 +11,11 @@ import {Card} from '../components/card';
 import data from '../test-data.json';
 
 const PersonIcon = (props) => <Icon {...props} name="person-outline" />;
+const SearchIcon = (props) => <Icon {...props} name="search-outline" />;
 
 export const NewScreen = () => {
   const renderPersonAction = () => <TopNavigationAction icon={PersonIcon} />;
+  const renderSearchAction = () => <TopNavigationAction icon={SearchIcon} />;
 
   const renderItem = (info) => {
     return <Card item={info.item} />;
@@ -27,7 +29,8 @@ export const NewScreen = () => {
         <TopNavigation
           title="New"
           alignment="center"
-          accessoryRight={renderPersonAction}
+          accessoryLeft={renderPersonAction}
+          accessoryRight={renderSearchAction}
         />
         <Divider />
         <FlatList

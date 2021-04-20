@@ -44,7 +44,11 @@ export const Card = ({item}) => {
                   <Text
                     key={i}
                     status="basic"
-                    style={t.style ? t.style : tagStyles.basic_outline}
+                    style={
+                      t.style
+                        ? {...t.style, borderRadius: 13}
+                        : {...tagStyles.basic_outline, borderRadius: 13}
+                    }
                     category="c1"
                     numberOfLines={1}>
                     {t.name ? t.name : t}
@@ -61,7 +65,11 @@ export const Card = ({item}) => {
                   <Text
                     key={i}
                     status="basic"
-                    style={t.style ? t.style : tagStyles.basic_outline}
+                    style={
+                      t.style
+                        ? {...t.style, borderRadius: 13}
+                        : {...tagStyles.basic_outline, borderRadius: 13}
+                    }
                     category="c1"
                     numberOfLines={1}>
                     {t.name ? t.name : t}
@@ -72,7 +80,7 @@ export const Card = ({item}) => {
             <Text
               key="0"
               status="basic"
-              style={tagStyles.basic_outline}
+              style={{...tagStyles.basic_outline, borderRadius: 13}}
               category="c1"
               numberOfLines={1}>
               {`+ ${more_tags}`}
@@ -86,7 +94,9 @@ export const Card = ({item}) => {
           size="small"
           appearance="ghost"
           accessoryLeft={CalendarIcon}>
-          <Text category="c1">{formatDate(item.created_at)}</Text>
+          <Text appearance="hint" category="c1">
+            {formatDate(item.created_at)}
+          </Text>
         </Button>
         <Layout style={{flexDirection: 'row'}}>
           <Button

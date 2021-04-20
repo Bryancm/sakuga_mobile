@@ -2,7 +2,7 @@ import React from 'react';
 import {Image, StyleSheet, Dimensions} from 'react-native';
 import {Layout, Text, Button, Icon} from '@ui-kitten/components';
 
-// const StarIcon = (props) => <Icon {...props} name="star-outline" />;
+const StarIcon = (props) => <Icon {...props} name="star-outline" />;
 const screenWidth = Dimensions.get('window').width;
 
 export const Card = ({item}) => {
@@ -11,41 +11,63 @@ export const Card = ({item}) => {
 
   return (
     <Layout style={styles.container}>
-      <Image
-        style={styles.image}
-        source={{uri: item.preview_url}}
-        resizeMode="stretch"
-      />
+      <Image style={styles.image} source={{uri: item.preview_url}} />
       <Layout style={styles.tagContainer}>
         <Layout style={styles.tagRow}>
-          {/* <Button
-            style={{padding: 5}}
-            size="tiny"
-            appearance="ghost"
-            accessoryLeft={StarIcon}>
-            <Text status="primary" category="c1">
-              {item.score}
+          {tags && tags[0] && (
+            <Text
+              style={styles.tag}
+              status="basic"
+              category="c1"
+              numberOfLines={1}>
+              {tags[0].name ? tags[0].name : tags[0]}
             </Text>
-          </Button> */}
-          {tags.length > 0 &&
-            tags.map(
-              (t, i) =>
-                i < 3 && (
-                  <Text
-                    style={styles.tag}
-                    key={i}
-                    status="basic"
-                    category="c1"
-                    numberOfLines={1}>
-                    {t.name ? t.name : t}
-                  </Text>
-                ),
-            )}
+          )}
+          <Text status="primary">-</Text>
+          {tags && tags[1] && (
+            <Text
+              style={styles.tag}
+              status="basic"
+              category="c1"
+              numberOfLines={1}>
+              {tags[1].name ? tags[1].name : tags[1]}
+            </Text>
+          )}
+        </Layout>
+        <Layout style={{...styles.tagRow, justifyContent: 'flex-start'}}>
+          {tags && tags[2] && (
+            <Text
+              style={styles.tag}
+              status="basic"
+              category="c1"
+              numberOfLines={1}>
+              {tags[2].name ? tags[2].name : tags[2]}
+            </Text>
+          )}
+          <Text style={{marginHorizontal: 5}} status="primary">
+            -
+          </Text>
+
           {more_tags > 0 && (
-            <Text key="0" status="basic" category="c1" style={styles.tag}>
+            <Text key="0" status="basic" category="c1">
               {`+ ${more_tags}`}
             </Text>
           )}
+        </Layout>
+        <Layout
+          style={{
+            ...styles.tagRow,
+            marginTop: 5,
+            justifyContent: 'flex-start',
+          }}>
+          <Icon
+            fill="#D4D4D4"
+            name="star-outline"
+            style={{width: 15, height: 15, marginRight: 5}}
+          />
+          <Text status="basic" category="c1">
+            {item.score}
+          </Text>
         </Layout>
       </Layout>
     </Layout>
@@ -54,7 +76,7 @@ export const Card = ({item}) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: screenWidth * 0.75,
+    width: screenWidth * 0.35,
     marginRight: 30,
   },
   image: {
@@ -69,11 +91,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   tag: {
-    borderWidth: 0.5,
-    borderColor: '#F5F5F5',
-    borderRadius: 11,
-    paddingVertical: 3,
-    paddingHorizontal: 6,
-    maxWidth: 80,
+    maxWidth: 50,
   },
 });

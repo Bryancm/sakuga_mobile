@@ -1,6 +1,6 @@
 import {tagStyles} from '../styles';
 
-const getTagStyle = (type) => {
+export const getTagStyle = (type) => {
   switch (type) {
     case 1:
       return tagStyles.artist_outline;

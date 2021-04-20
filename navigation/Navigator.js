@@ -11,6 +11,7 @@ import {
 
 import {NewScreen} from '../screens/New';
 import {ExploreScreen} from '../screens/Explore';
+import {TagScreen} from '../screens/Tag';
 import {HomeScreen} from '../screens/Home';
 import {DetailsScreen} from '../screens/Detail';
 
@@ -31,9 +32,9 @@ const ExploreStackNavigator = () => (
   </Stack.Navigator>
 );
 
-const SettingsStackNavigator = () => (
+const TagsStackNavigator = () => (
   <Stack.Navigator headerMode="none">
-    <Stack.Screen name="Home" component={HomeScreen} />
+    <Stack.Screen name="Tags" component={TagScreen} />
   </Stack.Navigator>
 );
 
@@ -57,7 +58,7 @@ const TabNavigator = () => (
     tabBar={(props) => <BottomTabBar {...props} />}>
     <Tab.Screen name="Home" component={HomeStackNavigator} />
     <Tab.Screen name="Explore" component={ExploreStackNavigator} />
-    <Tab.Screen name="Settings" component={SettingsStackNavigator} />
+    <Tab.Screen name="Tags" component={TagsStackNavigator} />
   </Tab.Navigator>
 );
 
