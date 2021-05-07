@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {Image, StyleSheet} from 'react-native';
 import {Divider, Layout, Text, Icon, Button} from '@ui-kitten/components';
 import {tagStyles} from '../styles';
@@ -7,9 +7,43 @@ const CalendarIcon = (props) => <Icon {...props} name="calendar-outline" />;
 const StarIcon = (props) => <Icon {...props} name="star-outline" />;
 const DownloadIcon = (props) => <Icon {...props} name="download-outline" />;
 
-export const Card = ({item}) => {
-  const tags = item.tags.split(' ');
+export const Card = ({item, tagsWithType}) => {
+  const capitalize = (s) => {
+    return s && s[0].toUpperCase() + s.slice(1);
+  };
+  const [tags, setTags] = useState(item.tags.split(' ').map((tag) => ({tag})));
+  const [title, setTitle] = useState(capitalize(tags[2].tag).replace('_', ' '));
   const more_tags = tags.length - 6;
+
+  useEffect(() => {
+    const setPostDetails = () => {
+      var artist = '';
+      var copyright = '';
+      var tags = [];
+      for (const tag in tagsWithType) {
+        if (Object.hasOwnProperty.call(tagsWithType, tag)) {
+          const type = tagsWithType[tag];
+          if (item.tags.includes(tag)) {
+            var style = tagStyles.artist_outline;
+            if (type === 'artist') artist = artist + ' ' + tag;
+            if (type === 'copyright') {
+              style = tagStyles.copyright_outline;
+              copyright = tag;
+            }
+            if (type === 'terminology') style = tagStyles.terminology_outline;
+            if (type === 'meta') style = tagStyles.meta_outline;
+            if (type === 'general') style = tagStyles.general_outline;
+            tags.push({type, tag, style});
+          }
+        }
+      }
+      const t = artist ? artist : copyright;
+      setTitle(t.trim() === 'artist_unknown' ? copyright : t);
+      setTags(tags.sort((a, b) => a.type > b.type));
+    };
+
+    setPostDetails();
+  }, []);
 
   const formatDate = (date) => {
     const d = new Date(date * 1000);
@@ -19,15 +53,12 @@ export const Card = ({item}) => {
     return `${da} / ${mo} / ${ye}`;
   };
 
-  const capitalize = (s) => {
-    return s && s[0].toUpperCase() + s.slice(1);
-  };
-
-  const title = capitalize(tags[2]).replace('_', ' ');
-
   return (
     <Layout style={styles.container}>
-      <Text style={{paddingHorizontal: 5, paddingVertical: 15}} category="h6">
+      <Text
+        style={{paddingHorizontal: 5, paddingVertical: 15}}
+        category="h6"
+        numberOfLines={1}>
         {title}
       </Text>
       <Image
@@ -46,12 +77,15 @@ export const Card = ({item}) => {
                     status="basic"
                     style={
                       t.style
-                        ? {...t.style, borderRadius: 13}
-                        : {...tagStyles.basic_outline, borderRadius: 13}
+                        ? {...t.style, ...styles.tagLimit}
+                        : {
+                            ...tagStyles.basic_outline,
+                            ...styles.tagLimit,
+                          }
                     }
                     category="c1"
                     numberOfLines={1}>
-                    {t.name ? t.name : t}
+                    {t.tag ? t.tag : t}
                   </Text>
                 ),
             )}
@@ -67,12 +101,12 @@ export const Card = ({item}) => {
                     status="basic"
                     style={
                       t.style
-                        ? {...t.style, borderRadius: 13}
-                        : {...tagStyles.basic_outline, borderRadius: 13}
+                        ? {...t.style, ...styles.tagLimit}
+                        : {...tagStyles.basic_outline, ...styles.tagLimit}
                     }
                     category="c1"
                     numberOfLines={1}>
-                    {t.name ? t.name : t}
+                    {t.tag ? t.tag : t}
                   </Text>
                 ),
             )}
@@ -137,5 +171,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  tagLimit: {
+    maxWidth: 128,
+    borderRadius: 13,
   },
 });
