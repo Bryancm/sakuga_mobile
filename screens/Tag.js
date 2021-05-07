@@ -153,7 +153,7 @@ export const TagScreen = ({navigation}) => {
 
           <FlatList
             key="tag-list"
-            numColumns={2} // set number of columns
+            numColumns={2}
             columnWrapperStyle={styles.row}
             style={{width: '100%'}}
             data={data}
