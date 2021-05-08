@@ -13,7 +13,7 @@ import {Card} from '../components/card';
 import {SmallCard} from '../components/smallCard';
 import data from '../test-data-v2.json';
 
-const PersonIcon = (props) => <Icon {...props} name="person-outline" />;
+const SettingsIcon = (props) => <Icon {...props} name="settings-outline" />;
 const LayoutIcon = (props) => <Icon {...props} name="layout-outline" />;
 const SearchIcon = (props) => <Icon {...props} name="search-outline" />;
 const SquareIcon = (props) => <Icon {...props} name="square-outline" />;
@@ -21,8 +21,7 @@ const SquareIcon = (props) => <Icon {...props} name="square-outline" />;
 export const NewScreen = () => {
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [layoutType, setLayoutType] = React.useState('large');
-  const renderPersonAction = () => <TopNavigationAction icon={PersonIcon} />;
-  const renderSearchAction = () => <TopNavigationAction icon={SearchIcon} />;
+  const renderPersonAction = () => <TopNavigationAction icon={SettingsIcon} />;
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
