@@ -12,9 +12,10 @@ import {
 import {NewScreen} from '../screens/New';
 import {ExploreScreen} from '../screens/Explore';
 import {TagScreen} from '../screens/Tag';
-import {HomeScreen} from '../screens/Home';
+import {ProfileScreen} from '../screens/Profile';
 import {DetailsScreen} from '../screens/Detail';
 
+const PersonIcon = (props) => <Icon {...props} name="person-outline" />;
 const FilmIcon = (props) => <Icon {...props} name="film-outline" />;
 const CompassIcon = (props) => <Icon {...props} name="compass-outline" />;
 const TagIcon = (props) => <Icon {...props} name="pricetags-outline" />;
@@ -32,9 +33,9 @@ const ExploreStackNavigator = () => (
   </Stack.Navigator>
 );
 
-const TagsStackNavigator = () => (
+const ProfileStackNavigator = () => (
   <Stack.Navigator headerMode="none">
-    <Stack.Screen name="Tags" component={TagScreen} />
+    <Stack.Screen name="Profile" component={ProfileScreen} />
   </Stack.Navigator>
 );
 
@@ -46,7 +47,7 @@ const BottomTabBar = ({navigation, state}) => (
     onSelect={(index) => navigation.navigate(state.routeNames[index])}>
     <BottomNavigationTab title="New" icon={FilmIcon} />
     <BottomNavigationTab title="Explore" icon={CompassIcon} />
-    <BottomNavigationTab title="Tags" icon={TagIcon} />
+    <BottomNavigationTab title="Profile" icon={PersonIcon} />
   </BottomNavigation>
 );
 
@@ -58,7 +59,7 @@ const TabNavigator = () => (
     tabBar={(props) => <BottomTabBar {...props} />}>
     <Tab.Screen name="Home" component={HomeStackNavigator} />
     <Tab.Screen name="Explore" component={ExploreStackNavigator} />
-    <Tab.Screen name="Tags" component={TagsStackNavigator} />
+    <Tab.Screen name="Profile" component={ProfileStackNavigator} />
   </Tab.Navigator>
 );
 
