@@ -16,8 +16,14 @@ import {Tag} from '../components/tag';
 
 const SearchIcon = (props) => <Icon {...props} name="search-outline" />;
 
-export const ExploreScreen = () => {
-  const renderSearchAction = () => <TopNavigationAction icon={SearchIcon} />;
+export const ExploreScreen = ({navigation}) => {
+  const navigateSearch = () => {
+    navigation.navigate('Search');
+  };
+  const renderSearchAction = () => (
+    <TopNavigationAction icon={SearchIcon} onPress={navigateSearch} />
+  );
+
   return (
     <Layout style={{flex: 1}}>
       <SafeAreaView style={{flex: 1}}>

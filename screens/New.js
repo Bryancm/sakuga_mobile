@@ -48,16 +48,8 @@ export const NewScreen = ({navigation}) => {
         anchor={renderMenuAction}
         visible={menuVisible}
         onBackdropPress={toggleMenu}>
-        <MenuItem
-          accessoryLeft={SquareIcon}
-          title="Large List"
-          onPress={() => changeLayout('large')}
-        />
-        <MenuItem
-          accessoryLeft={SquareIcon}
-          title="Small list"
-          onPress={() => changeLayout('small')}
-        />
+        <MenuItem title="Large List" onPress={() => changeLayout('large')} />
+        <MenuItem title="Small list" onPress={() => changeLayout('small')} />
       </OverflowMenu>
     </React.Fragment>
   );
