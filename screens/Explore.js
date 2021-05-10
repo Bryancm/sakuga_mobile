@@ -8,17 +8,15 @@ import {
   Icon,
   Text,
 } from '@ui-kitten/components';
-import data from '../test-data.json';
+import data from '../test-data-v2.json';
 import tag_data from '../test-tag-data.json';
 import tag_copy_data from '../test-tag-copy-data.json';
-import {Card} from '../components/exploreCard';
+import {SmallCard as Card} from '../components/uploadCard';
 import {Tag} from '../components/tag';
 
-const PersonIcon = (props) => <Icon {...props} name="person-outline" />;
 const SearchIcon = (props) => <Icon {...props} name="search-outline" />;
 
 export const ExploreScreen = () => {
-  const renderPersonAction = () => <TopNavigationAction icon={PersonIcon} />;
   const renderSearchAction = () => <TopNavigationAction icon={SearchIcon} />;
   return (
     <Layout style={{flex: 1}}>
@@ -26,7 +24,6 @@ export const ExploreScreen = () => {
         <TopNavigation
           title="Explore"
           alignment="center"
-          accessoryLeft={renderPersonAction}
           accessoryRight={renderSearchAction}
         />
         <Divider />
@@ -40,11 +37,9 @@ export const ExploreScreen = () => {
               style={{paddingHorizontal: 5, paddingVertical: 15}}>
               Trending
             </Text>
-            <ScrollView
-              horizontal
-              contentContainerStyle={{paddingHorizontal: 5}}>
-              {data.map((item, i) => (
-                <Card key={i} item={item} />
+            <ScrollView horizontal>
+              {data.posts.map((item, i) => (
+                <Card key={i} item={item} tagsWithType={data.tags} />
               ))}
             </ScrollView>
             <Text
@@ -73,11 +68,9 @@ export const ExploreScreen = () => {
               style={{paddingHorizontal: 5, paddingVertical: 15}}>
               Week's Popular
             </Text>
-            <ScrollView
-              horizontal
-              contentContainerStyle={{paddingHorizontal: 5}}>
-              {data.map((item, i) => (
-                <Card key={i} item={item} />
+            <ScrollView horizontal>
+              {data.posts.map((item, i) => (
+                <Card key={i} item={item} tagsWithType={data.tags} />
               ))}
             </ScrollView>
             <Text
@@ -85,11 +78,9 @@ export const ExploreScreen = () => {
               style={{paddingHorizontal: 5, paddingVertical: 15}}>
               Character Acting
             </Text>
-            <ScrollView
-              horizontal
-              contentContainerStyle={{paddingHorizontal: 5}}>
-              {data.map((item, i) => (
-                <Card key={i} item={item} />
+            <ScrollView horizontal>
+              {data.posts.map((item, i) => (
+                <Card key={i} item={item} tagsWithType={data.tags} />
               ))}
             </ScrollView>
             <Text
@@ -118,11 +109,9 @@ export const ExploreScreen = () => {
               style={{paddingHorizontal: 5, paddingVertical: 15}}>
               Month's Popular
             </Text>
-            <ScrollView
-              horizontal
-              contentContainerStyle={{paddingHorizontal: 5}}>
-              {data.map((item, i) => (
-                <Card key={i} item={item} />
+            <ScrollView horizontal>
+              {data.posts.map((item, i) => (
+                <Card key={i} item={item} tagsWithType={data.tags} />
               ))}
             </ScrollView>
             <Text
@@ -130,11 +119,9 @@ export const ExploreScreen = () => {
               style={{paddingHorizontal: 5, paddingVertical: 15}}>
               Fighting
             </Text>
-            <ScrollView
-              horizontal
-              contentContainerStyle={{paddingHorizontal: 5}}>
-              {data.map((item, i) => (
-                <Card key={i} item={item} />
+            <ScrollView horizontal>
+              {data.posts.map((item, i) => (
+                <Card key={i} item={item} tagsWithType={data.tags} />
               ))}
             </ScrollView>
             <Text
@@ -163,11 +150,9 @@ export const ExploreScreen = () => {
               style={{paddingHorizontal: 5, paddingVertical: 15}}>
               Liquid
             </Text>
-            <ScrollView
-              horizontal
-              contentContainerStyle={{paddingHorizontal: 5}}>
-              {data.map((item, i) => (
-                <Card key={i} item={item} />
+            <ScrollView horizontal>
+              {data.posts.map((item, i) => (
+                <Card key={i} item={item} tagsWithType={data.tags} />
               ))}
             </ScrollView>
             <Text
@@ -175,11 +160,9 @@ export const ExploreScreen = () => {
               style={{paddingHorizontal: 5, paddingVertical: 15}}>
               Explosions
             </Text>
-            <ScrollView
-              horizontal
-              contentContainerStyle={{paddingHorizontal: 5}}>
-              {data.map((item, i) => (
-                <Card key={i} item={item} />
+            <ScrollView horizontal>
+              {data.posts.map((item, i) => (
+                <Card key={i} item={item} tagsWithType={data.tags} />
               ))}
             </ScrollView>
             <Text
@@ -208,11 +191,9 @@ export const ExploreScreen = () => {
               style={{paddingHorizontal: 5, paddingVertical: 15}}>
               Hair
             </Text>
-            <ScrollView
-              horizontal
-              contentContainerStyle={{paddingHorizontal: 5}}>
-              {data.map((item, i) => (
-                <Card key={i} item={item} />
+            <ScrollView horizontal>
+              {data.posts.map((item, i) => (
+                <Card key={i} item={item} tagsWithType={data.tags} />
               ))}
             </ScrollView>
             <Text
@@ -220,11 +201,9 @@ export const ExploreScreen = () => {
               style={{paddingHorizontal: 5, paddingVertical: 15}}>
               Production Materials
             </Text>
-            <ScrollView
-              horizontal
-              contentContainerStyle={{paddingHorizontal: 5}}>
-              {data.map((item, i) => (
-                <Card key={i} item={item} />
+            <ScrollView horizontal>
+              {data.posts.map((item, i) => (
+                <Card key={i} item={item} tagsWithType={data.tags} />
               ))}
             </ScrollView>
             <Text
@@ -232,11 +211,9 @@ export const ExploreScreen = () => {
               style={{paddingHorizontal: 5, paddingVertical: 15}}>
               Year's Popular
             </Text>
-            <ScrollView
-              horizontal
-              contentContainerStyle={{paddingHorizontal: 5}}>
-              {data.map((item, i) => (
-                <Card key={i} item={item} />
+            <ScrollView horizontal>
+              {data.posts.map((item, i) => (
+                <Card key={i} item={item} tagsWithType={data.tags} />
               ))}
             </ScrollView>
           </ScrollView>

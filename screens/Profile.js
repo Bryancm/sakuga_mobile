@@ -10,11 +10,12 @@ import {
   Button,
   ListItem,
 } from '@ui-kitten/components';
-import {Card} from '../components/uploadCard';
+import {SmallCard} from '../components/uploadCard';
 import {Tag} from '../components/tagItem';
 import data from '../test-data-v2.json';
 import {tagStyles} from '../styles';
 
+const PlusIcon = (props) => <Icon {...props} name="plus-outline" />;
 const UploadIcon = (props) => <Icon {...props} name="cloud-upload-outline" />;
 const ArchiveIcon = (props) => <Icon {...props} name="archive-outline" />;
 const EyeIcon = (props) => <Icon {...props} name="eye-outline" />;
@@ -44,7 +45,15 @@ export const ProfileScreen = ({navigation}) => {
   const renderArchiveIcon = () => (
     <Button appearance="ghost" accessoryLeft={ArchiveIcon} />
   );
-  console.log(data);
+  const renderAddButton = () => (
+    <Button
+      size="tiny"
+      appearance="outline"
+      accessoryRight={PlusIcon}
+      style={{borderRadius: 15, width: 20, height: 20}}>
+      {/* <Text category="c1">Add</Text> */}
+    </Button>
+  );
   return (
     <Layout style={{flex: 1}}>
       <SafeAreaView style={{flex: 1}}>
@@ -56,7 +65,11 @@ export const ProfileScreen = ({navigation}) => {
         <Divider />
         <ScrollView>
           <Layout style={{flexDirection: 'row'}}>
-            <Button size="giant" appearance="ghost" accessoryLeft={PersonIcon}>
+            <Button
+              size="giant"
+              appearance="ghost"
+              accessoryRight={PersonIcon}
+              style={{paddingLeft: 0}}>
               <Text category="h4">Welcome Bryan</Text>
             </Button>
           </Layout>
@@ -90,15 +103,25 @@ export const ProfileScreen = ({navigation}) => {
             accessoryLeft={renderSettingsAction}
             accessoryRight={ArrowIcon}
           />
-          <Button
-            style={{width: 180}}
-            appearance="ghost"
-            accessoryLeft={UploadIcon}>
-            <Text category="h4">Uploads</Text>
-          </Button>
+          <Layout
+            style={{
+              justifyContent: 'space-between',
+              flexDirection: 'row',
+              alignItems: 'flex-end',
+            }}>
+            <Button
+              style={{width: 155}}
+              appearance="ghost"
+              accessoryRight={renderAddButton}>
+              <Text category="h4">Uploads</Text>
+            </Button>
+            <Button style={{width: 100, paddingRight: 0}} appearance="ghost">
+              <Text category="p2">See more</Text>
+            </Button>
+          </Layout>
           <ScrollView horizontal>
             {data.posts.map((p) => (
-              <Card key={p.id} item={p} tagsWithType={data.tags} />
+              <SmallCard key={p.id} item={p} tagsWithType={data.tags} />
             ))}
           </ScrollView>
         </ScrollView>

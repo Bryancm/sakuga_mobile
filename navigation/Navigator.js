@@ -12,13 +12,19 @@ import {
 import {NewScreen} from '../screens/New';
 import {ExploreScreen} from '../screens/Explore';
 import {TagScreen} from '../screens/Tag';
+import {SearchScreen} from '../screens/Search';
 import {ProfileScreen} from '../screens/Profile';
-import {DetailsScreen} from '../screens/Detail';
 
 const PersonIcon = (props) => <Icon {...props} name="person-outline" />;
 const FilmIcon = (props) => <Icon {...props} name="film-outline" />;
 const CompassIcon = (props) => <Icon {...props} name="compass-outline" />;
 const TagIcon = (props) => <Icon {...props} name="pricetags-outline" />;
+
+const forFade = ({current}) => ({
+  cardStyle: {
+    opacity: current.progress,
+  },
+});
 
 const Stack = createStackNavigator();
 
@@ -67,7 +73,11 @@ export const AppNavigator = () => (
   <NavigationContainer>
     <Stack.Navigator headerMode={false} mode="card" initialRouteName="Home">
       <Stack.Screen name="Home" component={TabNavigator} />
-      <Stack.Screen name="Details" component={DetailsScreen} />
+      <Stack.Screen
+        name="Search"
+        component={SearchScreen}
+        options={{cardStyleInterpolator: forFade}}
+      />
     </Stack.Navigator>
   </NavigationContainer>
 );

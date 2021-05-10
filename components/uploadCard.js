@@ -7,7 +7,7 @@ const CalendarIcon = (props) => <Icon {...props} name="calendar-outline" />;
 const StarIcon = (props) => <Icon {...props} name="star-outline" />;
 const DownloadIcon = (props) => <Icon {...props} name="download-outline" />;
 
-export const Card = ({item, tagsWithType}) => {
+export const SmallCard = ({item, tagsWithType}) => {
   const capitalize = (s) => {
     return s && s[0].toUpperCase() + s.slice(1);
   };
@@ -25,7 +25,7 @@ export const Card = ({item, tagsWithType}) => {
           const type = tagsWithType[tag];
           if (item.tags.includes(tag)) {
             var style = tagStyles.artist_outline;
-            if (type === 'artist') artist = artist + ' ' + tag;
+            if (type === 'artist') artist = artist + tag + ' ';
             if (type === 'copyright') {
               style = tagStyles.copyright_outline;
               copyright = tag;
@@ -50,129 +50,147 @@ export const Card = ({item, tagsWithType}) => {
     let ye = new Intl.DateTimeFormat('en', {year: 'numeric'}).format(d);
     let mo = new Intl.DateTimeFormat('en', {month: 'short'}).format(d);
     let da = new Intl.DateTimeFormat('en', {day: '2-digit'}).format(d);
-    return `${da} / ${mo} / ${ye}`;
+    return `${da}-${mo}-${ye}`;
   };
 
   return (
     <Layout style={styles.container}>
-      {/* <Text
-        style={{paddingHorizontal: 5, paddingVertical: 15}}
-        category="h6"
-        numberOfLines={1}>
-        {title}
-      </Text> */}
       <Image
         style={styles.image}
         source={{uri: item.preview_url}}
-        resizeMode="stretch"
+        resizeMode="cover"
       />
-      <Text category="c1" numberOfLines={2}>
-        {item.tags}
-      </Text>
-      {/* <Layout style={styles.tagContainer}>
-        <Layout style={{...styles.tagRow, marginBottom: 15}}>
-          {tags.length > 0 &&
-            tags.map(
-              (t, i) =>
-                i < 3 && (
-                  <Text
-                    key={i}
-                    status="basic"
-                    style={
-                      t.style
-                        ? {...t.style, ...styles.tagLimit}
-                        : {
-                            ...tagStyles.basic_outline,
-                            ...styles.tagLimit,
-                          }
-                    }
-                    category="c1"
-                    numberOfLines={1}>
-                    {t.tag ? t.tag : t}
-                  </Text>
-                ),
-            )}
+      <Layout style={styles.tagContainer}>
+        {/* <Text category="s1" style={{marginBottom: 6}} numberOfLines={1}>
+          {title}
+        </Text> */}
+        <Layout style={{justifyContent: 'space-between', height: 50}}>
+          <Layout>
+            <Layout style={{...styles.tagRow}}>
+              {tags.length > 0 &&
+                tags.map(
+                  (t, i) =>
+                    i <= 1 && (
+                      <Text
+                        key={i}
+                        status="basic"
+                        style={
+                          t.style
+                            ? {...t.style, ...styles.tagLimit}
+                            : {
+                                ...tagStyles.basic_outline,
+                                ...styles.tagLimit,
+                              }
+                        }
+                        category="c1"
+                        numberOfLines={1}>
+                        {t.tag ? t.tag : t}
+                      </Text>
+                    ),
+                )}
+            </Layout>
+            <Layout style={styles.tagRow}>
+              {tags.length > 0 &&
+                tags.map(
+                  (t, i) =>
+                    i >= 2 &&
+                    i <= 3 && (
+                      <Text
+                        key={i}
+                        status="basic"
+                        style={
+                          t.style
+                            ? {...t.style, ...styles.tagLimit}
+                            : {...tagStyles.basic_outline, ...styles.tagLimit}
+                        }
+                        category="c1"
+                        numberOfLines={1}>
+                        {t.tag ? t.tag : t}
+                      </Text>
+                    ),
+                )}
+            </Layout>
+            <Layout style={styles.tagRow}>
+              {tags.length > 0 &&
+                tags.map(
+                  (t, i) =>
+                    i >= 4 &&
+                    i <= 5 && (
+                      <Text
+                        key={i}
+                        status="basic"
+                        style={
+                          t.style
+                            ? {...t.style, ...styles.tagLimit}
+                            : {...tagStyles.basic_outline, ...styles.tagLimit}
+                        }
+                        category="c1"
+                        numberOfLines={1}>
+                        {t.tag ? t.tag : t}
+                      </Text>
+                    ),
+                )}
+              {more_tags > 0 && (
+                <Text
+                  key="0"
+                  status="basic"
+                  style={{...tagStyles.basic_outline, ...styles.tagLimit}}
+                  category="c1"
+                  numberOfLines={1}>
+                  {`+ ${more_tags}`}
+                </Text>
+              )}
+            </Layout>
+          </Layout>
         </Layout>
-        <Layout style={styles.tagRow}>
-          {tags.length > 0 &&
-            tags.map(
-              (t, i) =>
-                i >= 3 &&
-                i < 6 && (
-                  <Text
-                    key={i}
-                    status="basic"
-                    style={
-                      t.style
-                        ? {...t.style, ...styles.tagLimit}
-                        : {...tagStyles.basic_outline, ...styles.tagLimit}
-                    }
-                    category="c1"
-                    numberOfLines={1}>
-                    {t.tag ? t.tag : t}
-                  </Text>
-                ),
-            )}
-          {more_tags > 0 && (
-            <Text
-              key="0"
-              status="basic"
-              style={{...tagStyles.basic_outline, borderRadius: 13}}
-              category="c1"
-              numberOfLines={1}>
-              {`+ ${more_tags}`}
-            </Text>
-          )}
-        </Layout>
-      </Layout> */}
-      {/* <Layout style={styles.buttonContainer}>
-        <Text appearance="hint" category="c1">
-          {formatDate(item.created_at)}
-        </Text>
-        <Layout style={{flexDirection: 'row'}}>
-          <Button
-            size="small"
-            status="info"
-            appearance="ghost"
-            accessoryLeft={DownloadIcon}></Button>
-          <Button size="small" appearance="ghost" accessoryLeft={StarIcon}>
+        <Layout style={styles.buttonContainer}>
+          <Text appearance="hint" category="c1">
+            {formatDate(item.created_at)}
+          </Text>
+          <Button appearance="ghost" size="small" accessoryLeft={StarIcon}>
             <Text status="primary" category="c1">
               {item.score}
             </Text>
           </Button>
         </Layout>
-      </Layout> */}
-      {/* <Divider /> */}
+      </Layout>
     </Layout>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: 210,
+    width: 180,
     paddingHorizontal: 8,
   },
-  image: {
-    width: '100%',
-    height: 130,
-  },
-  tagContainer: {paddingHorizontal: 5, paddingVertical: 15},
-  tagRow: {
-    width: '100%',
+  infoContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
+    alignItems: 'flex-start',
+    paddingVertical: 8,
+  },
+  image: {
+    height: 115,
+    marginBottom: 5,
+  },
+  tagContainer: {},
+  tagRow: {
+    marginBottom: 3,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
   },
   buttonContainer: {
-    // paddingHorizontal: 5,
-    // paddingTop: 0,
-    // paddingBottom: 15,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    // alignSelf: 'flex-end',
   },
   tagLimit: {
-    maxWidth: 128,
-    borderRadius: 13,
+    maxWidth: 92,
+    borderWidth: 0,
+    borderRadius: 0,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+    paddingRight: 5,
+    paddingLeft: 0,
   },
 });

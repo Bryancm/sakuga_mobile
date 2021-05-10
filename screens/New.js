@@ -18,10 +18,12 @@ const LayoutIcon = (props) => <Icon {...props} name="layout-outline" />;
 const SearchIcon = (props) => <Icon {...props} name="search-outline" />;
 const SquareIcon = (props) => <Icon {...props} name="square-outline" />;
 
-export const NewScreen = () => {
+export const NewScreen = ({navigation}) => {
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [layoutType, setLayoutType] = React.useState('large');
-  const renderPersonAction = () => <TopNavigationAction icon={SettingsIcon} />;
+  const renderSearchIcon = () => (
+    <TopNavigationAction icon={SearchIcon} onPress={navigateSearch} />
+  );
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
@@ -31,9 +33,17 @@ export const NewScreen = () => {
     <TopNavigationAction icon={LayoutIcon} onPress={toggleMenu} />
   );
 
+  const changeLayout = (type) => {
+    toggleMenu();
+    setLayoutType(type);
+  };
+
+  const navigateSearch = () => {
+    navigation.navigate('Search');
+  };
+
   const renderRightActions = () => (
     <React.Fragment>
-      <TopNavigationAction icon={SearchIcon} />
       <OverflowMenu
         anchor={renderMenuAction}
         visible={menuVisible}
@@ -41,12 +51,12 @@ export const NewScreen = () => {
         <MenuItem
           accessoryLeft={SquareIcon}
           title="Large List"
-          onPress={() => setLayoutType('large')}
+          onPress={() => changeLayout('large')}
         />
         <MenuItem
           accessoryLeft={SquareIcon}
           title="Small list"
-          onPress={() => setLayoutType('small')}
+          onPress={() => changeLayout('small')}
         />
       </OverflowMenu>
     </React.Fragment>
@@ -66,8 +76,8 @@ export const NewScreen = () => {
         <TopNavigation
           title="New"
           alignment="center"
-          accessoryLeft={renderPersonAction}
-          accessoryRight={renderRightActions}
+          accessoryLeft={renderRightActions}
+          accessoryRight={renderSearchIcon}
         />
         <Divider />
         <FlatList
