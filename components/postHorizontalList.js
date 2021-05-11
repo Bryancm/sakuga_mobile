@@ -4,10 +4,10 @@ import { Layout, Text, Button, Icon } from '@ui-kitten/components';
 import { SmallCard } from '../components/uploadCard';
 
 export const PostHorizontalList = ({ title, data, tags, navigation }) => {
-  const renderItem = ({ item }) => <SmallCard item={item} tagsWithType={tags} />;
-  const keyStractor = (item) => item.id.toString();
+  const renderItem = ({ item }) => <SmallCard key={item.id.toString()} item={item} tagsWithType={tags} />;
+
   const navigatePostList = () => {
-    navigation.navigate('PostList', { from: title });
+    navigation.navigate('PostList', { from: title, data, tags, isPosts: true });
   };
   return (
     <Layout>
@@ -24,7 +24,6 @@ export const PostHorizontalList = ({ title, data, tags, navigation }) => {
         horizontal
         data={data}
         renderItem={renderItem}
-        keyStractor={keyStractor}
         windowSize={6}
         initialNumToRender={4}
         maxToRenderPerBatch={4}

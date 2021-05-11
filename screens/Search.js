@@ -204,7 +204,7 @@ export const SearchScreen = ({ navigation }) => {
         {data.length > 0 && <AutoComplete data={data} onPress={onAutoCompletePress} />}
 
         <TabView
-          style={{}}
+          style={{ flex: 1 }}
           selectedIndex={selectedIndex}
           shouldLoadComponent={shouldLoadComponent}
           onSelect={(index) => setSelectedIndex(index)}>
@@ -253,7 +253,7 @@ export const SearchScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   tabContainer: {
-    height: '94.5%',
+    flex: 1,
   },
   row: {
     flex: 1,

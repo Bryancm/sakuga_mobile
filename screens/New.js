@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView, StyleSheet, FlatList} from 'react-native';
+import { SafeAreaView, StyleSheet, FlatList } from 'react-native';
 import {
   Divider,
   Layout,
@@ -9,29 +9,23 @@ import {
   TopNavigationAction,
   Icon,
 } from '@ui-kitten/components';
-import {Card} from '../components/card';
-import {SmallCard} from '../components/smallCard';
+import { Card } from '../components/card';
+import { SmallCard } from '../components/smallCard';
 import data from '../test-data-v2.json';
 
-const SettingsIcon = (props) => <Icon {...props} name="settings-outline" />;
 const LayoutIcon = (props) => <Icon {...props} name="layout-outline" />;
 const SearchIcon = (props) => <Icon {...props} name="search-outline" />;
-const SquareIcon = (props) => <Icon {...props} name="square-outline" />;
 
-export const NewScreen = ({navigation}) => {
+export const NewScreen = ({ navigation }) => {
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [layoutType, setLayoutType] = React.useState('large');
-  const renderSearchIcon = () => (
-    <TopNavigationAction icon={SearchIcon} onPress={navigateSearch} />
-  );
+  const renderSearchIcon = () => <TopNavigationAction icon={SearchIcon} onPress={navigateSearch} />;
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
   };
 
-  const renderMenuAction = () => (
-    <TopNavigationAction icon={LayoutIcon} onPress={toggleMenu} />
-  );
+  const renderMenuAction = () => <TopNavigationAction icon={LayoutIcon} onPress={toggleMenu} />;
 
   const changeLayout = (type) => {
     toggleMenu();
@@ -44,10 +38,7 @@ export const NewScreen = ({navigation}) => {
 
   const renderRightActions = () => (
     <React.Fragment>
-      <OverflowMenu
-        anchor={renderMenuAction}
-        visible={menuVisible}
-        onBackdropPress={toggleMenu}>
+      <OverflowMenu anchor={renderMenuAction} visible={menuVisible} onBackdropPress={toggleMenu}>
         <MenuItem title="Large List" onPress={() => changeLayout('large')} />
         <MenuItem title="Small list" onPress={() => changeLayout('small')} />
       </OverflowMenu>
@@ -55,16 +46,15 @@ export const NewScreen = ({navigation}) => {
   );
 
   const renderItem = (info) => {
-    if (layoutType === 'small')
-      return <SmallCard item={info.item} tagsWithType={data.tags} />;
+    if (layoutType === 'small') return <SmallCard item={info.item} tagsWithType={data.tags} />;
     return <Card item={info.item} tagsWithType={data.tags} />;
   };
 
   const keyExtractor = (item) => item.id.toString();
 
   return (
-    <Layout style={{flex: 1}}>
-      <SafeAreaView style={{flex: 1}}>
+    <Layout style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 }}>
         <TopNavigation
           title="New"
           alignment="center"
@@ -72,12 +62,7 @@ export const NewScreen = ({navigation}) => {
           accessoryRight={renderSearchIcon}
         />
         <Divider />
-        <FlatList
-          style={styles.container}
-          data={data.posts}
-          renderItem={renderItem}
-          keyExtractor={keyExtractor}
-        />
+        <FlatList style={styles.container} data={data.posts} renderItem={renderItem} keyExtractor={keyExtractor} />
         <Divider />
       </SafeAreaView>
     </Layout>

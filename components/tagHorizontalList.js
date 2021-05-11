@@ -6,10 +6,9 @@ import { Tag } from '../components/tag';
 import { ScrollView } from 'react-native-gesture-handler';
 
 export const TagHorizontalList = ({ title, data, navigation }) => {
-  const renderItem = ({ item }) => <Tag tag={item} />;
-  const keyStractor = (item) => item.id.toString();
+  const renderItem = ({ item }) => <Tag key={item.id.toString()} tag={item} />;
   const navigatePostList = () => {
-    navigation.navigate('PostList', { from: title });
+    navigation.navigate('PostList', { from: title, data, isPosts: false });
   };
   const halfIndex = Math.round((data.length - 1) / 2);
 
@@ -29,7 +28,6 @@ export const TagHorizontalList = ({ title, data, navigation }) => {
           numColumns={halfIndex}
           data={data}
           renderItem={renderItem}
-          keyStractor={keyStractor}
           windowSize={10}
           initialNumToRender={8}
           maxToRenderPerBatch={8}
