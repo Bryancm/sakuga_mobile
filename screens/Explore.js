@@ -7,6 +7,7 @@ import tag_copy_data from '../test-tag-copy-data.json';
 import { SmallCard as Card } from '../components/uploadCard';
 import { Tag } from '../components/tag';
 import { PostHorizontalList } from '../components/postHorizontalList';
+import { TagHorizontalList } from '../components/tagHorizontalList';
 
 const SearchIcon = (props) => <Icon {...props} name="search-outline" />;
 
@@ -27,65 +28,16 @@ export const ExploreScreen = ({ navigation }) => {
           }}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <PostHorizontalList title="Trending" data={data.posts} tags={data.tags} navigation={navigation} />
-            <Text category="h4" style={{ paddingHorizontal: 5, paddingVertical: 5 }}>
-              New Artist
-            </Text>
-            <ScrollView horizontal contentContainerStyle={{ paddingHorizontal: 5 }}>
-              <Layout style={{ paddingVertical: 15 }}>
-                <Layout style={{ flexDirection: 'row', marginBottom: 15 }}>
-                  {tag_data.map((tag, i) => i < 25 && <Tag key={i} tag={tag} />)}
-                </Layout>
-                <Layout style={{ flexDirection: 'row' }}>
-                  {tag_data.map((tag, i) => i >= 25 && <Tag key={i} tag={tag} />)}
-                </Layout>
-              </Layout>
-            </ScrollView>
+            <TagHorizontalList title="New Artist" data={tag_data} navigation={navigation} />
             <PostHorizontalList title="Week's Popular" data={data.posts} tags={data.tags} navigation={navigation} />
             <PostHorizontalList title="Character Acting" data={data.posts} tags={data.tags} navigation={navigation} />
-            <Text category="h4" style={{ paddingHorizontal: 5, paddingVertical: 5 }}>
-              New Copyright
-            </Text>
-            <ScrollView horizontal contentContainerStyle={{ paddingHorizontal: 5 }}>
-              <Layout style={{ paddingVertical: 15 }}>
-                <Layout style={{ flexDirection: 'row', marginBottom: 15 }}>
-                  {tag_copy_data.map((tag, i) => i < 25 && <Tag key={i} tag={tag} />)}
-                </Layout>
-                <Layout style={{ flexDirection: 'row' }}>
-                  {tag_copy_data.map((tag, i) => i >= 25 && <Tag key={i} tag={tag} />)}
-                </Layout>
-              </Layout>
-            </ScrollView>
+            <TagHorizontalList title="New Copyright" data={tag_copy_data} navigation={navigation} />
             <PostHorizontalList title="Month's Popular" data={data.posts} tags={data.tags} navigation={navigation} />
             <PostHorizontalList title="Fighting" data={data.posts} tags={data.tags} navigation={navigation} />
-
-            <Text category="h4" style={{ paddingHorizontal: 5, paddingVertical: 5 }}>
-              Popular Artist
-            </Text>
-            <ScrollView horizontal contentContainerStyle={{ paddingHorizontal: 5 }}>
-              <Layout style={{ paddingVertical: 15 }}>
-                <Layout style={{ flexDirection: 'row', marginBottom: 15 }}>
-                  {tag_data.map((tag, i) => i < 25 && <Tag key={i} tag={tag} />)}
-                </Layout>
-                <Layout style={{ flexDirection: 'row' }}>
-                  {tag_data.map((tag, i) => i >= 25 && <Tag key={i} tag={tag} />)}
-                </Layout>
-              </Layout>
-            </ScrollView>
+            <TagHorizontalList title="Popular Artist" data={tag_data} navigation={navigation} />
             <PostHorizontalList title="Liquid" data={data.posts} tags={data.tags} navigation={navigation} />
             <PostHorizontalList title="Explosions" data={data.posts} tags={data.tags} navigation={navigation} />
-            <Text category="h4" style={{ paddingHorizontal: 5, paddingVertical: 5 }}>
-              Popular Copyright
-            </Text>
-            <ScrollView horizontal contentContainerStyle={{ paddingHorizontal: 5 }}>
-              <Layout style={{ paddingVertical: 15 }}>
-                <Layout style={{ flexDirection: 'row', marginBottom: 15 }}>
-                  {tag_copy_data.map((tag, i) => i < 25 && <Tag key={i} tag={tag} />)}
-                </Layout>
-                <Layout style={{ flexDirection: 'row' }}>
-                  {tag_copy_data.map((tag, i) => i >= 25 && <Tag key={i} tag={tag} />)}
-                </Layout>
-              </Layout>
-            </ScrollView>
+            <TagHorizontalList title="Popular Copyright" data={tag_copy_data} navigation={navigation} />
             <PostHorizontalList title="Hair" data={data.posts} tags={data.tags} navigation={navigation} />
             <PostHorizontalList
               title="Production Materials"
