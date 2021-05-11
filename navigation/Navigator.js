@@ -14,6 +14,7 @@ import {ExploreScreen} from '../screens/Explore';
 import {TagScreen} from '../screens/Tag';
 import {SearchScreen} from '../screens/Search';
 import {ProfileScreen} from '../screens/Profile';
+import {PostListScreen} from '../screens/PostList';
 
 const PersonIcon = (props) => <Icon {...props} name="person-outline" />;
 const FilmIcon = (props) => <Icon {...props} name="film-outline" />;
@@ -73,6 +74,7 @@ export const AppNavigator = () => (
   <NavigationContainer>
     <Stack.Navigator headerMode={false} mode="card" initialRouteName="Home">
       <Stack.Screen name="Home" component={TabNavigator} />
+      <Stack.Screen name="PostList" component={PostListScreen} />
       <Stack.Screen
         name="Search"
         component={SearchScreen}

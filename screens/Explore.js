@@ -13,6 +13,7 @@ import tag_data from '../test-tag-data.json';
 import tag_copy_data from '../test-tag-copy-data.json';
 import {SmallCard as Card} from '../components/uploadCard';
 import {Tag} from '../components/tag';
+import {PostHorizontalList} from '../components/postHorizontalList';
 
 const SearchIcon = (props) => <Icon {...props} name="search-outline" />;
 
@@ -38,6 +39,11 @@ export const ExploreScreen = ({navigation}) => {
             flex: 1,
           }}>
           <ScrollView showsVerticalScrollIndicator={false}>
+            <PostHorizontalList
+              title="Trending"
+              data={data.posts}
+              navigation={navigation}
+            />
             <Text
               category="h4"
               style={{paddingHorizontal: 5, paddingVertical: 15}}>
