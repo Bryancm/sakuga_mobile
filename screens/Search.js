@@ -1,32 +1,22 @@
 import React from 'react';
-import {SafeAreaView, FlatList, StyleSheet} from 'react-native';
-import {
-  Icon,
-  Layout,
-  Text,
-  Button,
-  Input,
-  Tab,
-  TabView,
-  OverflowMenu,
-  MenuItem,
-} from '@ui-kitten/components';
+import { SafeAreaView, FlatList, StyleSheet } from 'react-native';
+import { Icon, Layout, Text, Button, Input, Tab, TabView, OverflowMenu, MenuItem } from '@ui-kitten/components';
 
 import tagData from '../tag_data.json';
 import postData from '../test-data-v2.json';
 import testData from '../test-tag-copy-data.json';
 
-import {AutoComplete} from '../components/autoComplete';
-import {Card} from '../components/card';
-import {SmallCard} from '../components/smallCard';
-import {Tag} from '../components/tagItem';
+import { AutoComplete } from '../components/autoComplete';
+import { Card } from '../components/card';
+import { SmallCard } from '../components/smallCard';
+import { Tag } from '../components/tagItem';
 
 const LayoutIcon = (props) => <Icon {...props} name="layout-outline" />;
 const ArrowDownIcon = (props) => <Icon {...props} name="arrow-down-outline" />;
 const ShuffleIcon = (props) => <Icon {...props} name="shuffle-outline" />;
 const TagIcon = (props) => <Icon {...props} name="pricetags-outline" />;
 
-export const SearchScreen = ({navigation}) => {
+export const SearchScreen = ({ navigation }) => {
   const [value, setValue] = React.useState(null);
   const [data, setData] = React.useState([]);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
@@ -51,9 +41,7 @@ export const SearchScreen = ({navigation}) => {
     setValue(query);
     const splittedQuery = query.split(' ');
     const lastItem = splittedQuery[splittedQuery.length - 1];
-    const d = testData.filter((t) =>
-      t.name.toLowerCase().includes(lastItem.toLowerCase()),
-    );
+    const d = testData.filter((t) => t.name.toLowerCase().includes(lastItem.toLowerCase()));
     setData(query ? d : []);
   };
 
@@ -65,8 +53,7 @@ export const SearchScreen = ({navigation}) => {
   };
 
   const renderItem = (info) => {
-    if (layoutType === 'small')
-      return <SmallCard item={info.item} tagsWithType={postData.tags} />;
+    if (layoutType === 'small') return <SmallCard item={info.item} tagsWithType={postData.tags} />;
     return <Card item={info.item} tagsWithType={postData.tags} />;
   };
 
@@ -114,7 +101,7 @@ export const SearchScreen = ({navigation}) => {
       size="large"
       appearance="ghost"
       accessoryLeft={LayoutIcon}
-      style={{width: 60, paddingVertical: 0}}
+      style={{ width: 60, paddingVertical: 0 }}
       onPress={toggleMenu}
     />
   );
@@ -125,7 +112,7 @@ export const SearchScreen = ({navigation}) => {
       size="large"
       appearance="ghost"
       accessoryLeft={ArrowDownIcon}
-      style={{width: 60, paddingVertical: 0}}
+      style={{ width: 60, paddingVertical: 0 }}
       onPress={toggleSortMenu}
     />
   );
@@ -136,7 +123,7 @@ export const SearchScreen = ({navigation}) => {
       size="large"
       appearance="ghost"
       accessoryLeft={TagIcon}
-      style={{width: 60, paddingVertical: 0}}
+      style={{ width: 60, paddingVertical: 0 }}
       onPress={toggleMenuTagType}
     />
   );
@@ -147,7 +134,7 @@ export const SearchScreen = ({navigation}) => {
       size="large"
       appearance="ghost"
       accessoryLeft={ArrowDownIcon}
-      style={{width: 60, paddingVertical: 0}}
+      style={{ width: 60, paddingVertical: 0 }}
       onPress={toggleTagSortMenu}
     />
   );
@@ -158,57 +145,39 @@ export const SearchScreen = ({navigation}) => {
       size="large"
       appearance="ghost"
       accessoryLeft={ShuffleIcon}
-      style={{width: 60, paddingVertical: 0}}
+      style={{ width: 60, paddingVertical: 0 }}
       onPress={() => setRandomSelected(!randomSelected)}
     />
   );
 
   const LayoutActions = () => (
-    <OverflowMenu
-      anchor={renderMenuAction}
-      visible={menuVisible}
-      onBackdropPress={toggleMenu}>
+    <OverflowMenu anchor={renderMenuAction} visible={menuVisible} onBackdropPress={toggleMenu}>
       <MenuItem title="Large list" onPress={() => changeLayout('large')} />
       <MenuItem title="Small list" onPress={() => changeLayout('small')} />
     </OverflowMenu>
   );
 
   const SortActions = () => (
-    <OverflowMenu
-      anchor={renderSortMenuAction}
-      visible={sortMenuVisible}
-      onBackdropPress={toggleSortMenu}>
+    <OverflowMenu anchor={renderSortMenuAction} visible={sortMenuVisible} onBackdropPress={toggleSortMenu}>
       <MenuItem title="Sort by date" onPress={() => changeSort('date')} />
       <MenuItem title="Sort by score" onPress={() => changeSort('score')} />
-      <MenuItem
-        title="Sort by score asc"
-        onPress={() => changeSort('score_asc')}
-      />
+      <MenuItem title="Sort by score asc" onPress={() => changeSort('score_asc')} />
     </OverflowMenu>
   );
 
   const TagTypeActions = () => (
-    <OverflowMenu
-      anchor={renderTagTypeAction}
-      visible={tagTypeMenuVisible}
-      onBackdropPress={toggleMenuTagType}>
+    <OverflowMenu anchor={renderTagTypeAction} visible={tagTypeMenuVisible} onBackdropPress={toggleMenuTagType}>
       <MenuItem title="Any" onPress={() => changeTagType('any')} />
       <MenuItem title="General" onPress={() => changeTagType('general')} />
       <MenuItem title="Artist" onPress={() => changeTagType('artist')} />
       <MenuItem title="Copyright" onPress={() => changeTagType('copyright')} />
-      <MenuItem
-        title="Terminology"
-        onPress={() => changeTagType('terminology')}
-      />
+      <MenuItem title="Terminology" onPress={() => changeTagType('terminology')} />
       <MenuItem title="Meta" onPress={() => changeTagType('meta')} />
     </OverflowMenu>
   );
 
   const TagSortActions = () => (
-    <OverflowMenu
-      anchor={renderTagSortAction}
-      visible={tagsortMenuVisible}
-      onBackdropPress={toggleTagSortMenu}>
+    <OverflowMenu anchor={renderTagSortAction} visible={tagsortMenuVisible} onBackdropPress={toggleTagSortMenu}>
       <MenuItem title="Sort by date" onPress={() => changeSort('date')} />
       <MenuItem title="Sort by count" onPress={() => changeSort('count')} />
       <MenuItem title="Sort by name" onPress={() => changeSort('name')} />
@@ -216,29 +185,23 @@ export const SearchScreen = ({navigation}) => {
   );
 
   return (
-    <Layout style={{flex: 1}}>
-      <SafeAreaView style={{flex: 1}}>
-        <Layout style={{flexDirection: 'row'}}>
+    <Layout style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <Layout style={{ flexDirection: 'row' }}>
           <Input
-            style={{padding: 8, width: '77%'}}
+            style={{ padding: 8, width: '77%' }}
             size="small"
             status="basic"
             placeholder="Search"
             value={value}
             onChangeText={onChangeText}
           />
-          <Button
-            size="tiny"
-            appearance="ghost"
-            onPress={navigateBack}
-            style={styles.cancelButton}>
+          <Button size="tiny" appearance="ghost" onPress={navigateBack} style={styles.cancelButton}>
             <Text status="info">Cancel</Text>
           </Button>
         </Layout>
 
-        {data.length > 0 && (
-          <AutoComplete data={data} onPress={onAutoCompletePress} />
-        )}
+        {data.length > 0 && <AutoComplete data={data} onPress={onAutoCompletePress} />}
 
         <TabView
           style={{}}
@@ -247,9 +210,8 @@ export const SearchScreen = ({navigation}) => {
           onSelect={(index) => setSelectedIndex(index)}>
           <Tab title="POST">
             <Layout style={styles.tabContainer}>
-              <Layout
-                style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Layout style={{flexDirection: 'row'}}>
+              <Layout style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Layout style={{ flexDirection: 'row' }}>
                   <LayoutActions />
                   <SortActions />
                 </Layout>
@@ -257,7 +219,7 @@ export const SearchScreen = ({navigation}) => {
               </Layout>
               <FlatList
                 key="post-list"
-                style={{width: '100%'}}
+                style={{ width: '100%' }}
                 data={postData.posts}
                 renderItem={renderItem}
                 keyExtractor={keyExtractor}
@@ -267,7 +229,7 @@ export const SearchScreen = ({navigation}) => {
 
           <Tab title="TAGS">
             <Layout style={styles.tabContainer}>
-              <Layout style={{flexDirection: 'row'}}>
+              <Layout style={{ flexDirection: 'row' }}>
                 <TagTypeActions />
                 <TagSortActions />
               </Layout>
@@ -275,8 +237,8 @@ export const SearchScreen = ({navigation}) => {
                 key="tag-list"
                 numColumns={2}
                 columnWrapperStyle={styles.row}
-                contentContainerStyle={{paddingHorizontal: 2}}
-                style={{width: '100%'}}
+                contentContainerStyle={{ paddingHorizontal: 2 }}
+                style={{ width: '100%' }}
                 data={tagData}
                 renderItem={renderTagItem}
                 keyExtractor={keyExtractor}
