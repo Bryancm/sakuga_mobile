@@ -25,6 +25,7 @@ export const TagHorizontalList = ({ title, data, navigation }) => {
       </Layout>
       <ScrollView horizontal>
         <FlatList
+          bounces={false}
           numColumns={halfIndex}
           data={data}
           renderItem={renderItem}
