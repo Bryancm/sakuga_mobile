@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, FlatList, StyleSheet } from 'react-native';
+import { SafeAreaView, StyleSheet } from 'react-native';
 import {
   Divider,
   Icon,
@@ -9,34 +9,60 @@ import {
   OverflowMenu,
   MenuItem,
 } from '@ui-kitten/components';
-import { Tag } from '../components/tagItem';
 import { PostVerticalList } from '../components/postVerticalList';
+import { TagVerticalList } from '../components/tagVerticalList';
+import postData from '../test-data-v2.json';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 const CalendarIcon = (props) => <Icon {...props} name="calendar-outline" />;
+const FilterIcon = (props) => <Icon {...props} name="funnel-outline" />;
+const OptionsIcon = (props) => <Icon {...props} name="options-2-outline" />;
+const TrashIcon = (props) => <Icon {...props} name="trash-outline" />;
 
 export const PostListScreen = ({ navigation, route }) => {
-  const datePicker = React.useRef();
-  const [date, setDate] = React.useState(new Date());
-  const [data, setData] = React.useState(route.params.data);
-  const [tags, setTags] = React.useState(route.params.tags);
-  const [from, setFrom] = React.useState(route.params.from);
-  const [isPosts, setIsPosts] = React.useState(route.params.isPosts);
+  const from = route.params.from;
+  const isPosts = route.params.isPosts;
+  const [data, setData] = React.useState(route.params.data ? route.params.data : []);
+  const [tags, setTags] = React.useState(route.params.tags ? route.params.tags : []);
 
   const [menuVisible, setMenuVisible] = React.useState(false);
-  const [layoutType, setLayoutType] = React.useState('large');
+  const [secondMenuVisible, setSecondMenuVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    if (data.length === 0) {
+      if (from === 'Favorites') {
+        setData(postData.posts);
+        setTags(postData.tags);
+      }
+      if (from === 'History') {
+        setData(postData.posts);
+        setTags(postData.tags);
+      }
+      if (from === 'Watch Later') {
+        setData(postData.posts);
+        setTags(postData.tags);
+      }
+    }
+  }, []);
+
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
   };
-  const toggleDatePicker = () => {
-    datePicker.current.show();
+
+  const toggleSecondMenu = () => {
+    setSecondMenuVisible(!secondMenuVisible);
   };
+
   const navigateBack = () => {
     navigation.goBack();
   };
 
+  const clearHistory = () => {};
+
   const BackAction = () => <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
   const renderMenuAction = () => <TopNavigationAction icon={CalendarIcon} onPress={toggleMenu} />;
+  const renderFilterAction = () => <TopNavigationAction icon={FilterIcon} onPress={toggleMenu} />;
+  const renderOptionsAction = () => <TopNavigationAction icon={OptionsIcon} onPress={toggleSecondMenu} />;
 
   const dateItems = [
     <MenuItem key="24 hours" title="24 hours" />,
@@ -78,7 +104,7 @@ export const PostListScreen = ({ navigation, route }) => {
     <MenuItem key="2013" title="2013" />,
   ];
 
-  const renderRightActions = () => (
+  var renderRightActions = () => (
     <React.Fragment>
       {route.params.menuType && (
         <OverflowMenu anchor={renderMenuAction} visible={menuVisible} onBackdropPress={toggleMenu}>
@@ -91,14 +117,29 @@ export const PostListScreen = ({ navigation, route }) => {
     </React.Fragment>
   );
 
-  const renderTagItem = ({ item }) => <Tag tag={item} />;
+  const favActions = () => (
+    <React.Fragment>
+      <OverflowMenu anchor={renderFilterAction} visible={menuVisible} onBackdropPress={toggleMenu}>
+        <MenuItem key="1" title="Good only" />
+        <MenuItem key="2" title="Great only" />
+        <MenuItem key="3" title="Fav only" />
+      </OverflowMenu>
+      <OverflowMenu anchor={renderOptionsAction} visible={secondMenuVisible} onBackdropPress={toggleSecondMenu}>
+        <MenuItem key="4" title="Sort by date" />
+        <MenuItem key="5" title="Sort by score" />
+      </OverflowMenu>
+    </React.Fragment>
+  );
 
-  const keyExtractor = (item) => item.id.toString();
+  const historyActions = () => (
+    <React.Fragment>
+      <TopNavigationAction icon={TrashIcon} onPress={clearHistory} />
+    </React.Fragment>
+  );
 
-  const onSelectDate = (newDate) => {
-    console.log(newDate);
-    setDate(newDate);
-  };
+  if (from === 'Favorites') renderRightActions = favActions;
+  if (from === 'History') renderRightActions = historyActions;
+  if (from === 'Watch Later') renderRightActions = historyActions;
 
   return (
     <Layout style={{ flex: 1 }}>
@@ -107,16 +148,7 @@ export const PostListScreen = ({ navigation, route }) => {
         <Divider />
         <Layout style={{ flex: 1 }}>
           {isPosts && <PostVerticalList data={data} tags={tags} layoutType="small" />}
-          {!isPosts && (
-            <FlatList
-              numColumns={2}
-              columnWrapperStyle={styles.row}
-              contentContainerStyle={{ paddingHorizontal: 2 }}
-              data={data}
-              renderItem={renderTagItem}
-              keyExtractor={keyExtractor}
-            />
-          )}
+          {!isPosts && <TagVerticalList data={data} />}
         </Layout>
       </SafeAreaView>
     </Layout>

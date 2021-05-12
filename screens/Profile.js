@@ -34,6 +34,10 @@ export const ProfileScreen = ({ navigation }) => {
     navigation.navigate('Search');
   };
 
+  const navigatePostList = (from) => {
+    navigation.navigate('PostList', { from, isPosts: true });
+  };
+
   return (
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -50,12 +54,14 @@ export const ProfileScreen = ({ navigation }) => {
             description="Good, great and favorites sakugas"
             accessoryLeft={renderFavIcon}
             accessoryRight={ArrowIcon}
+            onPress={() => navigatePostList('Favorites')}
           />
           <ListItem
             title="History"
             description="Viewed sakugas"
             accessoryLeft={renderClockIcon}
             accessoryRight={ArrowIcon}
+            onPress={() => navigatePostList('History')}
           />
           {/* <ListItem
             title="Following"
@@ -68,6 +74,7 @@ export const ProfileScreen = ({ navigation }) => {
             description="Do not lose it"
             accessoryLeft={renderArchiveIcon}
             accessoryRight={ArrowIcon}
+            onPress={() => navigatePostList('Watch Later')}
           />
           <ListItem
             title="Settings"
