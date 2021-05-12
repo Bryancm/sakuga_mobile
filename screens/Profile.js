@@ -33,7 +33,9 @@ export const ProfileScreen = ({ navigation }) => {
   const navigateSearch = () => {
     navigation.navigate('Search');
   };
-
+  const navigateSettings = () => {
+    navigation.navigate('Settings');
+  };
   const navigatePostList = (from) => {
     navigation.navigate('PostList', { from, isPosts: true });
   };
@@ -81,6 +83,7 @@ export const ProfileScreen = ({ navigation }) => {
             description="Configure it to your taste"
             accessoryLeft={renderSettingsAction}
             accessoryRight={ArrowIcon}
+            onPress={navigateSettings}
           />
           <Layout
             style={{

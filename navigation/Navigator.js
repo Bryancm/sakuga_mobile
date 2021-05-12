@@ -1,27 +1,24 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {
-  BottomNavigation,
-  BottomNavigationTab,
-  Icon,
-} from '@ui-kitten/components';
+import { StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { BottomNavigation, BottomNavigationTab, Icon } from '@ui-kitten/components';
 
-import {NewScreen} from '../screens/New';
-import {ExploreScreen} from '../screens/Explore';
-import {TagScreen} from '../screens/Tag';
-import {SearchScreen} from '../screens/Search';
-import {ProfileScreen} from '../screens/Profile';
-import {PostListScreen} from '../screens/PostList';
+import { NewScreen } from '../screens/New';
+import { ExploreScreen } from '../screens/Explore';
+import { TagScreen } from '../screens/Tag';
+import { SearchScreen } from '../screens/Search';
+import { ProfileScreen } from '../screens/Profile';
+import { PostListScreen } from '../screens/PostList';
+import { SettingScreen } from '../screens/Settings';
 
 const PersonIcon = (props) => <Icon {...props} name="person-outline" />;
 const FilmIcon = (props) => <Icon {...props} name="film-outline" />;
 const CompassIcon = (props) => <Icon {...props} name="compass-outline" />;
 const TagIcon = (props) => <Icon {...props} name="pricetags-outline" />;
 
-const forFade = ({current}) => ({
+const forFade = ({ current }) => ({
   cardStyle: {
     opacity: current.progress,
   },
@@ -46,7 +43,7 @@ const ProfileStackNavigator = () => (
   </Stack.Navigator>
 );
 
-const BottomTabBar = ({navigation, state}) => (
+const BottomTabBar = ({ navigation, state }) => (
   <BottomNavigation
     appearance="noIndicator"
     style={styles.bottomNavigation}
@@ -61,9 +58,7 @@ const BottomTabBar = ({navigation, state}) => (
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => (
-  <Tab.Navigator
-    initialRouteName="Explore"
-    tabBar={(props) => <BottomTabBar {...props} />}>
+  <Tab.Navigator initialRouteName="Explore" tabBar={(props) => <BottomTabBar {...props} />}>
     <Tab.Screen name="Home" component={HomeStackNavigator} />
     <Tab.Screen name="Explore" component={ExploreStackNavigator} />
     <Tab.Screen name="Profile" component={ProfileStackNavigator} />
@@ -75,11 +70,8 @@ export const AppNavigator = () => (
     <Stack.Navigator headerMode={false} mode="card" initialRouteName="Home">
       <Stack.Screen name="Home" component={TabNavigator} />
       <Stack.Screen name="PostList" component={PostListScreen} />
-      <Stack.Screen
-        name="Search"
-        component={SearchScreen}
-        options={{cardStyleInterpolator: forFade}}
-      />
+      <Stack.Screen name="Settings" component={SettingScreen} />
+      <Stack.Screen name="Search" component={SearchScreen} options={{ cardStyleInterpolator: forFade }} />
     </Stack.Navigator>
   </NavigationContainer>
 );
