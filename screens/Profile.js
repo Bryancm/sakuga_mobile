@@ -1,5 +1,5 @@
-import React, {useState, useCallback} from 'react';
-import {SafeAreaView, FlatList, StyleSheet, ScrollView} from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { SafeAreaView, FlatList, StyleSheet, ScrollView } from 'react-native';
 import {
   Divider,
   Layout,
@@ -10,66 +10,38 @@ import {
   Button,
   ListItem,
 } from '@ui-kitten/components';
-import {SmallCard} from '../components/uploadCard';
-import {Tag} from '../components/tagItem';
 import data from '../test-data-v2.json';
-import {tagStyles} from '../styles';
+import { PostHorizontalList } from '../components/postHorizontalList';
 
-const PlusIcon = (props) => <Icon {...props} name="plus-outline" />;
-const UploadIcon = (props) => <Icon {...props} name="cloud-upload-outline" />;
+const PlusIcon = (props) => <Icon {...props} name="plus-circle-outline" style={{ width: 25, height: 25 }} />;
 const ArchiveIcon = (props) => <Icon {...props} name="archive-outline" />;
 const EyeIcon = (props) => <Icon {...props} name="eye-outline" />;
 const ClockIcon = (props) => <Icon {...props} name="clock-outline" />;
-const ArrowIcon = (props) => (
-  <Icon {...props} name="arrow-ios-forward-outline" />
-);
+const ArrowIcon = (props) => <Icon {...props} name="arrow-ios-forward-outline" />;
 const HeartIcon = (props) => <Icon {...props} name="heart-outline" />;
-const PersonIcon = (props) => <Icon {...props} name="person-outline" />;
+const PersonIcon = (props) => <Icon {...props} name="person-outline" style={{ width: 25, height: 25 }} />;
 const SettingsIcon = (props) => <Icon {...props} name="settings-outline" />;
 const SearchIcon = (props) => <Icon {...props} name="search-outline" />;
 
-export const ProfileScreen = ({navigation}) => {
-  const renderSearchAction = () => <TopNavigationAction icon={SearchIcon} />;
-  const renderFavIcon = () => (
-    <Button appearance="ghost" accessoryLeft={HeartIcon} />
-  );
-  const renderClockIcon = () => (
-    <Button appearance="ghost" accessoryLeft={ClockIcon} />
-  );
-  const renderSettingsAction = () => (
-    <Button appearance="ghost" accessoryLeft={SettingsIcon} />
-  );
-  const renderEyeIcon = () => (
-    <Button appearance="ghost" accessoryLeft={EyeIcon} />
-  );
-  const renderArchiveIcon = () => (
-    <Button appearance="ghost" accessoryLeft={ArchiveIcon} />
-  );
-  const renderAddButton = () => (
-    <Button
-      size="tiny"
-      appearance="outline"
-      accessoryRight={PlusIcon}
-      style={{borderRadius: 15, width: 20, height: 20}}>
-      {/* <Text category="c1">Add</Text> */}
-    </Button>
-  );
+export const ProfileScreen = ({ navigation }) => {
+  const renderSearchAction = () => <TopNavigationAction icon={SearchIcon} onPress={navigateSearch} />;
+  const renderFavIcon = () => <Button appearance="ghost" accessoryLeft={HeartIcon} />;
+  const renderClockIcon = () => <Button appearance="ghost" accessoryLeft={ClockIcon} />;
+  const renderSettingsAction = () => <Button appearance="ghost" accessoryLeft={SettingsIcon} />;
+  const renderArchiveIcon = () => <Button appearance="ghost" accessoryLeft={ArchiveIcon} />;
+
+  const navigateSearch = () => {
+    navigation.navigate('Search');
+  };
+
   return (
-    <Layout style={{flex: 1}}>
-      <SafeAreaView style={{flex: 1}}>
-        <TopNavigation
-          title="Profile"
-          alignment="center"
-          accessoryRight={renderSearchAction}
-        />
+    <Layout style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <TopNavigation title="Profile" alignment="center" accessoryRight={renderSearchAction} />
         <Divider />
         <ScrollView>
-          <Layout style={{flexDirection: 'row'}}>
-            <Button
-              size="giant"
-              appearance="ghost"
-              accessoryRight={PersonIcon}
-              style={{paddingLeft: 0}}>
+          <Layout style={{ flexDirection: 'row' }}>
+            <Button size="giant" appearance="ghost" accessoryRight={PersonIcon} style={{ paddingLeft: 0 }}>
               <Text category="h4">Welcome Bryan</Text>
             </Button>
           </Layout>
@@ -109,21 +81,14 @@ export const ProfileScreen = ({navigation}) => {
               flexDirection: 'row',
               alignItems: 'flex-end',
             }}>
-            <Button
-              style={{width: 155}}
-              appearance="ghost"
-              accessoryRight={renderAddButton}>
+            <Button appearance="ghost" accessoryRight={PlusIcon} style={{ paddingLeft: 0 }}>
               <Text category="h4">Uploads</Text>
             </Button>
-            <Button style={{width: 100, paddingRight: 0}} appearance="ghost">
+            <Button style={{ width: 100, paddingRight: 0 }} appearance="ghost">
               <Text category="p2">See more</Text>
             </Button>
           </Layout>
-          <ScrollView horizontal>
-            {data.posts.map((p) => (
-              <SmallCard key={p.id} item={p} tagsWithType={data.tags} />
-            ))}
-          </ScrollView>
+          <PostHorizontalList title="" data={data.posts} tags={data.tags} navigation={navigation} />
         </ScrollView>
       </SafeAreaView>
     </Layout>

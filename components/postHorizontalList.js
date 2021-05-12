@@ -11,15 +11,16 @@ export const PostHorizontalList = ({ title, data, tags, navigation, menuType }) 
   };
   return (
     <Layout>
-      <Layout style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-        <Text category="h4" style={{ paddingHorizontal: 5, paddingVertical: 15 }}>
-          {title}
-        </Text>
-        <Button style={{ width: 100, paddingRight: 0 }} appearance="ghost" onPress={navigatePostList}>
-          <Text category="p2">See more</Text>
-        </Button>
-      </Layout>
-
+      {title !== '' && (
+        <Layout style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Text category="h4" style={{ paddingHorizontal: 5, paddingVertical: 15 }}>
+            {title}
+          </Text>
+          <Button style={{ width: 100, paddingRight: 0 }} appearance="ghost" onPress={navigatePostList}>
+            <Text category="p2">See more</Text>
+          </Button>
+        </Layout>
+      )}
       <FlatList
         horizontal
         data={data}
