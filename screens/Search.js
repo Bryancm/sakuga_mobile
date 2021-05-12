@@ -7,9 +7,8 @@ import postData from '../test-data-v2.json';
 import testData from '../test-tag-copy-data.json';
 
 import { AutoComplete } from '../components/autoComplete';
-import { Card } from '../components/card';
-import { SmallCard } from '../components/smallCard';
-import { Tag } from '../components/tagItem';
+import { PostVerticalList } from '../components/postVerticalList';
+import { TagVerticalList } from '../components/tagVerticalList';
 
 const LayoutIcon = (props) => <Icon {...props} name="layout-outline" />;
 const ArrowDownIcon = (props) => <Icon {...props} name="arrow-down-outline" />;
@@ -51,15 +50,6 @@ export const SearchScreen = ({ navigation }) => {
     splittedValue[index] = item + ' ';
     setValue(splittedValue.join(' '));
   };
-
-  const renderItem = (info) => {
-    if (layoutType === 'small') return <SmallCard item={info.item} tagsWithType={postData.tags} />;
-    return <Card item={info.item} tagsWithType={postData.tags} />;
-  };
-
-  const renderTagItem = (info) => <Tag tag={info.item} />;
-
-  const keyExtractor = (item) => item.id.toString();
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
@@ -178,9 +168,9 @@ export const SearchScreen = ({ navigation }) => {
 
   const TagSortActions = () => (
     <OverflowMenu anchor={renderTagSortAction} visible={tagsortMenuVisible} onBackdropPress={toggleTagSortMenu}>
-      <MenuItem title="Sort by date" onPress={() => changeSort('date')} />
-      <MenuItem title="Sort by count" onPress={() => changeSort('count')} />
-      <MenuItem title="Sort by name" onPress={() => changeSort('name')} />
+      <MenuItem title="Sort by date" onPress={() => changeTagSort('date')} />
+      <MenuItem title="Sort by count" onPress={() => changeTagSort('count')} />
+      <MenuItem title="Sort by name" onPress={() => changeTagSort('name')} />
     </OverflowMenu>
   );
 
@@ -217,13 +207,7 @@ export const SearchScreen = ({ navigation }) => {
                 </Layout>
                 <RenderRandomAction />
               </Layout>
-              <FlatList
-                key="post-list"
-                style={{ width: '100%' }}
-                data={postData.posts}
-                renderItem={renderItem}
-                keyExtractor={keyExtractor}
-              />
+              <PostVerticalList data={postData.posts} tags={postData.tags} layoutType={layoutType} />
             </Layout>
           </Tab>
 
@@ -233,16 +217,7 @@ export const SearchScreen = ({ navigation }) => {
                 <TagTypeActions />
                 <TagSortActions />
               </Layout>
-              <FlatList
-                key="tag-list"
-                numColumns={2}
-                columnWrapperStyle={styles.row}
-                contentContainerStyle={{ paddingHorizontal: 2 }}
-                style={{ width: '100%' }}
-                data={tagData}
-                renderItem={renderTagItem}
-                keyExtractor={keyExtractor}
-              />
+              <TagVerticalList data={tagData} />
             </Layout>
           </Tab>
         </TabView>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet, FlatList } from 'react-native';
+import { SafeAreaView, StyleSheet } from 'react-native';
 import {
   Divider,
   Layout,
@@ -9,8 +9,7 @@ import {
   TopNavigationAction,
   Icon,
 } from '@ui-kitten/components';
-import { Card } from '../components/card';
-import { SmallCard } from '../components/smallCard';
+import { PostVerticalList } from '../components/postVerticalList';
 import data from '../test-data-v2.json';
 
 const LayoutIcon = (props) => <Icon {...props} name="layout-outline" />;
@@ -45,13 +44,6 @@ export const NewScreen = ({ navigation }) => {
     </React.Fragment>
   );
 
-  const renderItem = (info) => {
-    if (layoutType === 'small') return <SmallCard item={info.item} tagsWithType={data.tags} />;
-    return <Card item={info.item} tagsWithType={data.tags} />;
-  };
-
-  const keyExtractor = (item) => item.id.toString();
-
   return (
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -62,7 +54,7 @@ export const NewScreen = ({ navigation }) => {
           accessoryRight={renderSearchIcon}
         />
         <Divider />
-        <FlatList style={styles.container} data={data.posts} renderItem={renderItem} keyExtractor={keyExtractor} />
+        <PostVerticalList data={data.posts} tags={data.tags} layoutType={layoutType} />
         <Divider />
       </SafeAreaView>
     </Layout>

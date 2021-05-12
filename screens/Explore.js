@@ -27,12 +27,30 @@ export const ExploreScreen = ({ navigation }) => {
             flex: 1,
           }}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <PostHorizontalList title="Trending" data={data.posts} tags={data.tags} navigation={navigation} />
+            <PostHorizontalList
+              title="Trending"
+              data={data.posts}
+              tags={data.tags}
+              navigation={navigation}
+              menuType="date"
+            />
             <TagHorizontalList title="New Artist" data={tag_data} navigation={navigation} />
-            <PostHorizontalList title="Week's Popular" data={data.posts} tags={data.tags} navigation={navigation} />
+            <PostHorizontalList
+              title="Week's Popular"
+              data={data.posts}
+              tags={data.tags}
+              navigation={navigation}
+              menuType="week"
+            />
             <PostHorizontalList title="Character Acting" data={data.posts} tags={data.tags} navigation={navigation} />
             <TagHorizontalList title="New Copyright" data={tag_copy_data} navigation={navigation} />
-            <PostHorizontalList title="Month's Popular" data={data.posts} tags={data.tags} navigation={navigation} />
+            <PostHorizontalList
+              title="Month's Popular"
+              data={data.posts}
+              tags={data.tags}
+              navigation={navigation}
+              menuType="month"
+            />
             <PostHorizontalList title="Fighting" data={data.posts} tags={data.tags} navigation={navigation} />
             <TagHorizontalList title="Popular Artist" data={tag_data} navigation={navigation} />
             <PostHorizontalList title="Liquid" data={data.posts} tags={data.tags} navigation={navigation} />
@@ -45,7 +63,13 @@ export const ExploreScreen = ({ navigation }) => {
               tags={data.tags}
               navigation={navigation}
             />
-            <PostHorizontalList title="Year's Popular" data={data.posts} tags={data.tags} navigation={navigation} />
+            <PostHorizontalList
+              title="Year's Popular"
+              data={data.posts}
+              tags={data.tags}
+              navigation={navigation}
+              menuType="year"
+            />
           </ScrollView>
         </Layout>
         <Divider />

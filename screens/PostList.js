@@ -9,12 +9,11 @@ import {
   OverflowMenu,
   MenuItem,
 } from '@ui-kitten/components';
-import { SmallCard } from '../components/smallCard';
 import { Tag } from '../components/tagItem';
+import { PostVerticalList } from '../components/postVerticalList';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 const CalendarIcon = (props) => <Icon {...props} name="calendar-outline" />;
-const ArrowDownIcon = (props) => <Icon {...props} name="arrow-down-outline" />;
 
 export const PostListScreen = ({ navigation, route }) => {
   const datePicker = React.useRef();
@@ -39,27 +38,58 @@ export const PostListScreen = ({ navigation, route }) => {
   const BackAction = () => <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
   const renderMenuAction = () => <TopNavigationAction icon={CalendarIcon} onPress={toggleMenu} />;
 
+  const dateItems = [
+    <MenuItem key="24 hours" title="24 hours" />,
+    <MenuItem key="Yesterday" title="Yesterday" />,
+    <MenuItem key="Before yesterday" title="Before yesterday" />,
+    <MenuItem key="Other Day" title="Other Day" />,
+  ];
+
+  const weekItems = [
+    <MenuItem key="This week" title="This week" />,
+    <MenuItem key="Past week" title="Past week" />,
+    <MenuItem key="Other week" title="Other week" />,
+  ];
+
+  const monthItems = [
+    <MenuItem key="JAN" title="JAN" />,
+    <MenuItem key="FEB" title="FEB" />,
+    <MenuItem key="MAR" title="MAR" />,
+    <MenuItem key="APR" title="APR" />,
+    <MenuItem key="MAY" title="MAY" />,
+    <MenuItem key="JUNE" title="JUNE" />,
+    <MenuItem key="JULY" title="JULY" />,
+    <MenuItem key="AUG" title="AUG" />,
+    <MenuItem key="SEPT" title="SEPT" />,
+    <MenuItem key="OCT" title="OCT" />,
+    <MenuItem key="NOV" title="NOV" />,
+    <MenuItem key="DEC" title="DEC" />,
+  ];
+
+  const yearItems = [
+    <MenuItem key="2021" title="2021" />,
+    <MenuItem key="2020" title="2020" />,
+    <MenuItem key="2019" title="2019" />,
+    <MenuItem key="2018" title="2018" />,
+    <MenuItem key="2017" title="2017" />,
+    <MenuItem key="2016" title="2016" />,
+    <MenuItem key="2015" title="2015" />,
+    <MenuItem key="2014" title="2014" />,
+    <MenuItem key="2013" title="2013" />,
+  ];
+
   const renderRightActions = () => (
     <React.Fragment>
-      {/* <TopNavigationAction icon={CalendarIcon} onPress={toggleDatePicker} /> */}
-      <OverflowMenu anchor={renderMenuAction} visible={menuVisible} onBackdropPress={toggleMenu}>
-        <MenuItem title="JAN" />
-        <MenuItem title="FEB" />
-        <MenuItem title="MAR" />
-        <MenuItem title="APR" />
-        <MenuItem title="MAY" />
-        <MenuItem title="JUN" />
-        <MenuItem title="JUL" />
-        <MenuItem title="AGO" />
-        <MenuItem title="SEP" />
-        <MenuItem title="OCT" />
-        <MenuItem title="NOV" />
-        <MenuItem title="DEC" />
-      </OverflowMenu>
+      {route.params.menuType && (
+        <OverflowMenu anchor={renderMenuAction} visible={menuVisible} onBackdropPress={toggleMenu}>
+          {route.params.menuType === 'date' && dateItems}
+          {route.params.menuType === 'week' && weekItems}
+          {route.params.menuType === 'month' && monthItems}
+          {route.params.menuType === 'year' && yearItems}
+        </OverflowMenu>
+      )}
     </React.Fragment>
   );
-
-  const renderItem = ({ item }) => <SmallCard item={item} tagsWithType={tags} />;
 
   const renderTagItem = ({ item }) => <Tag tag={item} />;
 
@@ -74,10 +104,9 @@ export const PostListScreen = ({ navigation, route }) => {
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
         <TopNavigation title={from} alignment="center" accessoryLeft={BackAction} accessoryRight={renderRightActions} />
-
         <Divider />
         <Layout style={{ flex: 1 }}>
-          {isPosts && <FlatList data={data} renderItem={renderItem} keyExtractor={keyExtractor} />}
+          {isPosts && <PostVerticalList data={data} tags={tags} layoutType="small" />}
           {!isPosts && (
             <FlatList
               numColumns={2}
