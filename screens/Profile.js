@@ -13,13 +13,13 @@ import {
 import data from '../test-data-v2.json';
 import { PostHorizontalList } from '../components/postHorizontalList';
 
-const PlusIcon = (props) => <Icon {...props} name="plus-circle-outline" style={{ width: 25, height: 25 }} />;
+const PlusIcon = (props) => <Icon {...props} name="plus-circle-outline" />;
 const ArchiveIcon = (props) => <Icon {...props} name="archive-outline" />;
 const EyeIcon = (props) => <Icon {...props} name="eye-outline" />;
 const ClockIcon = (props) => <Icon {...props} name="clock-outline" />;
 const ArrowIcon = (props) => <Icon {...props} name="arrow-ios-forward-outline" />;
 const HeartIcon = (props) => <Icon {...props} name="heart-outline" />;
-const PersonIcon = (props) => <Icon {...props} name="person-outline" style={{ width: 25, height: 25 }} />;
+const PersonIcon = (props) => <Icon {...props} name="person-outline" />;
 const SettingsIcon = (props) => <Icon {...props} name="settings-outline" />;
 const SearchIcon = (props) => <Icon {...props} name="search-outline" />;
 
@@ -47,7 +47,7 @@ export const ProfileScreen = ({ navigation }) => {
         <Divider />
         <ScrollView>
           <Layout style={{ flexDirection: 'row' }}>
-            <Button size="giant" appearance="ghost" accessoryRight={PersonIcon} style={{ paddingLeft: 0 }}>
+            <Button size="giant" appearance="ghost" style={{ paddingLeft: 0 }}>
               <Text category="h4">Welcome Bryan</Text>
             </Button>
           </Layout>
@@ -91,7 +91,11 @@ export const ProfileScreen = ({ navigation }) => {
               flexDirection: 'row',
               alignItems: 'flex-end',
             }}>
-            <Button appearance="ghost" accessoryRight={PlusIcon} style={{ paddingLeft: 0 }}>
+            <Button
+              size="giant"
+              appearance="ghost"
+              accessoryRight={PlusIcon}
+              style={{ paddingLeft: 0, paddingBottom: 8 }}>
               <Text category="h4">Uploads</Text>
             </Button>
             <Button style={{ width: 100, paddingRight: 0 }} appearance="ghost">
