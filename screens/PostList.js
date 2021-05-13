@@ -18,6 +18,9 @@ const CalendarIcon = (props) => <Icon {...props} name="calendar-outline" />;
 const FilterIcon = (props) => <Icon {...props} name="funnel-outline" />;
 const OptionsIcon = (props) => <Icon {...props} name="options-2-outline" />;
 const TrashIcon = (props) => <Icon {...props} name="trash-outline" />;
+const StarIconGood = (props) => <Icon {...props} name="star-outline" fill="#207561" />;
+const StarIconGreat = (props) => <Icon {...props} name="star-outline" fill="#649d66" />;
+const StarIconFav = (props) => <Icon {...props} name="star-outline" fill="#eebb4d" />;
 
 export const PostListScreen = ({ navigation, route }) => {
   const from = route.params.from;
@@ -144,9 +147,9 @@ export const PostListScreen = ({ navigation, route }) => {
   const favActions = () => (
     <React.Fragment>
       <OverflowMenu anchor={renderFilterAction} visible={menuVisible} onBackdropPress={toggleMenu}>
-        <MenuItem key="1" title="Good only" />
-        <MenuItem key="2" title="Great only" />
-        <MenuItem key="3" title="Fav only" />
+        <MenuItem key="1" title="Good only" accessoryLeft={StarIconGood} />
+        <MenuItem key="2" title="Great only" accessoryLeft={StarIconGreat} />
+        <MenuItem key="3" title="Favorite only" accessoryLeft={StarIconFav} />
       </OverflowMenu>
       <OverflowMenu anchor={renderOptionsAction} visible={secondMenuVisible} onBackdropPress={toggleSecondMenu}>
         <MenuItem key="4" title="Sort by date" />

@@ -11,9 +11,9 @@ import { PostVerticalList } from '../components/postVerticalList';
 import { TagVerticalList } from '../components/tagVerticalList';
 
 const LayoutIcon = (props) => <Icon {...props} name="layout-outline" />;
-const ArrowDownIcon = (props) => <Icon {...props} name="arrow-down-outline" />;
+const FilterIcon = (props) => <Icon {...props} name="funnel-outline" />;
 const ShuffleIcon = (props) => <Icon {...props} name="shuffle-outline" />;
-const TagIcon = (props) => <Icon {...props} name="pricetags-outline" />;
+const OptionsIcon = (props) => <Icon {...props} name="options-2-outline" />;
 
 export const SearchScreen = ({ navigation }) => {
   const [value, setValue] = React.useState(null);
@@ -101,7 +101,7 @@ export const SearchScreen = ({ navigation }) => {
       status="basic"
       size="large"
       appearance="ghost"
-      accessoryLeft={ArrowDownIcon}
+      accessoryLeft={OptionsIcon}
       style={{ width: 60, paddingVertical: 0 }}
       onPress={toggleSortMenu}
     />
@@ -112,7 +112,7 @@ export const SearchScreen = ({ navigation }) => {
       status="basic"
       size="large"
       appearance="ghost"
-      accessoryLeft={TagIcon}
+      accessoryLeft={FilterIcon}
       style={{ width: 60, paddingVertical: 0 }}
       onPress={toggleMenuTagType}
     />
@@ -123,7 +123,7 @@ export const SearchScreen = ({ navigation }) => {
       status="basic"
       size="large"
       appearance="ghost"
-      accessoryLeft={ArrowDownIcon}
+      accessoryLeft={OptionsIcon}
       style={{ width: 60, paddingVertical: 0 }}
       onPress={toggleTagSortMenu}
     />
