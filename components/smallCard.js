@@ -15,10 +15,11 @@ const LinkIcon = (props) => <Icon {...props} name="link-2-outline" />;
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const ArchiveIcon = (props) => <Icon {...props} name="archive-outline" />;
 
+const capitalize = (s) => {
+  return s && s[0].toUpperCase() + s.slice(1);
+};
+
 export const SmallCard = ({ item, tagsWithType, deleteAlert }) => {
-  const capitalize = (s) => {
-    return s && s[0].toUpperCase() + s.slice(1);
-  };
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [menuVisible2, setMenuVisible2] = React.useState(false);
   const [tags, setTags] = useState(item.tags.split(' ').map((tag) => ({ tag })));
@@ -86,7 +87,7 @@ export const SmallCard = ({ item, tagsWithType, deleteAlert }) => {
   const formatDate = (date) => {
     const d = new Date(date * 1000);
     let ye = new Intl.DateTimeFormat('en', { year: '2-digit' }).format(d);
-    let mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d);
+    let mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(d);
     let da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
     return `${da}-${mo}-${ye}`;
   };

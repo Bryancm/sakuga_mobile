@@ -85,7 +85,7 @@ export const Card = ({ item, tagsWithType }) => {
   const formatDate = (date) => {
     const d = new Date(date * 1000);
     let ye = new Intl.DateTimeFormat('en', { year: '2-digit' }).format(d);
-    let mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d);
+    let mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(d);
     let da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
     return `${da}-${mo}-${ye}`;
   };
