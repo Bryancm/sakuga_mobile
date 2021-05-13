@@ -5,10 +5,10 @@ import { SmallCard } from '../components/uploadCard';
 import { Tag } from '../components/tag';
 import { ScrollView } from 'react-native-gesture-handler';
 
-export const TagHorizontalList = ({ title, data, navigation }) => {
+export const TagHorizontalList = ({ title, data, navigation, menuType }) => {
   const renderItem = ({ item }) => <Tag key={item.id.toString()} tag={item} />;
   const navigatePostList = () => {
-    navigation.navigate('PostList', { from: title, data, isPosts: false });
+    navigation.navigate('PostList', { from: title, data, isPosts: false, menuType });
   };
   const halfIndex = Math.round((data.length - 1) / 2);
 

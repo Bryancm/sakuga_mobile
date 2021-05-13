@@ -34,7 +34,7 @@ export const ExploreScreen = ({ navigation }) => {
               navigation={navigation}
               menuType="date"
             />
-            <TagHorizontalList title="New Artist" data={tag_data} navigation={navigation} />
+            <TagHorizontalList title="New Artist" data={tag_data} navigation={navigation} menuType="tag" />
             <PostHorizontalList
               title="Week's Popular"
               data={data.posts}
@@ -42,8 +42,14 @@ export const ExploreScreen = ({ navigation }) => {
               navigation={navigation}
               menuType="week"
             />
-            <PostHorizontalList title="Character Acting" data={data.posts} tags={data.tags} navigation={navigation} />
-            <TagHorizontalList title="New Copyright" data={tag_copy_data} navigation={navigation} />
+            <PostHorizontalList
+              title="Character Acting"
+              data={data.posts}
+              tags={data.tags}
+              navigation={navigation}
+              menuType="post"
+            />
+            <TagHorizontalList title="New Copyright" data={tag_copy_data} navigation={navigation} menuType="tag" />
             <PostHorizontalList
               title="Month's Popular"
               data={data.posts}
@@ -51,17 +57,42 @@ export const ExploreScreen = ({ navigation }) => {
               navigation={navigation}
               menuType="month"
             />
-            <PostHorizontalList title="Fighting" data={data.posts} tags={data.tags} navigation={navigation} />
-            <TagHorizontalList title="Popular Artist" data={tag_data} navigation={navigation} />
-            <PostHorizontalList title="Liquid" data={data.posts} tags={data.tags} navigation={navigation} />
-            <PostHorizontalList title="Explosions" data={data.posts} tags={data.tags} navigation={navigation} />
-            <TagHorizontalList title="Popular Copyright" data={tag_copy_data} navigation={navigation} />
-            <PostHorizontalList title="Hair" data={data.posts} tags={data.tags} navigation={navigation} />
+            <PostHorizontalList
+              title="Fighting"
+              data={data.posts}
+              tags={data.tags}
+              navigation={navigation}
+              menuType="post"
+            />
+            <TagHorizontalList title="Popular Artist" data={tag_data} navigation={navigation} menuType="tag" />
+            <PostHorizontalList
+              title="Liquid"
+              data={data.posts}
+              tags={data.tags}
+              navigation={navigation}
+              menuType="post"
+            />
+            <PostHorizontalList
+              title="Explosions"
+              data={data.posts}
+              tags={data.tags}
+              navigation={navigation}
+              menuType="post"
+            />
+            <TagHorizontalList title="Popular Copyright" data={tag_copy_data} navigation={navigation} menuType="tag" />
+            <PostHorizontalList
+              title="Hair"
+              data={data.posts}
+              tags={data.tags}
+              navigation={navigation}
+              menuType="post"
+            />
             <PostHorizontalList
               title="Production Materials"
               data={data.posts}
               tags={data.tags}
               navigation={navigation}
+              menuType="post"
             />
             <PostHorizontalList
               title="Year's Popular"

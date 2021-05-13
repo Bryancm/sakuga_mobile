@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet, Alert } from 'react-native';
+import { SafeAreaView, Alert } from 'react-native';
 import {
   Divider,
   Icon,
@@ -75,7 +75,7 @@ export const PostListScreen = ({ navigation, route }) => {
   const deleteAlert = (item) =>
     Alert.alert(
       'Remove',
-      `Do you want to remove ${item.tags} from your ${from === 'History' ? 'History' : 'Watch List'} ?`,
+      `Do you want to remove this post from your ${from === 'History' ? 'History' : 'Watch List'} ?`,
       [
         {
           text: 'Cancel',
@@ -95,13 +95,12 @@ export const PostListScreen = ({ navigation, route }) => {
     <MenuItem key="24 hours" title="24 hours" />,
     <MenuItem key="Yesterday" title="Yesterday" />,
     <MenuItem key="Before yesterday" title="Before yesterday" />,
-    <MenuItem key="Other Day" title="Other Day" />,
   ];
 
   const weekItems = [
     <MenuItem key="This week" title="This week" />,
     <MenuItem key="Past week" title="Past week" />,
-    <MenuItem key="Other week" title="Other week" />,
+    <MenuItem key="2 weeks ago" title="2 weeks ago" />,
   ];
 
   const monthItems = [
@@ -164,9 +163,26 @@ export const PostListScreen = ({ navigation, route }) => {
     </React.Fragment>
   );
 
+  const TagSortActions = () => (
+    <OverflowMenu anchor={renderOptionsAction} visible={secondMenuVisible} onBackdropPress={toggleSecondMenu}>
+      <MenuItem title="Sort by date" />
+      <MenuItem title="Sort by count" />
+      <MenuItem title="Sort by name" />
+    </OverflowMenu>
+  );
+
+  const PostSortActions = () => (
+    <OverflowMenu anchor={renderOptionsAction} visible={secondMenuVisible} onBackdropPress={toggleSecondMenu}>
+      <MenuItem title="Sort by date" />
+      <MenuItem title="Sort by score" />
+    </OverflowMenu>
+  );
+
   if (from === 'Favorites') renderRightActions = favActions;
   if (from === 'History') renderRightActions = historyActions;
   if (from === 'Watch Later') renderRightActions = historyActions;
+  if (route.params.menuType === 'tag') renderRightActions = TagSortActions;
+  if (route.params.menuType === 'post') renderRightActions = PostSortActions;
 
   var showDeleteButton = false;
   if (from === 'History' || from === 'Watch Later') showDeleteButton = deleteAlert;
@@ -183,10 +199,3 @@ export const PostListScreen = ({ navigation, route }) => {
     </Layout>
   );
 };
-
-const styles = StyleSheet.create({
-  row: {
-    flex: 1,
-    justifyContent: 'flex-start',
-  },
-});
