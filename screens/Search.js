@@ -1,6 +1,17 @@
 import React from 'react';
-import { SafeAreaView, FlatList, StyleSheet } from 'react-native';
-import { Icon, Layout, Text, Button, Input, Tab, TabView, OverflowMenu, MenuItem } from '@ui-kitten/components';
+import { SafeAreaView, StyleSheet } from 'react-native';
+import {
+  Icon,
+  Layout,
+  Text,
+  Button,
+  Input,
+  Tab,
+  TabView,
+  OverflowMenu,
+  MenuItem,
+  RangeDatepicker,
+} from '@ui-kitten/components';
 
 import tagData from '../tag_data.json';
 import postData from '../test-data-v2.json';
@@ -11,15 +22,20 @@ import { PostVerticalList } from '../components/postVerticalList';
 import { TagVerticalList } from '../components/tagVerticalList';
 
 const LayoutIcon = (props) => <Icon {...props} name="layout-outline" />;
+const CalendarIcon = (props) => <Icon {...props} name="calendar-outline" />;
 const FilterIcon = (props) => <Icon {...props} name="funnel-outline" />;
 const ShuffleIcon = (props) => <Icon {...props} name="shuffle-outline" />;
 const OptionsIcon = (props) => <Icon {...props} name="options-2-outline" />;
+const StarIcon = (props) => <Icon {...props} name="star-outline" />;
 
 export const SearchScreen = ({ navigation }) => {
+  const rangePicker = React.useRef();
   const [value, setValue] = React.useState(null);
   const [data, setData] = React.useState([]);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [randomSelected, setRandomSelected] = React.useState(false);
+
+  const [range, setRange] = React.useState({});
 
   const [layoutType, setLayoutType] = React.useState('large');
   const [sortType, setSortType] = React.useState('date');
@@ -88,10 +104,9 @@ export const SearchScreen = ({ navigation }) => {
   const renderMenuAction = () => (
     <Button
       status="basic"
-      size="large"
       appearance="ghost"
       accessoryLeft={LayoutIcon}
-      style={{ width: 60, paddingVertical: 0 }}
+      style={{ paddingHorizontal: 0 }}
       onPress={toggleMenu}
     />
   );
@@ -99,10 +114,9 @@ export const SearchScreen = ({ navigation }) => {
   const renderSortMenuAction = () => (
     <Button
       status="basic"
-      size="large"
       appearance="ghost"
       accessoryLeft={OptionsIcon}
-      style={{ width: 60, paddingVertical: 0 }}
+      style={{ paddingHorizontal: 0 }}
       onPress={toggleSortMenu}
     />
   );
@@ -110,10 +124,9 @@ export const SearchScreen = ({ navigation }) => {
   const renderTagTypeAction = () => (
     <Button
       status="basic"
-      size="large"
       appearance="ghost"
       accessoryLeft={FilterIcon}
-      style={{ width: 60, paddingVertical: 0 }}
+      style={{ paddingVertical: 0 }}
       onPress={toggleMenuTagType}
     />
   );
@@ -121,10 +134,9 @@ export const SearchScreen = ({ navigation }) => {
   const renderTagSortAction = () => (
     <Button
       status="basic"
-      size="large"
       appearance="ghost"
       accessoryLeft={OptionsIcon}
-      style={{ width: 60, paddingVertical: 0 }}
+      style={{ paddingVertical: 0 }}
       onPress={toggleTagSortMenu}
     />
   );
@@ -132,10 +144,9 @@ export const SearchScreen = ({ navigation }) => {
   const RenderRandomAction = () => (
     <Button
       status={randomSelected ? 'primary' : 'basic'}
-      size="large"
       appearance="ghost"
       accessoryLeft={ShuffleIcon}
-      style={{ width: 60, paddingVertical: 0 }}
+      style={{ paddingHorizontal: 0 }}
       onPress={() => setRandomSelected(!randomSelected)}
     />
   );
@@ -149,9 +160,9 @@ export const SearchScreen = ({ navigation }) => {
 
   const SortActions = () => (
     <OverflowMenu anchor={renderSortMenuAction} visible={sortMenuVisible} onBackdropPress={toggleSortMenu}>
-      <MenuItem title="Sort by date" onPress={() => changeSort('date')} />
-      <MenuItem title="Sort by score" onPress={() => changeSort('score')} />
-      <MenuItem title="Sort by score asc" onPress={() => changeSort('score_asc')} />
+      <MenuItem title="Sort by date" accessoryLeft={CalendarIcon} onPress={() => changeSort('date')} />
+      <MenuItem title="Sort by score" accessoryLeft={StarIcon} onPress={() => changeSort('score')} />
+      <MenuItem title="Shuffle" accessoryLeft={ShuffleIcon} onPress={() => changeSort('shuffle')} />
     </OverflowMenu>
   );
 
@@ -173,6 +184,14 @@ export const SearchScreen = ({ navigation }) => {
       <MenuItem title="Sort by name" onPress={() => changeTagSort('name')} />
     </OverflowMenu>
   );
+
+  const onRangeDateSelect = (nextRange) => {
+    setRange(nextRange);
+    if (nextRange.startDate && nextRange.endDate)
+      setTimeout(() => {
+        rangePicker.current.blur();
+      }, 500);
+  };
 
   return (
     <Layout style={{ flex: 1 }}>
@@ -200,12 +219,22 @@ export const SearchScreen = ({ navigation }) => {
           onSelect={(index) => setSelectedIndex(index)}>
           <Tab title="POST">
             <Layout style={styles.tabContainer}>
-              <Layout style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Layout style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <RangeDatepicker
+                  placeholder="Date range"
+                  ref={rangePicker}
+                  style={{ marginTop: 5, marginLeft: 5 }}
+                  size="small"
+                  range={range}
+                  max={new Date()}
+                  onSelect={onRangeDateSelect}
+                  accessoryLeft={CalendarIcon}
+                />
                 <Layout style={{ flexDirection: 'row' }}>
                   <LayoutActions />
                   <SortActions />
+                  {/* <RenderRandomAction /> */}
                 </Layout>
-                <RenderRandomAction />
               </Layout>
               <PostVerticalList data={postData.posts} tags={postData.tags} layoutType={layoutType} />
             </Layout>
@@ -213,7 +242,7 @@ export const SearchScreen = ({ navigation }) => {
 
           <Tab title="TAGS">
             <Layout style={styles.tabContainer}>
-              <Layout style={{ flexDirection: 'row' }}>
+              <Layout style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
                 <TagTypeActions />
                 <TagSortActions />
               </Layout>
