@@ -22,7 +22,7 @@ export const SmallCard = ({ item, tagsWithType, deleteAlert }) => {
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [menuVisible2, setMenuVisible2] = React.useState(false);
   const [tags, setTags] = useState(item.tags.split(' ').map((tag) => ({ tag })));
-  const [title, setTitle] = useState(capitalize(tags[2].tag).replace('_', ' '));
+  const [title, setTitle] = useState(capitalize(tags[2].tag).replaceAll('_', ' '));
   const more_tags = tags.length - 6;
 
   const toggleMenu = () => {
@@ -62,7 +62,7 @@ export const SmallCard = ({ item, tagsWithType, deleteAlert }) => {
           const type = tagsWithType[tag];
           if (item.tags.includes(tag)) {
             var style = tagStyles.artist_outline;
-            if (type === 'artist') artist = artist + tag + ' ';
+            if (type === 'artist') artist = artist + ' ' + capitalize(tag);
             if (type === 'copyright') {
               style = tagStyles.copyright_outline;
               copyright = tag;
@@ -74,8 +74,9 @@ export const SmallCard = ({ item, tagsWithType, deleteAlert }) => {
           }
         }
       }
-      const t = artist ? artist : copyright;
-      setTitle(t.trim() === 'artist_unknown' ? copyright : t);
+      const name = artist.trim() && artist.trim() !== 'Artist_unknown' ? artist.trim() : copyright.trim();
+      const t = capitalize(name).replaceAll('_', ' ');
+      setTitle(t);
       setTags(tags.sort((a, b) => a.type > b.type));
     };
 
@@ -99,83 +100,21 @@ export const SmallCard = ({ item, tagsWithType, deleteAlert }) => {
             {title}
           </Text>
           <Layout style={{ justifyContent: 'space-between', height: 90 }}>
-            <Layout>
-              <Layout style={{ ...styles.tagRow }}>
-                {tags.length > 0 &&
-                  tags.map(
-                    (t, i) =>
-                      i <= 1 && (
-                        <Text
-                          key={i}
-                          status="basic"
-                          style={
-                            t.style
-                              ? { ...t.style, ...styles.tagLimit }
-                              : {
-                                  ...tagStyles.basic_outline,
-                                  ...styles.tagLimit,
-                                }
-                          }
-                          category="c1"
-                          numberOfLines={1}>
-                          {t.tag ? t.tag : t}
-                        </Text>
-                      ),
-                  )}
-              </Layout>
-              <Layout style={styles.tagRow}>
-                {tags.length > 0 &&
-                  tags.map(
-                    (t, i) =>
-                      i >= 2 &&
-                      i <= 3 && (
-                        <Text
-                          key={i}
-                          status="basic"
-                          style={
-                            t.style
-                              ? { ...t.style, ...styles.tagLimit }
-                              : { ...tagStyles.basic_outline, ...styles.tagLimit }
-                          }
-                          category="c1"
-                          numberOfLines={1}>
-                          {t.tag ? t.tag : t}
-                        </Text>
-                      ),
-                  )}
-              </Layout>
-              <Layout style={styles.tagRow}>
-                {tags.length > 0 &&
-                  tags.map(
-                    (t, i) =>
-                      i >= 4 &&
-                      i <= 5 && (
-                        <Text
-                          key={i}
-                          status="basic"
-                          style={
-                            t.style
-                              ? { ...t.style, ...styles.tagLimit }
-                              : { ...tagStyles.basic_outline, ...styles.tagLimit }
-                          }
-                          category="c1"
-                          numberOfLines={1}>
-                          {t.tag ? t.tag : t}
-                        </Text>
-                      ),
-                  )}
-                {more_tags > 0 && (
-                  <Text
-                    key="0"
-                    status="basic"
-                    style={{ ...tagStyles.basic_outline, ...styles.tagLimit }}
-                    category="c1"
-                    numberOfLines={1}>
-                    {`+ ${more_tags}`}
-                  </Text>
+            <Text style={{ width: '95%' }}>
+              {tags.length > 0 &&
+                tags.map((t, i) =>
+                  t.style ? (
+                    <Text key={i} category="c1" style={{ color: t.style.color }}>
+                      {`${t.tag ? t.tag : t} `}
+                    </Text>
+                  ) : (
+                    <Text key={i} category="c1">
+                      {`${t.tag ? t.tag : t} `}
+                    </Text>
+                  ),
                 )}
-              </Layout>
-            </Layout>
+            </Text>
+
             <Layout style={styles.buttonContainer}>
               <Text appearance="hint" category="c1">
                 {formatDate(item.created_at)}
