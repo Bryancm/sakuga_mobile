@@ -80,7 +80,7 @@ export const ProfileScreen = ({ navigation }) => {
           />
           <ListItem
             title="Settings"
-            description="Configure it to your taste"
+            description="Layout, previews and Log out"
             accessoryLeft={renderSettingsAction}
             accessoryRight={ArrowIcon}
             onPress={navigateSettings}

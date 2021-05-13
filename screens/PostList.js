@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
+import { SafeAreaView, StyleSheet, Alert } from 'react-native';
 import {
   Divider,
   Icon,
@@ -58,6 +58,30 @@ export const PostListScreen = ({ navigation, route }) => {
   };
 
   const clearHistory = () => {};
+
+  const clearAlert = () =>
+    Alert.alert('Remove all', `Do you want to clear your ${from === 'History' ? 'History' : 'Watch List'} ?`, [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      { text: 'Confirm', onPress: () => console.log('OK Pressed'), style: 'destructive' },
+    ]);
+
+  const deleteAlert = (item) =>
+    Alert.alert(
+      'Remove',
+      `Do you want to remove ${item.tags} from your ${from === 'History' ? 'History' : 'Watch List'} ?`,
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        { text: 'Confirm', onPress: () => console.log('OK Pressed'), style: 'destructive' },
+      ],
+    );
 
   const BackAction = () => <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
   const renderMenuAction = () => <TopNavigationAction icon={CalendarIcon} onPress={toggleMenu} />;
@@ -133,7 +157,7 @@ export const PostListScreen = ({ navigation, route }) => {
 
   const historyActions = () => (
     <React.Fragment>
-      <TopNavigationAction icon={TrashIcon} onPress={clearHistory} />
+      <TopNavigationAction icon={TrashIcon} onPress={clearAlert} />
     </React.Fragment>
   );
 
@@ -141,13 +165,15 @@ export const PostListScreen = ({ navigation, route }) => {
   if (from === 'History') renderRightActions = historyActions;
   if (from === 'Watch Later') renderRightActions = historyActions;
 
+  var showDeleteButton = false;
+  if (from === 'History' || from === 'Watch Later') showDeleteButton = deleteAlert;
   return (
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
         <TopNavigation title={from} alignment="center" accessoryLeft={BackAction} accessoryRight={renderRightActions} />
         <Divider />
         <Layout style={{ flex: 1 }}>
-          {isPosts && <PostVerticalList data={data} tags={tags} layoutType="small" />}
+          {isPosts && <PostVerticalList data={data} tags={tags} layoutType="small" deleteAlert={showDeleteButton} />}
           {!isPosts && <TagVerticalList data={data} />}
         </Layout>
       </SafeAreaView>

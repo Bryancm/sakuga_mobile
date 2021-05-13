@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView, ScrollView, Alert } from 'react-native';
 import {
   Divider,
   Icon,
@@ -16,7 +16,6 @@ import {
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 const LayoutIcon = (props) => <Icon {...props} name="layout-outline" />;
 const PlayIcon = (props) => <Icon {...props} name="play-circle-outline" />;
-const LogOutIcon = (props) => <Icon {...props} name="log-out-outline" />;
 
 export const SettingScreen = ({ navigation }) => {
   const [sizeForNew, setSizeForNew] = React.useState('large');
@@ -34,12 +33,22 @@ export const SettingScreen = ({ navigation }) => {
   const radioSmall2 = () => <Radio checked={sizeForSearch == 'small'} onChange={() => setSizeForSearch('small')} />;
   const toggleAutoplay = () => <Toggle size="small" checked={autoplay} onChange={(checked) => setAutoplay(checked)} />;
 
+  const logOutAlert = () =>
+    Alert.alert('Log out', 'Do you want to log out ?', [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      { text: 'OK', onPress: () => console.log('OK Pressed') },
+    ]);
+
   return (
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
         <TopNavigation title="Settings" alignment="center" accessoryLeft={BackAction} />
         <Divider />
-        <Layout style={{ flex: 1 }}>
+        <ScrollView style={{ flex: 1 }}>
           <Layout level="2">
             <Button appearance="ghost" accessoryRight={LayoutIcon} style={{ paddingLeft: 0, width: 220 }}>
               <Text category="h6">Layout for "New"</Text>
@@ -74,21 +83,11 @@ export const SettingScreen = ({ navigation }) => {
             />
             <Divider />
           </Layout>
-          <Layout
-            level="2"
-            style={{
-              paddingHorizontal: 6,
-              marginTop: 50,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-            <Text status="info" category="s1">
-              Log out
-            </Text>
-            <Button status="info" appearance="ghost" accessoryRight={LogOutIcon} />
-          </Layout>
-        </Layout>
+
+          <Button appearance="ghost" status="info" onPress={logOutAlert}>
+            Log out
+          </Button>
+        </ScrollView>
       </SafeAreaView>
     </Layout>
   );
