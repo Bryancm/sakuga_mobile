@@ -14,15 +14,15 @@ const LinkIcon = (props) => <Icon {...props} name="link-2-outline" />;
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const ArchiveIcon = (props) => <Icon {...props} name="archive-outline" />;
 
+const capitalize = (s) => {
+  return s && s[0].toUpperCase() + s.slice(1);
+};
+
 export const Card = ({ item, tagsWithType }) => {
-  const capitalize = (s) => {
-    return s && s[0].toUpperCase() + s.slice(1);
-  };
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [menuVisible2, setMenuVisible2] = React.useState(false);
   const [tags, setTags] = useState(item.tags.split(' ').map((tag) => ({ tag })));
-  const [title, setTitle] = useState(capitalize(tags[2].tag).replace('_', ' '));
-  const more_tags = tags.length - 6;
+  const [title, setTitle] = useState(capitalize(tags[2].tag).replaceAll('_', ' '));
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
@@ -61,7 +61,7 @@ export const Card = ({ item, tagsWithType }) => {
           const type = tagsWithType[tag];
           if (item.tags.includes(tag)) {
             var style = tagStyles.artist_outline;
-            if (type === 'artist') artist = artist + ' ' + tag;
+            if (type === 'artist') artist = artist + ' ' + capitalize(tag);
             if (type === 'copyright') {
               style = tagStyles.copyright_outline;
               copyright = tag;
@@ -73,8 +73,9 @@ export const Card = ({ item, tagsWithType }) => {
           }
         }
       }
-      const t = artist ? artist : copyright;
-      setTitle(t.trim() === 'artist_unknown' ? copyright : t);
+      const name = artist.trim() && artist.trim() !== 'Artist_unknown' ? artist.trim() : copyright.trim();
+      const t = capitalize(name).replaceAll('_', ' ');
+      setTitle(t);
       setTags(tags.sort((a, b) => a.type > b.type));
     };
 
@@ -96,65 +97,27 @@ export const Card = ({ item, tagsWithType }) => {
       </Text>
       <Image style={styles.image} source={{ uri: item.preview_url }} resizeMode="stretch" />
       <Layout style={styles.tagContainer}>
-        <Layout style={{ ...styles.tagRow, marginBottom: 15 }}>
-          {tags.length > 0 &&
-            tags.map(
-              (t, i) =>
-                i < 3 && (
-                  <Text
-                    key={i}
-                    status="basic"
-                    style={
-                      t.style
-                        ? { ...t.style, ...styles.tagLimit }
-                        : {
-                            ...tagStyles.basic_outline,
-                            ...styles.tagLimit,
-                          }
-                    }
-                    category="c1"
-                    numberOfLines={1}>
-                    {t.tag ? t.tag : t}
-                  </Text>
-                ),
-            )}
-        </Layout>
-        <Layout style={styles.tagRow}>
-          {tags.length > 0 &&
-            tags.map(
-              (t, i) =>
-                i >= 3 &&
-                i < 6 && (
-                  <Text
-                    key={i}
-                    status="basic"
-                    style={
-                      t.style ? { ...t.style, ...styles.tagLimit } : { ...tagStyles.basic_outline, ...styles.tagLimit }
-                    }
-                    category="c1"
-                    numberOfLines={1}>
-                    {t.tag ? t.tag : t}
-                  </Text>
-                ),
-            )}
-          {more_tags > 0 && (
-            <Text
-              key="0"
-              status="basic"
-              style={{ ...tagStyles.basic_outline, borderRadius: 13 }}
-              category="c1"
-              numberOfLines={1}>
-              {`+ ${more_tags}`}
-            </Text>
+        {tags.length > 0 &&
+          tags.map((t, i) =>
+            t.style ? (
+              <Layout key={i} style={{ ...t.style, marginRight: 4, marginBottom: 8 }}>
+                <Text category="c1" style={{ color: t.style.color, maxWidth: 114 }} numberOfLines={1}>
+                  {t.tag ? t.tag : t}
+                </Text>
+              </Layout>
+            ) : (
+              <Layout key={i} style={{ ...tagStyles.basic_outline, marginRight: 4, marginBottom: 8 }}>
+                <Text category="c1" style={{ maxWidth: 108 }} numberOfLines={1}>
+                  {t.tag ? t.tag : t}
+                </Text>
+              </Layout>
+            ),
           )}
-        </Layout>
       </Layout>
       <Layout style={styles.buttonContainer}>
-        <Button status="basic" size="small" appearance="ghost">
-          <Text appearance="hint" category="c1">
-            {`${formatDate(item.created_at)}\nPosted by ${item.author}`}
-          </Text>
-        </Button>
+        <Text appearance="hint" category="c1" style={{ marginLeft: 6, lineHeight: 16 }}>
+          {`${formatDate(item.created_at)}\nPosted by ${item.author}`}
+        </Text>
         <Layout style={{ flexDirection: 'row' }}>
           <OverflowMenu anchor={renderMenuAction2} visible={menuVisible2} onBackdropPress={toggleMenu2}>
             <MenuItem key="1" accessoryLeft={StarIconGood} title={<Text category="c1">Good</Text>} />
@@ -183,7 +146,14 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 220,
   },
-  tagContainer: { paddingHorizontal: 5, paddingVertical: 15 },
+  tagContainer: {
+    paddingLeft: 4,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    // justifyContent: 'space-around',
+    flexWrap: 'wrap',
+  },
   tagRow: {
     width: '100%',
     flexDirection: 'row',
@@ -191,7 +161,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   buttonContainer: {
-    paddingHorizontal: 5,
+    paddingHorizontal: 0,
     paddingTop: 0,
     paddingBottom: 15,
     flexDirection: 'row',
@@ -199,7 +169,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   tagLimit: {
-    maxWidth: 128,
+    // maxWidth: 128,
     borderRadius: 13,
   },
 });
