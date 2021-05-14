@@ -159,7 +159,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    // justifyContent: 'space-around',
     flexWrap: 'wrap',
   },
   tagRow: {
@@ -177,7 +176,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   tagLimit: {
-    // maxWidth: 128,
     borderRadius: 13,
   },
 });
