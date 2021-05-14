@@ -35,18 +35,6 @@ const forVerticalModal = ({ current, next, inverted, layouts: { screen } }) => {
     inverted,
   );
 
-  const overlayOpacity = current.progress.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 0.07],
-    extrapolate: 'clamp',
-  });
-
-  const shadowOpacity = current.progress.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 0.3],
-    extrapolate: 'clamp',
-  });
-
   return {
     cardStyle: {
       transform: [
@@ -56,8 +44,6 @@ const forVerticalModal = ({ current, next, inverted, layouts: { screen } }) => {
         { translateY: 0 },
       ],
     },
-    overlayStyle: { opacity: overlayOpacity },
-    shadowStyle: { shadowOpacity },
   };
 };
 
