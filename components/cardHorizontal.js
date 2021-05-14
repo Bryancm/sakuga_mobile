@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Image, StyleSheet } from 'react-native';
 import { Layout, Text, Icon, Button, OverflowMenu, MenuItem } from '@ui-kitten/components';
 import { tagStyles } from '../styles';
-
+import { getRelativeTime } from '../util/date';
 const StarIcon = (props) => <Icon {...props} name="star-outline" />;
 const StarIconGood = (props) => <Icon {...props} name="star-outline" fill="#207561" />;
 const StarIconGreat = (props) => <Icon {...props} name="star-outline" fill="#649d66" />;
@@ -86,14 +86,6 @@ export const SmallCard = ({ item, tagsWithType }) => {
     setPostDetails();
   }, []);
 
-  const formatDate = (date) => {
-    const d = new Date(date * 1000);
-    let ye = new Intl.DateTimeFormat('en', { year: '2-digit' }).format(d);
-    let mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(d);
-    let da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
-    return `${da}-${mo}-${ye}`;
-  };
-
   return (
     <Layout style={styles.container}>
       <Image style={styles.image} source={{ uri: item.preview_url }} resizeMode="cover" />
@@ -117,7 +109,7 @@ export const SmallCard = ({ item, tagsWithType }) => {
         </Text>
         <Layout style={styles.buttonContainer}>
           <Text appearance="hint" category="c1">
-            {formatDate(item.created_at)}
+            {getRelativeTime(item.created_at * 1000)}
           </Text>
           <Layout style={{ flexDirection: 'row', alignItems: 'center' }}>
             <OverflowMenu anchor={renderMenuAction2} visible={menuVisible2} onBackdropPress={toggleMenu2}>

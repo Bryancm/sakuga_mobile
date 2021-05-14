@@ -1,7 +1,7 @@
 import React from 'react';
 import { SafeAreaView, Image, StyleSheet } from 'react-native';
 import { Divider, Icon, Layout, Text, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
-import { getRelativeTime, formatDate } from '../util/date';
+import { getRelativeTime } from '../util/date';
 import { tagStyles } from '../styles';
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 const PlayIcon = (props) => <Icon {...props} name="play-circle-outline" />;
