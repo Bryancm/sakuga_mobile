@@ -90,7 +90,7 @@ export const Card = ({ item, tagsWithType, navigateDetail }) => {
   };
 
   const goToDetail = () => {
-    navigateDetail(item);
+    navigateDetail(item, title, tags);
   };
 
   return (

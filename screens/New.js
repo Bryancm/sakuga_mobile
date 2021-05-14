@@ -35,8 +35,8 @@ export const NewScreen = ({ navigation }) => {
     navigation.navigate('Search');
   };
 
-  const navigateDetail = (item) => {
-    navigation.navigate('Detail');
+  const navigateDetail = (item, title, tags) => {
+    navigation.navigate('Detail', { item, title, tags });
   };
 
   const renderRightActions = () => (

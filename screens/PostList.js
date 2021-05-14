@@ -197,6 +197,7 @@ export const PostListScreen = ({ navigation, route }) => {
     }
     return title;
   };
+
   return (
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>

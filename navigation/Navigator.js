@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Animated } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -13,6 +13,8 @@ import { PostListScreen } from '../screens/PostList';
 import { SettingScreen } from '../screens/Settings';
 import { DetailsScreen } from '../screens/Detail';
 
+const { multiply } = Animated;
+
 const PersonIcon = (props) => <Icon {...props} name="person-outline" />;
 const FilmIcon = (props) => <Icon {...props} name="film-outline" />;
 const CompassIcon = (props) => <Icon {...props} name="compass-outline" />;
@@ -22,6 +24,42 @@ const forFade = ({ current }) => ({
     opacity: current.progress,
   },
 });
+
+const forHorizontalModal = ({ current, next, inverted, layouts: { screen } }) => {
+  const translateFocused = multiply(
+    current.progress.interpolate({
+      inputRange: [0, 1],
+      outputRange: [screen.width, 0],
+      extrapolate: 'clamp',
+    }),
+    inverted,
+  );
+
+  const overlayOpacity = current.progress.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 0.07],
+    extrapolate: 'clamp',
+  });
+
+  const shadowOpacity = current.progress.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 0.3],
+    extrapolate: 'clamp',
+  });
+
+  return {
+    cardStyle: {
+      transform: [
+        // Translation for the animation of the current card
+        { translateX: translateFocused },
+        // Translation for the animation of the card in back
+        { translateX: 0 },
+      ],
+    },
+    overlayStyle: { opacity: overlayOpacity },
+    shadowStyle: { shadowOpacity },
+  };
+};
 
 const Stack = createStackNavigator();
 
@@ -66,12 +104,20 @@ const TabNavigator = () => (
 
 export const AppNavigator = () => (
   <NavigationContainer>
-    <Stack.Navigator headerMode={false} mode="card" initialRouteName="Home">
+    <Stack.Navigator headerMode={false} mode="modal" initialRouteName="Home">
       <Stack.Screen name="Home" component={TabNavigator} />
-      <Stack.Screen name="PostList" component={PostListScreen} />
-      <Stack.Screen name="Settings" component={SettingScreen} />
-      <Stack.Screen name="Detail" component={DetailsScreen} />
+      <Stack.Screen
+        name="PostList"
+        component={PostListScreen}
+        options={{ gestureDirection: 'horizontal', cardStyleInterpolator: forHorizontalModal }}
+      />
+      <Stack.Screen
+        name="Settings"
+        component={SettingScreen}
+        options={{ gestureDirection: 'horizontal', cardStyleInterpolator: forHorizontalModal }}
+      />
       <Stack.Screen name="Search" component={SearchScreen} options={{ cardStyleInterpolator: forFade }} />
+      <Stack.Screen name="Detail" component={DetailsScreen} />
     </Stack.Navigator>
   </NavigationContainer>
 );
