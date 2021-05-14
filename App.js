@@ -11,13 +11,13 @@
  */
 import 'react-native-gesture-handler';
 import React from 'react';
-import {StyleSheet} from 'react-native';
-import {ApplicationProvider, IconRegistry, Layout} from '@ui-kitten/components';
-import {EvaIconsPack} from '@ui-kitten/eva-icons';
+import { StyleSheet } from 'react-native';
+import { ApplicationProvider, IconRegistry, Layout } from '@ui-kitten/components';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import * as eva from '@eva-design/eva';
-import {default as theme} from './custom-theme.json';
-import {default as mapping} from './mapping.json';
-import {AppNavigator} from './navigation/Navigator';
+import { default as theme } from './custom-theme.json';
+import { default as mapping } from './mapping.json';
+import { AppNavigator } from './navigation/Navigator';
 
 /**
  * Use any valid `name` property from eva icons (e.g `github`, or `heart-outline`)
@@ -28,10 +28,7 @@ import {AppNavigator} from './navigation/Navigator';
 export default () => (
   <>
     <IconRegistry icons={EvaIconsPack} />
-    <ApplicationProvider
-      {...eva}
-      theme={{...eva.dark, ...theme}}
-      customMapping={mapping}>
+    <ApplicationProvider {...eva} theme={{ ...eva.dark, ...theme }} customMapping={mapping}>
       <Layout style={styles.container}>
         <AppNavigator />
       </Layout>

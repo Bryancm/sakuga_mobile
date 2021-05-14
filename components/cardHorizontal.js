@@ -3,6 +3,7 @@ import { Image, StyleSheet } from 'react-native';
 import { Layout, Text, Icon, Button, OverflowMenu, MenuItem } from '@ui-kitten/components';
 import { tagStyles } from '../styles';
 import { getRelativeTime } from '../util/date';
+
 const StarIcon = (props) => <Icon {...props} name="star-outline" />;
 const StarIconGood = (props) => <Icon {...props} name="star-outline" fill="#207561" />;
 const StarIconGreat = (props) => <Icon {...props} name="star-outline" fill="#649d66" />;
