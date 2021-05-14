@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Image, StyleSheet } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Divider, Layout, Text, Icon, Button, OverflowMenu, MenuItem } from '@ui-kitten/components';
 import { tagStyles } from '../styles';
 
@@ -17,7 +17,7 @@ const capitalize = (s) => {
   return s && s[0].toUpperCase() + s.slice(1);
 };
 
-export const Card = ({ item, tagsWithType }) => {
+export const Card = ({ item, tagsWithType, navigateDetail }) => {
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [menuVisible2, setMenuVisible2] = React.useState(false);
   const [tags, setTags] = useState(item.tags.split(' ').map((tag) => ({ tag })));
@@ -89,8 +89,17 @@ export const Card = ({ item, tagsWithType }) => {
     return `${da}-${mo}-${ye}`;
   };
 
+  const goToDetail = () => {
+    navigateDetail(item);
+  };
+
   return (
-    <Layout style={styles.container}>
+    <TouchableOpacity
+      delayPressIn={0}
+      delayPressOut={0}
+      activeOpacity={0.7}
+      style={styles.container}
+      onPress={goToDetail}>
       <Text style={{ paddingHorizontal: 5, paddingVertical: 15 }} category="h6" numberOfLines={1}>
         {title}
       </Text>
@@ -133,7 +142,7 @@ export const Card = ({ item, tagsWithType }) => {
         </Layout>
       </Layout>
       <Divider />
-    </Layout>
+    </TouchableOpacity>
   );
 };
 

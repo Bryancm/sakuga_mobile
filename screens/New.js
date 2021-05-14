@@ -35,6 +35,10 @@ export const NewScreen = ({ navigation }) => {
     navigation.navigate('Search');
   };
 
+  const navigateDetail = (item) => {
+    navigation.navigate('Detail');
+  };
+
   const renderRightActions = () => (
     <React.Fragment>
       <OverflowMenu anchor={renderMenuAction} visible={menuVisible} onBackdropPress={toggleMenu}>
@@ -54,7 +58,7 @@ export const NewScreen = ({ navigation }) => {
           accessoryRight={renderSearchIcon}
         />
         <Divider />
-        <PostVerticalList data={data.posts} tags={data.tags} layoutType={layoutType} />
+        <PostVerticalList data={data.posts} tags={data.tags} layoutType={layoutType} navigateDetail={navigateDetail} />
         <Divider />
       </SafeAreaView>
     </Layout>

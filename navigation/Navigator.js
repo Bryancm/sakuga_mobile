@@ -11,6 +11,7 @@ import { SearchScreen } from '../screens/Search';
 import { ProfileScreen } from '../screens/Profile';
 import { PostListScreen } from '../screens/PostList';
 import { SettingScreen } from '../screens/Settings';
+import { DetailsScreen } from '../screens/Detail';
 
 const PersonIcon = (props) => <Icon {...props} name="person-outline" />;
 const FilmIcon = (props) => <Icon {...props} name="film-outline" />;
@@ -69,6 +70,7 @@ export const AppNavigator = () => (
       <Stack.Screen name="Home" component={TabNavigator} />
       <Stack.Screen name="PostList" component={PostListScreen} />
       <Stack.Screen name="Settings" component={SettingScreen} />
+      <Stack.Screen name="Detail" component={DetailsScreen} />
       <Stack.Screen name="Search" component={SearchScreen} options={{ cardStyleInterpolator: forFade }} />
     </Stack.Navigator>
   </NavigationContainer>
