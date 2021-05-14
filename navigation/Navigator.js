@@ -25,11 +25,11 @@ const forFade = ({ current }) => ({
   },
 });
 
-const forHorizontalModal = ({ current, next, inverted, layouts: { screen } }) => {
+const forVerticalModal = ({ current, next, inverted, layouts: { screen } }) => {
   const translateFocused = multiply(
     current.progress.interpolate({
       inputRange: [0, 1],
-      outputRange: [screen.width, 0],
+      outputRange: [screen.height, 0],
       extrapolate: 'clamp',
     }),
     inverted,
@@ -51,9 +51,9 @@ const forHorizontalModal = ({ current, next, inverted, layouts: { screen } }) =>
     cardStyle: {
       transform: [
         // Translation for the animation of the current card
-        { translateX: translateFocused },
+        { translateY: translateFocused },
         // Translation for the animation of the card in back
-        { translateX: 0 },
+        { translateY: 0 },
       ],
     },
     overlayStyle: { opacity: overlayOpacity },
@@ -104,20 +104,16 @@ const TabNavigator = () => (
 
 export const AppNavigator = () => (
   <NavigationContainer>
-    <Stack.Navigator headerMode={false} mode="modal" initialRouteName="Home">
+    <Stack.Navigator headerMode={false} mode="card" initialRouteName="Home">
       <Stack.Screen name="Home" component={TabNavigator} />
-      <Stack.Screen
-        name="PostList"
-        component={PostListScreen}
-        options={{ gestureDirection: 'horizontal', cardStyleInterpolator: forHorizontalModal }}
-      />
-      <Stack.Screen
-        name="Settings"
-        component={SettingScreen}
-        options={{ gestureDirection: 'horizontal', cardStyleInterpolator: forHorizontalModal }}
-      />
+      <Stack.Screen name="PostList" component={PostListScreen} />
+      <Stack.Screen name="Settings" component={SettingScreen} />
       <Stack.Screen name="Search" component={SearchScreen} options={{ cardStyleInterpolator: forFade }} />
-      <Stack.Screen name="Detail" component={DetailsScreen} />
+      <Stack.Screen
+        name="Detail"
+        component={DetailsScreen}
+        options={{ gestureDirection: 'vertical', cardStyleInterpolator: forVerticalModal }}
+      />
     </Stack.Navigator>
   </NavigationContainer>
 );
