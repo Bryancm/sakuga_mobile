@@ -1,27 +1,25 @@
 import React from 'react';
-import {Image, StyleSheet, Dimensions} from 'react-native';
-import {Layout, Text, Button, Icon} from '@ui-kitten/components';
-import {getTagStyle} from '../util/api';
+import { StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, Icon } from '@ui-kitten/components';
+import { getTagStyle } from '../util/api';
 
-const StarIcon = (props) => <Icon {...props} name="star-outline" />;
-const screenWidth = Dimensions.get('window').width;
-
-export const Tag = ({tag}) => {
+export const Tag = ({ tag, navigatePostList }) => {
   const style = getTagStyle(tag.type);
   return (
-    <Layout style={{...style, ...styles.container}}>
-      <Text style={{color: style.color}} numberOfLines={1}>
+    <TouchableOpacity
+      delayPressIn={0}
+      delayPressOut={0}
+      activeOpacity={0.7}
+      style={{ ...style, ...styles.container }}
+      onPress={() => navigatePostList(tag.name, null, true, 'post')}>
+      <Text style={{ color: style.color }} numberOfLines={1}>
         {tag.name}
       </Text>
-      <Icon
-        fill={style.color}
-        name="play-circle-outline"
-        style={{width: 15, height: 15, marginLeft: 10}}
-      />
-      <Text style={{color: style.color, marginLeft: 2}} numberOfLines={1}>
+      <Icon fill={style.color} name="play-circle-outline" style={{ width: 15, height: 15, marginLeft: 10 }} />
+      <Text style={{ color: style.color, marginLeft: 2 }} numberOfLines={1}>
         {tag.count}
       </Text>
-    </Layout>
+    </TouchableOpacity>
   );
 };
 

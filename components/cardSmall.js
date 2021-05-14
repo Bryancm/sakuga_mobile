@@ -3,7 +3,6 @@ import { Image, StyleSheet } from 'react-native';
 import { Divider, Layout, Text, Icon, Button, OverflowMenu, MenuItem } from '@ui-kitten/components';
 import { tagStyles } from '../styles';
 
-const CalendarIcon = (props) => <Icon {...props} name="calendar-outline" />;
 const StarIcon = (props) => <Icon {...props} name="star-outline" />;
 const StarIconGood = (props) => <Icon {...props} name="star-outline" fill="#207561" />;
 const StarIconGreat = (props) => <Icon {...props} name="star-outline" fill="#649d66" />;
@@ -19,7 +18,7 @@ const capitalize = (s) => {
   return s && s[0].toUpperCase() + s.slice(1);
 };
 
-export const SmallCard = ({ item, tagsWithType, deleteAlert }) => {
+export const CardSmall = ({ item, tagsWithType, deleteAlert }) => {
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [menuVisible2, setMenuVisible2] = React.useState(false);
   const [tags, setTags] = useState(item.tags.split(' ').map((tag) => ({ tag })));

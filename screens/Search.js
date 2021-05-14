@@ -30,12 +30,10 @@ const StarIcon = (props) => <Icon {...props} name="star-outline" />;
 
 export const SearchScreen = ({ navigation }) => {
   const rangePicker = React.useRef();
+  const [range, setRange] = React.useState({});
   const [value, setValue] = React.useState(null);
   const [data, setData] = React.useState([]);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
-  const [randomSelected, setRandomSelected] = React.useState(false);
-
-  const [range, setRange] = React.useState({});
 
   const [layoutType, setLayoutType] = React.useState('large');
   const [sortType, setSortType] = React.useState('date');
@@ -141,16 +139,6 @@ export const SearchScreen = ({ navigation }) => {
     />
   );
 
-  const RenderRandomAction = () => (
-    <Button
-      status={randomSelected ? 'primary' : 'basic'}
-      appearance="ghost"
-      accessoryLeft={ShuffleIcon}
-      style={{ paddingHorizontal: 0 }}
-      onPress={() => setRandomSelected(!randomSelected)}
-    />
-  );
-
   const LayoutActions = () => (
     <OverflowMenu anchor={renderMenuAction} visible={menuVisible} onBackdropPress={toggleMenu}>
       <MenuItem title="Large list" onPress={() => changeLayout('large')} />
@@ -233,7 +221,6 @@ export const SearchScreen = ({ navigation }) => {
                 <Layout style={{ flexDirection: 'row' }}>
                   <LayoutActions />
                   <SortActions />
-                  {/* <RenderRandomAction /> */}
                 </Layout>
               </Layout>
               <PostVerticalList data={postData.posts} tags={postData.tags} layoutType={layoutType} />

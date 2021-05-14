@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { SafeAreaView, FlatList, StyleSheet, ScrollView } from 'react-native';
+import React from 'react';
+import { SafeAreaView, ScrollView } from 'react-native';
 import {
   Divider,
   Layout,
@@ -15,11 +15,9 @@ import { PostHorizontalList } from '../components/postHorizontalList';
 
 const PlusIcon = (props) => <Icon {...props} name="plus-circle-outline" />;
 const ArchiveIcon = (props) => <Icon {...props} name="archive-outline" />;
-const EyeIcon = (props) => <Icon {...props} name="eye-outline" />;
 const ClockIcon = (props) => <Icon {...props} name="clock-outline" />;
 const ArrowIcon = (props) => <Icon {...props} name="arrow-ios-forward-outline" />;
 const HeartIcon = (props) => <Icon {...props} name="heart-outline" />;
-const PersonIcon = (props) => <Icon {...props} name="person-outline" />;
 const SettingsIcon = (props) => <Icon {...props} name="settings-outline" />;
 const SearchIcon = (props) => <Icon {...props} name="search-outline" />;
 
@@ -65,12 +63,6 @@ export const ProfileScreen = ({ navigation }) => {
             accessoryRight={ArrowIcon}
             onPress={() => navigatePostList('History')}
           />
-          {/* <ListItem
-            title="Following"
-            description="Keep an eye on the comments"
-            accessoryLeft={renderEyeIcon}
-            accessoryRight={ArrowIcon}
-          /> */}
           <ListItem
             title="Watch Later"
             description="Do not lose it"
@@ -108,22 +100,3 @@ export const ProfileScreen = ({ navigation }) => {
     </Layout>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 5,
-  },
-  row: {
-    flex: 1,
-    justifyContent: 'flex-start',
-  },
-  button: {
-    marginRight: 15,
-    borderWidth: 1,
-    borderColor: '#f5f5f5',
-    paddingVertical: 7,
-    paddingHorizontal: 20,
-    borderRadius: 17,
-  },
-});

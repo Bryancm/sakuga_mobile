@@ -3,14 +3,12 @@ import { Image, StyleSheet } from 'react-native';
 import { Layout, Text, Icon, Button, OverflowMenu, MenuItem } from '@ui-kitten/components';
 import { tagStyles } from '../styles';
 
-const CalendarIcon = (props) => <Icon {...props} name="calendar-outline" />;
 const StarIcon = (props) => <Icon {...props} name="star-outline" />;
 const StarIconGood = (props) => <Icon {...props} name="star-outline" fill="#207561" />;
 const StarIconGreat = (props) => <Icon {...props} name="star-outline" fill="#649d66" />;
 const StarIconFav = (props) => <Icon {...props} name="star-outline" fill="#eebb4d" />;
 const DownloadIcon = (props) => <Icon {...props} name="download-outline" />;
 const MoreIcon = (props) => <Icon {...props} name="more-vertical-outline" />;
-const TrashIcon = (props) => <Icon {...props} name="trash-outline" fill="#E3170A" />;
 const LinkIcon = (props) => <Icon {...props} name="link-2-outline" />;
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const ArchiveIcon = (props) => <Icon {...props} name="archive-outline" />;
@@ -24,7 +22,6 @@ export const SmallCard = ({ item, tagsWithType }) => {
   const [menuVisible2, setMenuVisible2] = React.useState(false);
   const [tags, setTags] = useState(item.tags.split(' ').map((tag) => ({ tag })));
   const [title, setTitle] = useState(capitalize(tags[2].tag).replaceAll('_', ' '));
-  const more_tags = tags.length - 6;
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);

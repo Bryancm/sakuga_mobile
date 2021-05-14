@@ -1,14 +1,14 @@
 import React from 'react';
-import { StyleSheet, FlatList } from 'react-native';
-import { Layout, Text, Button, Icon } from '@ui-kitten/components';
-import { SmallCard } from '../components/uploadCard';
+import { FlatList } from 'react-native';
+import { Layout, Text, Button } from '@ui-kitten/components';
+import { SmallCard } from './cardHorizontal';
 
 export const PostHorizontalList = ({ title, data, tags, navigation, menuType }) => {
   const renderItem = ({ item }) => <SmallCard key={item.id.toString()} item={item} tagsWithType={tags} />;
-
   const navigatePostList = () => {
     navigation.navigate('PostList', { from: title, data, tags, isPosts: true, menuType });
   };
+
   return (
     <Layout>
       {title !== '' && (
@@ -32,7 +32,3 @@ export const PostHorizontalList = ({ title, data, tags, navigation, menuType }) 
     </Layout>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {},
-});

@@ -1,14 +1,13 @@
 import React from 'react';
-import { StyleSheet, FlatList } from 'react-native';
-import { Layout, Text, Button, Icon } from '@ui-kitten/components';
-import { SmallCard } from '../components/uploadCard';
+import { FlatList } from 'react-native';
+import { Layout, Text, Button } from '@ui-kitten/components';
 import { Tag } from '../components/tag';
 import { ScrollView } from 'react-native-gesture-handler';
 
 export const TagHorizontalList = ({ title, data, navigation, menuType }) => {
-  const renderItem = ({ item }) => <Tag key={item.id.toString()} tag={item} />;
-  const navigatePostList = () => {
-    navigation.navigate('PostList', { from: title, data, isPosts: false, menuType });
+  const renderItem = ({ item }) => <Tag key={item.id.toString()} tag={item} navigatePostList={navigatePostList} />;
+  const navigatePostList = (from, data, isPosts, menuType) => {
+    navigation.navigate('PostList', { from, data, isPosts, menuType });
   };
   const halfIndex = Math.round((data.length - 1) / 2);
 
@@ -18,7 +17,10 @@ export const TagHorizontalList = ({ title, data, navigation, menuType }) => {
         <Text category="h4" style={{ paddingHorizontal: 5, paddingVertical: 15 }}>
           {title}
         </Text>
-        <Button style={{ width: 100, paddingRight: 0 }} appearance="ghost" onPress={navigatePostList}>
+        <Button
+          style={{ width: 100, paddingRight: 0 }}
+          appearance="ghost"
+          onPress={() => navigatePostList(title, data, false, menuType)}>
           <Text category="p2">See more</Text>
         </Button>
       </Layout>
@@ -40,7 +42,3 @@ export const TagHorizontalList = ({ title, data, navigation, menuType }) => {
     </Layout>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {},
-});

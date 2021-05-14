@@ -7,7 +7,6 @@ import { BottomNavigation, BottomNavigationTab, Icon } from '@ui-kitten/componen
 
 import { NewScreen } from '../screens/New';
 import { ExploreScreen } from '../screens/Explore';
-import { TagScreen } from '../screens/Tag';
 import { SearchScreen } from '../screens/Search';
 import { ProfileScreen } from '../screens/Profile';
 import { PostListScreen } from '../screens/PostList';
@@ -16,7 +15,6 @@ import { SettingScreen } from '../screens/Settings';
 const PersonIcon = (props) => <Icon {...props} name="person-outline" />;
 const FilmIcon = (props) => <Icon {...props} name="film-outline" />;
 const CompassIcon = (props) => <Icon {...props} name="compass-outline" />;
-const TagIcon = (props) => <Icon {...props} name="pricetags-outline" />;
 
 const forFade = ({ current }) => ({
   cardStyle: {

@@ -1,19 +1,13 @@
 import React from 'react';
-import {Image, StyleSheet, Dimensions, FlatList} from 'react-native';
-import {Layout, Text, Button, Icon} from '@ui-kitten/components';
-import {getTagStyle} from '../util/api';
+import { StyleSheet, FlatList } from 'react-native';
+import { Layout, Text } from '@ui-kitten/components';
+import { getTagStyle } from '../util/api';
 
-const StarIcon = (props) => <Icon {...props} name="star-outline" />;
-const screenWidth = Dimensions.get('window').width;
-
-export const AutoComplete = ({data, onPress}) => {
-  const renderItem = ({item}) => {
+export const AutoComplete = ({ data, onPress }) => {
+  const renderItem = ({ item }) => {
     const style = getTagStyle(item.type);
     return (
-      <Text
-        style={{...styles.text, color: style.color}}
-        category="c1"
-        onPress={() => onPress(item.name)}>
+      <Text style={{ ...styles.text, color: style.color }} category="c1" onPress={() => onPress(item.name)}>
         {item.name}
       </Text>
     );
@@ -38,5 +32,5 @@ const styles = StyleSheet.create({
   container: {
     height: '25%',
   },
-  text: {padding: 6},
+  text: { padding: 6 },
 });

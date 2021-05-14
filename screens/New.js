@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import {
   Divider,
   Layout,
@@ -60,9 +60,3 @@ export const NewScreen = ({ navigation }) => {
     </Layout>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-  },
-});

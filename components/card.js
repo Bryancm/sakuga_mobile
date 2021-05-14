@@ -3,7 +3,6 @@ import { Image, StyleSheet } from 'react-native';
 import { Divider, Layout, Text, Icon, Button, OverflowMenu, MenuItem } from '@ui-kitten/components';
 import { tagStyles } from '../styles';
 
-const CalendarIcon = (props) => <Icon {...props} name="calendar-outline" />;
 const StarIcon = (props) => <Icon {...props} name="star-outline" />;
 const StarIconGood = (props) => <Icon {...props} name="star-outline" fill="#207561" />;
 const StarIconGreat = (props) => <Icon {...props} name="star-outline" fill="#649d66" />;

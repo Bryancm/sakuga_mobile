@@ -1,11 +1,9 @@
 import React from 'react';
-import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
-import { Divider, Layout, TopNavigation, TopNavigationAction, Icon, Text } from '@ui-kitten/components';
+import { SafeAreaView, ScrollView } from 'react-native';
+import { Divider, Layout, TopNavigation, TopNavigationAction, Icon } from '@ui-kitten/components';
 import data from '../test-data-v2.json';
 import tag_data from '../test-tag-data.json';
 import tag_copy_data from '../test-tag-copy-data.json';
-import { SmallCard as Card } from '../components/uploadCard';
-import { Tag } from '../components/tag';
 import { PostHorizontalList } from '../components/postHorizontalList';
 import { TagHorizontalList } from '../components/tagHorizontalList';
 
@@ -108,9 +106,3 @@ export const ExploreScreen = ({ navigation }) => {
     </Layout>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-  },
-});
