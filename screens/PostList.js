@@ -45,6 +45,10 @@ export const PostListScreen = ({ navigation, route }) => {
         setData(postData.posts);
         setTags(postData.tags);
       }
+      if (route.params.menuType === 'post') {
+        setData(postData.posts);
+        setTags(postData.tags);
+      }
     }
   }, []);
 
@@ -186,10 +190,22 @@ export const PostListScreen = ({ navigation, route }) => {
 
   var showDeleteButton = false;
   if (from === 'History' || from === 'Watch Later') showDeleteButton = deleteAlert;
+
+  const formatTitle = (title) => {
+    if (title.length > 30) {
+      return title.slice(0, 30) + '...';
+    }
+    return title;
+  };
   return (
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
-        <TopNavigation title={from} alignment="center" accessoryLeft={BackAction} accessoryRight={renderRightActions} />
+        <TopNavigation
+          title={formatTitle(from)}
+          alignment="center"
+          accessoryLeft={BackAction}
+          accessoryRight={renderRightActions}
+        />
         <Divider />
         <Layout style={{ flex: 1 }}>
           {isPosts && <PostVerticalList data={data} tags={tags} layoutType="small" deleteAlert={showDeleteButton} />}
