@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Image, StyleSheet } from 'react-native';
 import { Divider, Layout, Text, Icon, Button, OverflowMenu, MenuItem } from '@ui-kitten/components';
+import { getRelativeTime } from '../util/date';
 import { tagStyles } from '../styles';
 
 const StarIcon = (props) => <Icon {...props} name="star-outline" />;
@@ -83,14 +84,6 @@ export const CardSmall = ({ item, tagsWithType, deleteAlert }) => {
     setPostDetails();
   }, []);
 
-  const formatDate = (date) => {
-    const d = new Date(date * 1000);
-    let ye = new Intl.DateTimeFormat('en', { year: '2-digit' }).format(d);
-    let mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(d);
-    let da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
-    return `${da}-${mo}-${ye}`;
-  };
-
   return (
     <Layout style={styles.container}>
       <Layout style={styles.infoContainer}>
@@ -117,7 +110,7 @@ export const CardSmall = ({ item, tagsWithType, deleteAlert }) => {
 
             <Layout style={styles.buttonContainer}>
               <Text appearance="hint" category="c1">
-                {formatDate(item.created_at)}
+                {getRelativeTime(item.created_at * 1000)}
               </Text>
               <Layout style={{ flexDirection: 'row' }}>
                 <OverflowMenu anchor={renderMenuAction2} visible={menuVisible2} onBackdropPress={toggleMenu2}>

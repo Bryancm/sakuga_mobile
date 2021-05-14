@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Divider, Layout, Text, Icon, Button, OverflowMenu, MenuItem } from '@ui-kitten/components';
+import { getRelativeTime } from '../util/date';
 import { tagStyles } from '../styles';
 
 const StarIcon = (props) => <Icon {...props} name="star-outline" />;
@@ -81,14 +82,6 @@ export const Card = ({ item, tagsWithType, navigateDetail }) => {
     setPostDetails();
   }, []);
 
-  const formatDate = (date) => {
-    const d = new Date(date * 1000);
-    let ye = new Intl.DateTimeFormat('en', { year: '2-digit' }).format(d);
-    let mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(d);
-    let da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
-    return `${da}-${mo}-${ye}`;
-  };
-
   const goToDetail = () => {
     navigateDetail(item, title, tags);
   };
@@ -103,7 +96,7 @@ export const Card = ({ item, tagsWithType, navigateDetail }) => {
       <Text style={{ paddingHorizontal: 5, paddingVertical: 15 }} category="h6" numberOfLines={1}>
         {title}
       </Text>
-      <Image style={styles.image} source={{ uri: item.preview_url }} resizeMode="stretch" />
+      <Image style={styles.image} source={{ uri: item.preview_url }} resizeMode="contain" />
       <Layout style={styles.tagContainer}>
         {tags.length > 0 &&
           tags.map((t, i) =>
@@ -124,7 +117,7 @@ export const Card = ({ item, tagsWithType, navigateDetail }) => {
       </Layout>
       <Layout style={styles.buttonContainer}>
         <Text appearance="hint" category="c1" style={{ marginLeft: 6, lineHeight: 16 }}>
-          {`${formatDate(item.created_at)}\nPosted by ${item.author}`}
+          {`${getRelativeTime(item.created_at * 1000)}\nPosted by ${item.author}`}
         </Text>
         <Layout style={{ flexDirection: 'row' }}>
           <OverflowMenu anchor={renderMenuAction2} visible={menuVisible2} onBackdropPress={toggleMenu2}>
@@ -152,7 +145,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 220,
+    height: 210,
   },
   tagContainer: {
     paddingLeft: 4,
