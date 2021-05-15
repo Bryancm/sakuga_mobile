@@ -1,27 +1,20 @@
 import React from 'react';
-import { SafeAreaView, Image, StyleSheet, ScrollView } from 'react-native';
-import { Divider, Icon, Layout, Text, Button, Input } from '@ui-kitten/components';
-import { getRelativeTime } from '../util/date';
-import { tagStyles } from '../styles';
+import { SafeAreaView, Image, StyleSheet, Keyboard } from 'react-native';
+import { Divider, Icon, Layout, Input, Button, Text } from '@ui-kitten/components';
 import { DetailHeader } from '../components/detailHeader';
 import { TagList } from '../components/tagList';
 import { DetailFooter } from '../components/detailFooter';
 import { CommentList } from '../components/commentList';
 import data from '../comment-data.json';
 
-const StarIcon = (props) => <Icon {...props} name="star-outline" />;
-const StarIconGood = (props) => <Icon {...props} name="star-outline" fill="#207561" />;
-const StarIconGreat = (props) => <Icon {...props} name="star-outline" fill="#649d66" />;
-const StarIconFav = (props) => <Icon {...props} name="star-outline" fill="#eebb4d" />;
-const DownloadIcon = (props) => <Icon {...props} name="download-outline" />;
-const MoreIcon = (props) => <Icon {...props} name="more-vertical-outline" />;
-const LinkIcon = (props) => <Icon {...props} name="link-2-outline" />;
+const ChevronDownIcon = (props) => <Icon {...props} name="chevron-down-outline" />;
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
-const ArchiveIcon = (props) => <Icon {...props} name="archive-outline" />;
-const EditIcon = (props) => <Icon {...props} name="edit-outline" />;
-const OptionsIcon = (props) => <Icon {...props} name="options-2-outline" />;
+const SendIcon = (props) => <Icon {...props} name="corner-down-right-outline" />;
 
 export const DetailsScreen = ({ navigation, route }) => {
+  const [inputIsFocused, setInputIsFocused] = React.useState(false);
+  const [text, setText] = React.useState();
+  const commentList = React.useRef();
   const item = route.params.item;
   const title = route.params.title;
   const tags = route.params.tags;
@@ -30,15 +23,53 @@ export const DetailsScreen = ({ navigation, route }) => {
     navigation.goBack();
   };
 
+  const cancelInput = () => {
+    setText();
+    setInputIsFocused(false);
+    Keyboard.dismiss();
+    commentList.current.scrollToOffset({ animated: true, offset: 0 });
+  };
+
+  const CommentButtons = () => (
+    <Layout style={{ backgroundColor: 'transparent', flexDirection: 'row', alignItems: 'center' }}>
+      {inputIsFocused && (
+        <Button
+          style={{ paddingHorizontal: 0, paddingVertical: 0, height: 10 }}
+          status="basic"
+          appearance="ghost"
+          accessoryRight={CloseIcon}
+          onPress={cancelInput}
+        />
+      )}
+
+      {inputIsFocused && (
+        <Button
+          style={{ paddingHorizontal: 0, paddingVertical: 0, height: 10 }}
+          status="info"
+          appearance="ghost"
+          accessoryLeft={SendIcon}
+        />
+      )}
+    </Layout>
+  );
+
+  const onInputFocus = () => {
+    commentList.current.scrollToOffset({ animated: true, offset: 185 });
+    setInputIsFocused(true);
+  };
+
+  const onChangeText = (text) => {
+    if (!text) cancelInput();
+    setText(text);
+  };
+
   return (
     <Layout level="2" style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
-        <Image
-          source={{ uri: item.preview_url }}
-          style={{ width: '100%', height: 210, marginBottom: 4, backgroundColor: '#000' }}
-          resizeMode="contain"
-        />
+        <Image source={{ uri: item.preview_url }} style={styles.image} resizeMode="contain" />
+
         <CommentList
+          commentList={commentList}
           data={data}
           header={
             <Layout level="2">
@@ -51,9 +82,26 @@ export const DetailsScreen = ({ navigation, route }) => {
                 style={styles.titleContainer}
               />
               <Divider style={{ marginBottom: 12 }} />
-              <Layout level="3" style={{ margin: 8, borderRadius: 2 }}>
-                <Input style={{ backgroundColor: 'transparent', height: 40 }} placeholder="add a comment" />
+              <Layout level="3" style={{ margin: 8, borderRadius: 2, padding: 0 }}>
+                <Input
+                  keyboardAppearance="dark"
+                  multiline={true}
+                  style={{ backgroundColor: 'transparent', minHeight: 40, maxHeight: 160, borderColor: 'transparent' }}
+                  placeholder="add a comment"
+                  accessoryRight={CommentButtons}
+                  onFocus={onInputFocus}
+                  onChangeText={onChangeText}
+                  value={text}
+                />
               </Layout>
+              <Button
+                appearance="ghost"
+                accessoryRight={ChevronDownIcon}
+                style={{ width: 104, paddingHorizontal: 0, paddingVertical: 0 }}>
+                <Text appearance="hint" category="c1">
+                  Newest
+                </Text>
+              </Button>
             </Layout>
           }
         />
@@ -77,4 +125,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 8,
   },
+  image: { width: '100%', height: 210, marginBottom: 4, backgroundColor: '#000' },
 });
