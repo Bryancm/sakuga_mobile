@@ -3,11 +3,13 @@ import { Layout, Text, Button, Icon } from '@ui-kitten/components';
 import { tagStyles } from '../styles';
 
 const MoreIcon = (props) => <Icon {...props} name="more-horizontal-outline" />;
-const ChevronDownIcon = (props) => <Icon {...props} name="chevron-down-outline" />;
+const ChevronDownIcon = (props) => (
+  <Icon name="arrow-ios-downward-outline" style={{ width: 18, height: 18 }} fill="#808080" />
+);
 
 export const TagList = ({ tags, style }) => {
   return (
-    <Layout level="2" style={{ ...style, alignItems: 'flex-end' }}>
+    <Layout level="2" style={style}>
       {tags.length > 0 &&
         tags.map((t, i) =>
           t.style ? (
@@ -24,15 +26,13 @@ export const TagList = ({ tags, style }) => {
             </Layout>
           ),
         )}
-      {/* <Button
-        // size="small"
+      <Button
+        size="small"
+        status="basic"
         appearance="ghost"
         accessoryRight={ChevronDownIcon}
-        style={{ paddingHorizontal: 0, paddingVertical: 0, justifyContent: 'flex-end' }}> */}
-      <Text status="primary" category="h6" style={{ marginBottom: 8 }}>
-        ...
-      </Text>
-      {/* </Button> */}
+        style={{ paddingHorizontal: 0, paddingVertical: 0 }}
+      />
     </Layout>
   );
 };

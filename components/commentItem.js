@@ -46,7 +46,7 @@ export const CommentItem = ({ item, user }) => {
   }
 
   return (
-    <Layout level="2" style={{ paddingHorizontal: 8, paddingVertical: 12 }}>
+    <Layout level="2" style={{ paddingHorizontal: 8, paddingTop: 0, marginBottom: 22 }}>
       <Layout level="2" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <Text category="s2">
           {`${item.creator} `}

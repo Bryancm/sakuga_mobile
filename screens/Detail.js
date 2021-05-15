@@ -7,7 +7,18 @@ import { DetailFooter } from '../components/detailFooter';
 import { CommentList } from '../components/commentList';
 import data from '../comment-data.json';
 
-const ChevronDownIcon = (props) => <Icon {...props} name="chevron-down-outline" />;
+const SortIcon = () => (
+  <Icon
+    name="code-outline"
+    style={{
+      width: 14,
+      height: 14,
+
+      transform: [{ rotate: '90deg' }],
+    }}
+    fill="#808080"
+  />
+);
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const SendIcon = (props) => <Icon {...props} name="corner-down-right-outline" />;
 
@@ -95,10 +106,17 @@ export const DetailsScreen = ({ navigation, route }) => {
                 />
               </Layout>
               <Button
+                status="basic"
                 appearance="ghost"
-                accessoryRight={ChevronDownIcon}
-                style={{ width: 100, paddingHorizontal: 0, paddingVertical: 0 }}>
-                <Text appearance="hint" category="c1">
+                accessoryRight={SortIcon}
+                style={{
+                  width: 76,
+                  paddingHorizontal: 0,
+                  paddingVertical: 0,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text appearance="hint" category="c1" style={{ marginBottom: 8 }}>
                   Newest
                 </Text>
               </Button>
@@ -125,5 +143,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 8,
   },
-  image: { width: '100%', height: 210, marginBottom: 4, backgroundColor: '#000' },
+  image: { width: '100%', height: 210, backgroundColor: '#000' },
 });
