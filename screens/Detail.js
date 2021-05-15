@@ -87,7 +87,7 @@ export const DetailsScreen = ({ navigation, route }) => {
                   keyboardAppearance="dark"
                   multiline={true}
                   style={{ backgroundColor: 'transparent', minHeight: 40, maxHeight: 160, borderColor: 'transparent' }}
-                  placeholder="add a comment"
+                  placeholder="Add a comment"
                   accessoryRight={CommentButtons}
                   onFocus={onInputFocus}
                   onChangeText={onChangeText}
@@ -97,7 +97,7 @@ export const DetailsScreen = ({ navigation, route }) => {
               <Button
                 appearance="ghost"
                 accessoryRight={ChevronDownIcon}
-                style={{ width: 104, paddingHorizontal: 0, paddingVertical: 0 }}>
+                style={{ width: 100, paddingHorizontal: 0, paddingVertical: 0 }}>
                 <Text appearance="hint" category="c1">
                   Newest
                 </Text>

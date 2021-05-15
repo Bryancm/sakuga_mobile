@@ -13,7 +13,7 @@
   "color-primary-focus": "$color-primary-600",
   "color-primary-active": "$color-primary-600",
   "color-primary-disabled": "$color-basic-transparent-300",
-  "text-basic-color": "$color-basic-300",
+  "text-basic-color": "$color-basic-400",
   "color-basic-transparent-100": "rgba(128, 128, 128, 0.08)",
   "color-basic-transparent-200": "rgba(128, 128, 128, 0.16)",
   "color-basic-transparent-300": "rgba(128, 128, 128, 0.24)",
