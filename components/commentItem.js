@@ -1,4 +1,5 @@
 import React from 'react';
+import { Linking } from 'react-native';
 import { Divider, Icon, Layout, Text, Button, Input } from '@ui-kitten/components';
 import { getRelativeTime } from '../util/date';
 import ParsedText from 'react-native-parsed-text';
@@ -22,7 +23,7 @@ export const CommentItem = ({ item, user }) => {
   const textParse = [
     {
       pattern: /[0-5]?\d:[0-5]\d\d*/,
-      style: { color: '#2980b9', fontSize: 15, letterSpacing: 2 },
+      style: { color: '#2980b9', fontSize: 15, letterSpacing: 1.5 },
       onPress: timePress,
     },
     { type: 'url', style: { color: '#2980b9' }, onPress: urlPress },
@@ -45,7 +46,7 @@ export const CommentItem = ({ item, user }) => {
   }
 
   return (
-    <Layout level="2" style={{ paddingHorizontal: 8, marginBottom: 20, minHeight: 70 }}>
+    <Layout level="2" style={{ paddingHorizontal: 8, paddingVertical: 12 }}>
       <Layout level="2" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <Text category="s2">
           {`${item.creator} `}

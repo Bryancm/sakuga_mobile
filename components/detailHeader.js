@@ -5,7 +5,7 @@ const OptionsIcon = (props) => <Icon {...props} name="options-2-outline" />;
 export const DetailHeader = ({ title, style }) => {
   return (
     <Layout level="2" style={style}>
-      <Text category="h6" style={{ lineHeight: 22 }}>
+      <Text category="h6" style={{ lineHeight: 22, paddingVertical: 12 }}>
         {title}
       </Text>
       <Layout level="2" style={{ flexDirection: 'row', height: '100%', alignItems: 'flex-start' }}>

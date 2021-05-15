@@ -17,7 +17,7 @@ export const DetailsScreen = ({ navigation, route }) => {
   const commentList = React.useRef();
   const item = route.params.item;
   const title = route.params.title;
-  const tags = route.params.tags;
+  const tags = route.params.tags.slice(0, 7);
 
   const navigateBack = () => {
     navigation.goBack();
