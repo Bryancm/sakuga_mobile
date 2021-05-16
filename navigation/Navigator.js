@@ -12,6 +12,7 @@ import { ProfileScreen } from '../screens/Profile';
 import { PostListScreen } from '../screens/PostList';
 import { SettingScreen } from '../screens/Settings';
 import { DetailsScreen } from '../screens/Detail';
+import { GifEditorScreen } from '../screens/GifEditor';
 
 const { multiply } = Animated;
 
@@ -98,6 +99,11 @@ export const AppNavigator = () => (
       <Stack.Screen
         name="Detail"
         component={DetailsScreen}
+        options={{ gestureDirection: 'vertical', cardStyleInterpolator: forVerticalModal }}
+      />
+      <Stack.Screen
+        name="GifEditor"
+        component={GifEditorScreen}
         options={{ gestureDirection: 'vertical', cardStyleInterpolator: forVerticalModal }}
       />
     </Stack.Navigator>

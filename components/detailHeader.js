@@ -1,8 +1,13 @@
 import React from 'react';
 import { Icon, Layout, Text, Button } from '@ui-kitten/components';
 const OptionsIcon = (props) => <Icon {...props} name="options-2-outline" />;
+import { useNavigation } from '@react-navigation/native';
 
-export const DetailHeader = ({ title, style }) => {
+export const DetailHeader = ({ title, style, url }) => {
+  const navigation = useNavigation();
+  const navigateGifEditor = () => {
+    navigation.navigate('GifEditor', { url });
+  };
   return (
     <Layout level="2" style={style}>
       <Text category="h6" style={{ lineHeight: 22, paddingVertical: 14 }}>
@@ -14,6 +19,7 @@ export const DetailHeader = ({ title, style }) => {
           status="basic"
           appearance="ghost"
           accessoryRight={OptionsIcon}
+          onPress={navigateGifEditor}
         />
       </Layout>
     </Layout>

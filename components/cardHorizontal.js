@@ -3,6 +3,7 @@ import { Image, StyleSheet } from 'react-native';
 import { Layout, Text, Icon, Button, OverflowMenu, MenuItem } from '@ui-kitten/components';
 import { tagStyles } from '../styles';
 import { getRelativeTime } from '../util/date';
+import FastImage from 'react-native-fast-image';
 
 const StarIcon = (props) => <Icon {...props} name="star-outline" />;
 const StarIconGood = (props) => <Icon {...props} name="star-outline" fill="#207561" />;
@@ -89,7 +90,7 @@ export const SmallCard = ({ item, tagsWithType }) => {
 
   return (
     <Layout style={styles.container}>
-      <Image style={styles.image} source={{ uri: item.preview_url }} resizeMode="cover" />
+      <FastImage style={styles.image} source={{ uri: item.preview_url }} resizeMode="cover" />
       <Layout style={styles.tagContainer}>
         <Text category="c2" style={{ marginBottom: 6 }} numberOfLines={1}>
           {title}

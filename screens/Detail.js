@@ -1,11 +1,15 @@
 import React from 'react';
 import { SafeAreaView, Image, StyleSheet, Keyboard } from 'react-native';
 import { Divider, Icon, Layout, Input, Button, Text } from '@ui-kitten/components';
+import FastImage from 'react-native-fast-image';
 import { DetailHeader } from '../components/detailHeader';
 import { TagList } from '../components/tagList';
 import { DetailFooter } from '../components/detailFooter';
 import { CommentList } from '../components/commentList';
 import data from '../comment-data.json';
+
+import converProxyUrl, { convertAsync } from 'react-native-video-cache';
+import RNFS from 'react-native-fs';
 
 const SortIcon = () => (
   <Icon
@@ -23,12 +27,33 @@ const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const SendIcon = (props) => <Icon {...props} name="corner-down-right-outline" />;
 
 export const DetailsScreen = ({ navigation, route }) => {
-  const [inputIsFocused, setInputIsFocused] = React.useState(false);
-  const [text, setText] = React.useState();
-  const commentList = React.useRef();
   const item = route.params.item;
   const title = route.params.title;
   const tags = route.params.tags;
+
+  const [inputIsFocused, setInputIsFocused] = React.useState(false);
+  const [text, setText] = React.useState();
+  const commentList = React.useRef();
+
+  React.useEffect(() => {
+    // const checkDir = async () => {
+    //   const video_dir = `${RNFS.CachesDirectoryPath}/test-video.mp4`;
+    //   const exist = await RNFS.exists(video_dir);
+    //   if (exist) {
+    //     const file = await RNFS.readFile(video_dir);
+    //     console.log('FILE: ', file);
+    //   }
+    // };
+    // convertAsync(item.file_url).then((url) => {
+    //   RNFS.downloadFile({
+    //     fromUrl: url,
+    //     toFile: `${RNFS.CachesDirectoryPath}/test-video.mp4`,
+    //   }).promise.then((r) => {
+    //     console.log('DONE: ', r);
+    //   });
+    // });
+    // checkDir();
+  }, []);
 
   const navigateBack = () => {
     navigation.goBack();
@@ -77,14 +102,14 @@ export const DetailsScreen = ({ navigation, route }) => {
   return (
     <Layout level="2" style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
-        <Image source={{ uri: item.preview_url }} style={styles.image} resizeMode="contain" />
+        <FastImage source={{ uri: item.preview_url }} style={styles.image} resizeMode="contain" />
 
         <CommentList
           commentList={commentList}
           data={data}
           header={
             <Layout level="2">
-              <DetailHeader title={title} style={styles.titleContainer} />
+              <DetailHeader title={title} style={styles.titleContainer} url={converProxyUrl(item.file_url)} />
               <TagList tags={tags} style={styles.tagContainer} />
               <DetailFooter
                 date={item.created_at}
