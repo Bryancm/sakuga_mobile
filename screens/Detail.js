@@ -28,7 +28,7 @@ export const DetailsScreen = ({ navigation, route }) => {
   const commentList = React.useRef();
   const item = route.params.item;
   const title = route.params.title;
-  const tags = route.params.tags.slice(0, 7);
+  const tags = route.params.tags;
 
   const navigateBack = () => {
     navigation.goBack();
@@ -130,7 +130,7 @@ export const DetailsScreen = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
   tagContainer: {
-    paddingLeft: 6,
+    paddingLeft: 8,
     paddingTop: 0,
     paddingBottom: 8,
     flexDirection: 'row',
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 8,
+    paddingLeft: 8,
   },
   image: { width: '100%', height: 210, backgroundColor: '#000' },
 });

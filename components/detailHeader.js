@@ -9,7 +9,12 @@ export const DetailHeader = ({ title, style }) => {
         {title}
       </Text>
       <Layout level="2" style={{ flexDirection: 'row', height: '100%', alignItems: 'flex-start' }}>
-        <Button style={{ paddingHorizontal: 0 }} status="basic" appearance="ghost" accessoryLeft={OptionsIcon} />
+        <Button
+          style={{ paddingHorizontal: 0, paddingTop: 16 }}
+          status="basic"
+          appearance="ghost"
+          accessoryRight={OptionsIcon}
+        />
       </Layout>
     </Layout>
   );

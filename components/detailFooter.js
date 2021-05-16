@@ -22,7 +22,13 @@ export const DetailFooter = ({ date, score, author, style }) => {
             {score}
           </Text>
         </Button>
-        <Button style={{ paddingHorizontal: 0 }} status="basic" appearance="ghost" accessoryLeft={MoreIcon} />
+        <Button
+          size="small"
+          style={{ paddingHorizontal: 0 }}
+          status="basic"
+          appearance="ghost"
+          accessoryRight={MoreIcon}
+        />
       </Layout>
     </Layout>
   );
