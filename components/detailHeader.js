@@ -10,7 +10,7 @@ export const DetailHeader = ({ title, style, url }) => {
   };
   return (
     <Layout level="2" style={style}>
-      <Text category="h6" style={{ lineHeight: 22, paddingVertical: 14 }}>
+      <Text category="h6" style={{ lineHeight: 22, paddingVertical: 14, width: '90%' }}>
         {title}
       </Text>
       <Layout level="2" style={{ flexDirection: 'row', height: '100%', alignItems: 'flex-start' }}>
