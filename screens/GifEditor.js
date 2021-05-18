@@ -1,95 +1,113 @@
-import React from 'react';
-import {
-  SafeAreaView,
-  Image,
-  StyleSheet,
-  Keyboard,
-  Dimensions,
-  ScrollView,
-  TouchableWithoutFeedback,
-} from 'react-native';
-import { Divider, Icon, Layout, Input, Button, Text } from '@ui-kitten/components';
+import React, { useState, useEffect, useCallback } from 'react';
+import { SafeAreaView, StyleSheet, Dimensions } from 'react-native';
+import { Divider, Icon, Layout, Button, Text, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { VideoPlayer, Trimmer } from 'react-native-video-processing';
 
+const GifIcon = () => (
+  <Text style={{ paddingTop: 3, fontWeight: 'bold' }} category="s1">
+    GIF
+  </Text>
+);
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
-const SendIcon = (props) => <Icon {...props} name="corner-down-right-outline" />;
-const PlayIcon = (props) => <Icon {...props} name="play-circle-outline" />;
+const GridIcon = (props) => <Icon {...props} name="grid-outline" />;
+const PlayIcon = () => <Icon name="play-circle-outline" style={{ width: 40, height: 40 }} fill="#D4D4D4" />;
+const PauseIcon = () => <Icon name="pause-circle-outline" style={{ width: 40, height: 40 }} fill="#D4D4D4" />;
 const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
+
+const formatSeconds = (seconds) => {
+  return new Date(seconds ? seconds * 1000 : 0).toISOString().substr(14, 5);
+};
 
 export const GifEditorScreen = ({ navigation, route }) => {
   const videoPlayer = React.useRef();
   const url = route.params.url;
-  const [currentTime, setCurrentTime] = React.useState(0);
-  const [currentTimeTrimmer, setCurrentTimeTrimmer] = React.useState(0);
-  const [startTime, setStartTime] = React.useState(0);
-  const [endTime, setEndTime] = React.useState();
-  const [play, setPlay] = React.useState(false);
-  const [replay, setReplay] = React.useState(false);
-  const [fps, setFPS] = React.useState(8);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [currentTimeTrimmer, setCurrentTimeTrimmer] = useState(0);
+  const [startTime, setStartTime] = useState(0);
+  const [endTime, setEndTime] = useState();
+  const [play, setPlay] = useState(false);
+  const [replay, setReplay] = useState(false);
+  const [fps, setFPS] = useState(8);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (videoPlayer.current) {
       videoPlayer.current
         .getVideoInfo()
         .then((r) => {
-          console.log(r);
+          // console.log(r);
           setEndTime(r.duration);
         })
         .catch((e) => console.log(e));
     }
   }, []);
 
-  const onVideoChange = ({ nativeEvent }) => {
-    setCurrentTimeTrimmer(nativeEvent.currentTime);
-  };
+  const onVideoChange = useCallback(
+    ({ nativeEvent }) => {
+      if (play) setCurrentTimeTrimmer(nativeEvent.currentTime);
+    },
+    [play],
+  );
 
-  const onTrackerMove = ({ currentTime }) => {
-    setPlay(false);
-    setReplay(false);
-    setCurrentTime(currentTime);
-    // setCurrentTimeTrimmer(currentTime);
-  };
+  const onTrackerMove = useCallback(
+    ({ currentTime }) => {
+      if (play) {
+        setPlay(false);
+        setReplay(false);
+      }
 
-  const onTrimmerChange = (e) => {
-    // setCurrentTimeTrimmer(0);
-    setPlay(false);
-    setReplay(false);
-    if (e.startTime !== startTime) {
-      setCurrentTime(e.startTime);
-    }
-    if (e.endTime !== endTime) {
-      setCurrentTime(e.endTime);
-    }
-    setStartTime(e.startTime);
-    setEndTime(e.endTime);
-  };
+      setCurrentTime(currentTime);
+    },
+    [play],
+  );
 
-  const toggleVideo = () => {
+  const onTrimmerChange = useCallback(
+    (e) => {
+      if (play) {
+        setPlay(false);
+        setReplay(false);
+      }
+
+      if (e.startTime !== startTime) {
+        setCurrentTime(e.startTime);
+      }
+      if (e.endTime !== endTime) {
+        setCurrentTime(e.endTime);
+      }
+      setStartTime(e.startTime);
+      setEndTime(e.endTime);
+    },
+    [startTime, endTime, play],
+  );
+
+  const toggleVideo = useCallback(() => {
     setPlay(!play);
     setReplay(!replay);
-  };
+  }, [play, replay]);
 
-  const changeFPS = (fps) => {
+  const changeFPS = useCallback((fps) => {
     setFPS(fps);
-  };
+  }, []);
+
+  const renderLeftAction = () => <TopNavigationAction icon={CloseIcon} onPress={() => navigation.goBack()} />;
+
+  const renderRightActions = () => (
+    <React.Fragment>
+      <TopNavigationAction icon={GifIcon} />
+      <TopNavigationAction icon={GridIcon} />
+    </React.Fragment>
+  );
+
   return (
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
-        <Layout style={styles.titleContainer}>
-          <Button appearance="ghost" onPress={() => navigation.goBack()}>
-            <Text>Cancel</Text>
-          </Button>
-          <Button appearance="ghost">
-            <Text status="info">Next</Text>
-          </Button>
-        </Layout>
-
-        <Layout style={{ flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-evenly' }}>
-          <Text>{Math.round(startTime)}</Text>
-          <Text>-</Text>
-          <Text>{Math.round(endTime)}</Text>
-        </Layout>
+        <TopNavigation
+          title="Trim"
+          subtitle={`${formatSeconds(startTime)} ~ ${formatSeconds(endTime)}`}
+          alignment="center"
+          accessoryLeft={renderLeftAction}
+          accessoryRight={renderRightActions}
+        />
+        <Divider />
 
         <VideoPlayer
           ref={videoPlayer}
@@ -102,16 +120,9 @@ export const GifEditorScreen = ({ navigation, route }) => {
           style={{ backgroundColor: 'black' }}
           resizeMode={VideoPlayer.Constants.resizeMode.CONTAIN}
           onChange={onVideoChange} // get Current time on every second
-          onPress={toggleVideo}>
-          {!play && (
-            <Button appearance="ghost" style={styles.pauseButton} onPress={toggleVideo}>
-              <Icon name="play-circle-outline" fill="#fff" style={styles.playButton} />
-            </Button>
-          )}
-          {play && <Button appearance="ghost" style={styles.pauseButton} onPress={toggleVideo} />}
-        </VideoPlayer>
+        />
 
-        <Layout style={{ position: 'absolute', bottom: '25%' }}>
+        <Layout style={styles.controlContainer}>
           <Layout style={styles.buttonContainer}>
             <Button size="small" appearance="ghost" onPress={() => changeFPS(5)}>
               <Text status={fps === 5 ? 'primary' : 'basic'} category={fps === 5 ? 's1' : 's2'}>
@@ -142,18 +153,22 @@ export const GifEditorScreen = ({ navigation, route }) => {
           </Layout>
           <Trimmer
             source={url}
-            height={80}
-            width={screenWidth}
+            height={60}
+            width={screenWidth - 8}
             onTrackerMove={onTrackerMove} // iOS only
-            currentTime={play ? currentTimeTrimmer : undefined} // use this prop to set tracker position iOS only
+            currentTime={currentTimeTrimmer} // use this prop to set tracker position iOS only
             themeColor="#C3070B" // iOS only
-            // thumbWidth={30} // iOS only
             trackerColor="#C3070B" // iOS only
             onChange={onTrimmerChange}
-            trackerHandleColor="#C3070B"
             minLength={1}
-            showTrackerHandle={true}
-            // maxLength={10}
+            thumbWidth={11}
+          />
+          <Button
+            status="basic"
+            appearance="ghost"
+            style={styles.pauseButton}
+            onPress={toggleVideo}
+            accessoryRight={play ? PauseIcon : PlayIcon}
           />
         </Layout>
       </SafeAreaView>
@@ -173,30 +188,28 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingLeft: 8,
+    justifyContent: 'center',
   },
   image: { width: '100%', height: 210, backgroundColor: '#000' },
-  playButton: {
-    width: 80,
-    height: 80,
-  },
   pauseButton: {
-    width: screenWidth,
-    height: '100%',
-    height: 230,
-    position: 'absolute',
-    opacity: 1,
-    // top: 145,
-    top: 165,
+    marginTop: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 0,
+    paddingHorizontal: 0,
   },
   buttonContainer: {
     width: '100%',
     flexDirection: 'row',
-    // position: 'absolute',
-    // bottom: '42%',
     alignItems: 'center',
     justifyContent: 'space-evenly',
     marginBottom: 10,
+  },
+  controlContainer: {
+    position: 'absolute',
+    bottom: '8%',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
