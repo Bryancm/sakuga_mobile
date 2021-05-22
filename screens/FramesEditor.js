@@ -3,13 +3,10 @@ import { SafeAreaView, StyleSheet, Dimensions } from 'react-native';
 import { Divider, Icon, Layout, Button, Text, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { VideoPlayer, Trimmer } from 'react-native-video-processing';
 
-const GifIcon = () => (
-  <Text style={{ paddingTop: 3, fontWeight: 'bold' }} category="s1">
-    Next
-  </Text>
-);
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const GridIcon = (props) => <Icon {...props} name="grid-outline" />;
+const ArrowRightIcon = () => <Icon name="arrowhead-right-outline" style={{ width: 25, height: 25 }} fill="#D4D4D4" />;
+const ArrowLeftIcon = () => <Icon name="arrowhead-left-outline" style={{ width: 25, height: 25 }} fill="#D4D4D4" />;
 const PlayIcon = () => <Icon name="play-circle-outline" style={{ width: 25, height: 25 }} fill="#D4D4D4" />;
 const PauseIcon = () => <Icon name="pause-circle-outline" style={{ width: 25, height: 25 }} fill="#D4D4D4" />;
 const screenWidth = Dimensions.get('window').width;
@@ -18,7 +15,7 @@ const formatSeconds = (seconds) => {
   return new Date(seconds ? seconds * 1000 : 0).toISOString().substr(14, 5);
 };
 
-export const GifEditorScreen = ({ navigation, route }) => {
+export const FramesEditorScreen = ({ navigation, route }) => {
   const videoPlayer = React.useRef();
   const url = route.params.url;
   const [currentTime, setCurrentTime] = useState(0);
@@ -27,7 +24,10 @@ export const GifEditorScreen = ({ navigation, route }) => {
   const [endTime, setEndTime] = useState();
   const [play, setPlay] = useState(false);
   const [replay, setReplay] = useState(false);
-  const [fps, setFPS] = useState(8);
+  const [totalFPS, setTotalFPS] = useState(0);
+  const [currentFPS, setCurrentFPS] = useState(0);
+  const [stepCount, setStepCount] = useState(1);
+  // const [longPressInterval, setLongPressInterval] = useState();
 
   useEffect(() => {
     if (videoPlayer.current) {
@@ -36,6 +36,7 @@ export const GifEditorScreen = ({ navigation, route }) => {
         .then((r) => {
           // console.log(r);
           setEndTime(r.duration);
+          setTotalFPS(Math.round(r.duration / 0.042));
         })
         .catch((e) => console.log(e));
     }
@@ -44,6 +45,7 @@ export const GifEditorScreen = ({ navigation, route }) => {
   const onVideoChange = useCallback(
     ({ nativeEvent }) => {
       if (play) setCurrentTimeTrimmer(nativeEvent.currentTime);
+      setCurrentFPS(Math.round(nativeEvent.currentTime / 0.042));
     },
     [play],
   );
@@ -56,6 +58,7 @@ export const GifEditorScreen = ({ navigation, route }) => {
       }
 
       setCurrentTime(currentTime);
+      // setCurrentTimeTrimmer(currentTime);
     },
     [play],
   );
@@ -84,18 +87,54 @@ export const GifEditorScreen = ({ navigation, route }) => {
     setReplay(!replay);
   }, [play, replay]);
 
-  const changeFPS = useCallback((fps) => {
-    setFPS(fps);
-  }, []);
-
   const renderLeftAction = () => <TopNavigationAction icon={CloseIcon} onPress={() => navigation.goBack()} />;
+
+  const navigateFramesList = () => {
+    navigation.navigate('FramesList');
+  };
 
   const renderRightActions = () => (
     <React.Fragment>
-      <TopNavigationAction icon={GifIcon} />
-      {/* <TopNavigationAction icon={GridIcon} /> */}
+      <TopNavigationAction icon={GridIcon} onPress={navigateFramesList} />
     </React.Fragment>
   );
+
+  const stepFoward = useCallback(() => {
+    const stepTime = 0.042 * stepCount;
+    const current = play ? currentTimeTrimmer : currentTime;
+    setCurrentTime(current + stepTime);
+    setCurrentTimeTrimmer(current + stepTime);
+    if (play) {
+      setPlay(false);
+      setReplay(false);
+    }
+  }, [currentTime, play, stepCount, currentTimeTrimmer]);
+
+  const stepBackward = useCallback(() => {
+    const stepTime = 0.042 * stepCount;
+    const current = play ? currentTimeTrimmer : currentTime;
+    setCurrentTime(current - stepTime);
+    setCurrentTimeTrimmer(current - stepTime);
+    if (play) {
+      setPlay(false);
+      setReplay(false);
+    }
+  }, [currentTime, play, stepCount, currentTimeTrimmer]);
+
+  const changeStepCount = useCallback(() => {
+    if (stepCount === 1) setStepCount(2);
+    if (stepCount === 2) setStepCount(3);
+    if (stepCount === 3) setStepCount(1);
+  }, [stepCount]);
+
+  // const onLongPressBackward = useCallback(() => {
+  //   setLongPressInterval(setInterval(() => stepBackward(), 2000));
+  // }, []);
+
+  // const onPressOut = useCallback(() => {
+  //   window.clearInterval(longPressInterval);
+  //   setLongPressInterval();
+  // }, [longPressInterval]);
 
   return (
     <Layout style={{ flex: 1 }}>
@@ -127,45 +166,47 @@ export const GifEditorScreen = ({ navigation, route }) => {
             style={{
               ...styles.buttonContainer,
               justifyContent: 'space-between',
-              marginBottom: 0,
               paddingHorizontal: 8,
             }}>
-            <Button
-              size="small"
-              appearance="ghost"
-              style={styles.pauseButton}
-              onPress={toggleVideo}
-              accessoryRight={play ? PauseIcon : PlayIcon}
-            />
+            <Layout
+              style={{
+                ...styles.buttonContainer,
+                marginBottom: 0,
+                justifyContent: 'space-between',
+                width: '55%',
+              }}>
+              <Button
+                appearance="ghost"
+                style={styles.pauseButton}
+                onPress={toggleVideo}
+                accessoryRight={play ? PauseIcon : PlayIcon}
+              />
+              <Button
+                appearance="ghost"
+                style={styles.pauseButton}
+                onPress={stepBackward}
+                accessoryRight={ArrowLeftIcon}
+                // onLongPress={onLongPressBackward}
+                // onPressOut={onPressOut}
+              />
+              <Button
+                appearance="ghost"
+                style={styles.pauseButton}
+                onPress={stepFoward}
+                accessoryRight={ArrowRightIcon}
+              />
+              <Button
+                appearance="ghost"
+                style={styles.pauseButton}
+                onPress={changeStepCount}
+                accessoryRight={() => <Text category="s2">{`x${stepCount}`}</Text>}
+              />
+            </Layout>
+            <Text status="primary" category="s2">
+              {`${currentFPS} / ${totalFPS}`}
+            </Text>
           </Layout>
-          <Layout style={styles.buttonContainer}>
-            <Button size="small" appearance="ghost" onPress={() => changeFPS(5)}>
-              <Text status={fps === 5 ? 'primary' : 'basic'} category={fps === 5 ? 's1' : 's2'}>
-                5 FPS
-              </Text>
-            </Button>
-            <Button size="small" appearance="ghost" onPress={() => changeFPS(8)}>
-              <Text status={fps === 8 ? 'primary' : 'basic'} category={fps === 8 ? 's1' : 's2'}>
-                8 FPS
-              </Text>
-            </Button>
-            <Button size="small" appearance="ghost" onPress={() => changeFPS(12)}>
-              <Text status={fps === 12 ? 'primary' : 'basic'} category={fps === 12 ? 's1' : 's2'}>
-                12 FPS
-              </Text>
-            </Button>
 
-            <Button size="small" appearance="ghost" onPress={() => changeFPS(24)}>
-              <Text status={fps === 24 ? 'primary' : 'basic'} category={fps === 24 ? 's1' : 's2'}>
-                24 FPS
-              </Text>
-            </Button>
-            <Button size="small" appearance="ghost" onPress={() => changeFPS(30)}>
-              <Text status={fps === 30 ? 'primary' : 'basic'} category={fps === 30 ? 's1' : 's2'}>
-                30 FPS
-              </Text>
-            </Button>
-          </Layout>
           <Trimmer
             source={url}
             height={60}
@@ -218,7 +259,7 @@ const styles = StyleSheet.create({
   },
   controlContainer: {
     position: 'absolute',
-    bottom: '18%',
+    bottom: '20%',
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
