@@ -1,8 +1,15 @@
 import React from 'react';
 import { SafeAreaView, FlatList } from 'react-native';
-import { Divider, Layout, TopNavigation, TopNavigationAction, Icon } from '@ui-kitten/components';
+import { Divider, Layout, TopNavigation, TopNavigationAction, Icon, Text } from '@ui-kitten/components';
 import FastImage from 'react-native-fast-image';
-const CloseIcon = (props) => <Icon {...props} name="arrow-back-outline" />;
+
+const BackIcon = (props) => <Icon {...props} name="arrow-back-outline" />;
+const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
+const CheckmarkIcon = (props) => <Icon {...props} name="checkmark-outline" />;
+const DownloadIcon = (props) => <Icon {...props} name="download-outline" />;
+const formatSeconds = (seconds) => {
+  return new Date(seconds ? seconds * 1000 : 0).toISOString().substr(14, 5);
+};
 
 const data = [
   { uri: 'https://dlastframe.com/wp-content/uploads/sakuga-japan.jpg', id: '1' },
@@ -29,11 +36,26 @@ const data = [
   { uri: 'https://dlastframe.com/wp-content/uploads/sakuga-japan.jpg', id: '2423' },
 ];
 
-export const FramesListScreen = ({ navigation }) => {
+export const FramesListScreen = ({ navigation, route }) => {
+  const startTime = route.params.startTime;
+  const endTime = route.params.endTime;
+  const [selectView, setSelectView] = React.useState(false);
+
+  const toggleSelectView = () => {
+    setSelectView(!selectView);
+  };
+
   const navigateBack = () => {
     navigation.goBack();
   };
-  const renderSearchAction = () => <TopNavigationAction icon={CloseIcon} onPress={navigateBack} />;
+  const renderBackAction = () => <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
+
+  const renderRightActions = () => (
+    <React.Fragment>
+      <TopNavigationAction icon={selectView ? CloseIcon : CheckmarkIcon} onPress={toggleSelectView} />
+      {selectView && <TopNavigationAction icon={DownloadIcon} onPress={toggleSelectView} />}
+    </React.Fragment>
+  );
   const renderItem = ({ item }) => (
     <FastImage style={{ width: '33%', height: 100, marginRight: 2, marginBottom: 2 }} key={item.id} source={item} />
   );
@@ -41,7 +63,13 @@ export const FramesListScreen = ({ navigation }) => {
   return (
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
-        <TopNavigation title="Frames list" alignment="center" accessoryLeft={renderSearchAction} />
+        <TopNavigation
+          title="Frames"
+          subtitle={`${formatSeconds(startTime)} ~ ${formatSeconds(endTime)}`}
+          alignment="center"
+          accessoryLeft={renderBackAction}
+          accessoryRight={renderRightActions}
+        />
         <Divider />
         <Layout
           style={{

@@ -90,7 +90,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   const renderLeftAction = () => <TopNavigationAction icon={CloseIcon} onPress={() => navigation.goBack()} />;
 
   const navigateFramesList = () => {
-    navigation.navigate('FramesList');
+    navigation.navigate('FramesList', { startTime, endTime });
   };
 
   const renderRightActions = () => (

@@ -1,7 +1,11 @@
 import React from 'react';
 import { Icon, Layout, Text, Button, OverflowMenu, MenuItem } from '@ui-kitten/components';
-const OptionsIcon = (props) => <Icon {...props} name="options-2-outline" />;
 import { useNavigation } from '@react-navigation/native';
+
+const OptionsIcon = (props) => <Icon {...props} name="options-2-outline" />;
+const GridIcon = (props) => <Icon {...props} name="grid-outline" />;
+const EditIcon = (props) => <Icon {...props} name="edit-outline" />;
+const ImageIcon = (props) => <Icon {...props} name="image-outline" />;
 
 export const DetailHeader = ({ title, style, url }) => {
   const [menuVisible, setMenuVisible] = React.useState(false);
@@ -37,9 +41,19 @@ export const DetailHeader = ({ title, style, url }) => {
       </Text>
       <Layout level="2" style={{ flexDirection: 'row', height: '100%', alignItems: 'flex-start' }}>
         <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>
-          <MenuItem key="1" onPress={navigateFramesEditor} title={<Text category="c1">Frames</Text>} />
-          <MenuItem key="2" onPress={navigateGifEditor} title={<Text category="c1">GIF</Text>} />
-          <MenuItem key="3" title={<Text category="c1">Edit</Text>} />
+          <MenuItem
+            key="1"
+            onPress={navigateFramesEditor}
+            title={<Text category="c1">Frames</Text>}
+            accessoryLeft={GridIcon}
+          />
+          <MenuItem
+            key="2"
+            onPress={navigateGifEditor}
+            title={<Text category="c1">GIF</Text>}
+            accessoryLeft={ImageIcon}
+          />
+          <MenuItem key="3" title={<Text category="c1">Edit</Text>} accessoryLeft={EditIcon} />
         </OverflowMenu>
       </Layout>
     </Layout>
