@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { SafeAreaView, Image, StyleSheet, Keyboard } from 'react-native';
 import { Divider, Icon, Layout, Input, Button, Text } from '@ui-kitten/components';
 import FastImage from 'react-native-fast-image';
@@ -8,6 +8,7 @@ import { DetailFooter } from '../components/detailFooter';
 import { CommentList } from '../components/commentList';
 import data from '../comment-data.json';
 
+import VideoPlayer from 'react-native-video-controls';
 import converProxyUrl, { convertAsync } from 'react-native-video-cache';
 import RNFS from 'react-native-fs';
 
@@ -27,37 +28,15 @@ const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const SendIcon = (props) => <Icon {...props} name="corner-down-right-outline" />;
 
 export const DetailsScreen = ({ navigation, route }) => {
+  const video = useRef();
+  const commentList = useRef();
+
   const item = route.params.item;
   const title = route.params.title;
   const tags = route.params.tags;
 
-  const [inputIsFocused, setInputIsFocused] = React.useState(false);
-  const [text, setText] = React.useState();
-  const commentList = React.useRef();
-
-  React.useEffect(() => {
-    // const checkDir = async () => {
-    //   const video_dir = `${RNFS.CachesDirectoryPath}/test-video.mp4`;
-    //   const exist = await RNFS.exists(video_dir);
-    //   if (exist) {
-    //     const file = await RNFS.readFile(video_dir);
-    //     console.log('FILE: ', file);
-    //   }
-    // };
-    // convertAsync(item.file_url).then((url) => {
-    //   RNFS.downloadFile({
-    //     fromUrl: url,
-    //     toFile: `${RNFS.CachesDirectoryPath}/test-video.mp4`,
-    //   }).promise.then((r) => {
-    //     console.log('DONE: ', r);
-    //   });
-    // });
-    // checkDir();
-  }, []);
-
-  const navigateBack = () => {
-    navigation.goBack();
-  };
+  const [inputIsFocused, setInputIsFocused] = useState(false);
+  const [text, setText] = useState();
 
   const cancelInput = () => {
     setText();
@@ -99,11 +78,37 @@ export const DetailsScreen = ({ navigation, route }) => {
     setText(text);
   };
 
+  const onEnterFullscreen = () => {
+    video.current.player.ref.presentFullscreenPlayer();
+  };
+
+  const onFullscreenPlayerWillDismiss = () => {
+    video.current.methods.togglePlayPause();
+    video.current.methods.toggleFullscreen();
+  };
+
   return (
     <Layout level="2" style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
-        <FastImage source={{ uri: item.preview_url }} style={styles.image} resizeMode="contain" />
-
+        {/* <FastImage source={{ uri: item.preview_url }} style={styles.image} resizeMode="contain" /> */}
+        <Layout style={styles.image}>
+          <VideoPlayer
+            ref={video}
+            source={{ uri: converProxyUrl(item.file_url) }}
+            navigator={navigation}
+            controlAnimationTiming={250}
+            controlTimeout={3000}
+            scrubbing={1}
+            repeat={true}
+            muted={true}
+            disableVolume={true}
+            toggleResizeModeOnFullscreen={false}
+            controls={false}
+            seekColor="#C3070B"
+            onEnterFullscreen={onEnterFullscreen}
+            onFullscreenPlayerWillDismiss={onFullscreenPlayerWillDismiss}
+          />
+        </Layout>
         <CommentList
           commentList={commentList}
           data={data}
@@ -168,5 +173,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingLeft: 8,
   },
-  image: { width: '100%', height: 210, backgroundColor: '#000' },
+  image: { width: '100%', height: 210 },
 });
