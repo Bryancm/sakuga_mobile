@@ -10,7 +10,6 @@ import {
   Icon,
 } from '@ui-kitten/components';
 import { PostVerticalList } from '../components/postVerticalList';
-import data from '../test-data-v2.json';
 
 const LayoutIcon = (props) => <Icon {...props} name="layout-outline" />;
 const SearchIcon = (props) => <Icon {...props} name="search-outline" />;
@@ -58,7 +57,7 @@ export const NewScreen = ({ navigation }) => {
           accessoryRight={renderSearchIcon}
         />
         <Divider />
-        <PostVerticalList data={data.posts} tags={data.tags} layoutType={layoutType} navigateDetail={navigateDetail} />
+        <PostVerticalList layoutType={layoutType} navigateDetail={navigateDetail} />
         <Divider />
       </SafeAreaView>
     </Layout>

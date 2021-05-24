@@ -23,7 +23,7 @@ export const Card = ({ item, tagsWithType, navigateDetail }) => {
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [menuVisible2, setMenuVisible2] = React.useState(false);
   const [tags, setTags] = useState(item.tags.split(' ').map((tag) => ({ tag })));
-  const [title, setTitle] = useState(capitalize(tags[2].tag).replaceAll('_', ' '));
+  const [title, setTitle] = useState(capitalize(tags[0].tag).replaceAll('_', ' '));
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);

@@ -1,7 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { SafeAreaView, Image, StyleSheet, Keyboard } from 'react-native';
 import { Divider, Icon, Layout, Input, Button, Text } from '@ui-kitten/components';
-import FastImage from 'react-native-fast-image';
 import { DetailHeader } from '../components/detailHeader';
 import { TagList } from '../components/tagList';
 import { DetailFooter } from '../components/detailFooter';
@@ -9,8 +8,7 @@ import { CommentList } from '../components/commentList';
 import data from '../comment-data.json';
 
 import VideoPlayer from 'react-native-video-controls';
-import converProxyUrl, { convertAsync } from 'react-native-video-cache';
-import RNFS from 'react-native-fs';
+import converProxyUrl from 'react-native-video-cache';
 
 const SortIcon = () => (
   <Icon
