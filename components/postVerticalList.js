@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FlatList, ActivityIndicator, RefreshControl, StyleSheet } from 'react-native';
 import { CardSmall } from './cardSmall';
 import { Card } from '../components/card';
@@ -8,26 +8,33 @@ import { Layout, Text } from '@ui-kitten/components';
 
 const Loader = (props) => <Icon {...props} name="loader-outline" />;
 
-export const PostVerticalList = ({ tags = '', layoutType, deleteAlert, navigateDetail }) => {
-  const [page, setPage] = React.useState(1);
-  const { isLoading, data, isFetching, refetch, fetchNextPage } = useInfiniteQuery(
-    'posts',
-    ({ pageParam }) => getPosts({ tags, include_tags: 1, pageParam }),
-    {
-      keepPreviousData: true,
-      staleTime: 3600000,
-      notifyOnChangePropsExclusions: ['isStale'],
-      select: (data) => {
-        var posts = [];
-        var tags = {};
-        for (const d of data.pages) {
-          posts = [...posts, ...d.posts];
-          tags = { ...tags, ...d.tags };
-        }
-        return { posts, tags };
-      },
-    },
-  );
+export const PostVerticalList = ({ search = '', layoutType, deleteAlert, navigateDetail, fromSearch = false }) => {
+  const [page, setPage] = useState(1);
+  const [isLoading, setLoading] = useState(true);
+  const [data, setData] = useState({ posts: [], tags: {} });
+  const [isFetching, setFetching] = useState(false);
+  const [message, setMessage] = useState('Nobody here but us chickens!');
+
+  const fetchPost = async (page, isFirst) => {
+    if (!isFirst) setFetching(true);
+    const response = await getPosts({ search, page, include_tags: 1 });
+    const filteredPosts = response.posts.filter((p) => !data.posts.some((currentPost) => currentPost.id === p.id));
+    let newData = { posts: [...data.posts, ...filteredPosts], tags: { ...data.tags, ...response.tags } };
+    if (page === 1) newData = response;
+    setData(newData);
+    setLoading(false);
+    setFetching(false);
+  };
+
+  useEffect(() => {
+    if (!fromSearch) {
+      fetchPost(page, true);
+    } else {
+      setMessage('');
+      setLoading(false);
+    }
+  }, []);
+
   const renderItem = ({ item }) =>
     layoutType === 'small' ? (
       <CardSmall
@@ -48,34 +55,39 @@ export const PostVerticalList = ({ tags = '', layoutType, deleteAlert, navigateD
     );
 
   const onEndReached = async () => {
-    await fetchNextPage({ pageParam: page + 1 });
-    setPage(page + 1);
+    if (!isLoading && !isFetching) {
+      fetchPost(page + 1);
+      setPage(page + 1);
+    }
   };
 
-  // console.log('QUERY_LOADING: ', isLoading);
-  // console.log('QUERY_IS_ERROR: ', isError);
-  // console.log('QUERY_ERROR: ', error);
-  // if (data) console.log('QUERY_DATA: ', data);
-  // console.log('QUERY_FETCHING: ', isFetching);
-  // console.log('QUERY_PREV_DATA', isPreviousData);
+  const refetch = () => {
+    if (!isLoading && !isFetching) {
+      fetchPost(1);
+      setPage(1);
+    }
+  };
+
   if (isLoading)
     return (
       <Layout style={styles.center}>
         <ActivityIndicator />
       </Layout>
     );
+
   return (
     <FlatList
       data={data.posts}
       renderItem={renderItem}
-      // windowSize={10}
-      // initialNumToRender={10}
-      // maxToRenderPerBatch={10}
+      contentContainerStyle={{
+        paddingBottom: 10,
+      }}
       refreshControl={<RefreshControl onRefresh={refetch} refreshing={isFetching} />}
-      // onEndReachedThreshold={0.5}
+      onEndReachedThreshold={4}
       onEndReached={onEndReached}
       ListFooterComponent={
-        isFetching && (
+        isFetching &&
+        !isLoading && (
           <Layout style={styles.center}>
             <ActivityIndicator />
           </Layout>
@@ -84,7 +96,7 @@ export const PostVerticalList = ({ tags = '', layoutType, deleteAlert, navigateD
       ListEmptyComponent={
         !isFetching && (
           <Layout style={styles.center}>
-            <Text>Nobody here but us chickens!</Text>
+            <Text>{message}</Text>
           </Layout>
         )
       }
@@ -93,5 +105,5 @@ export const PostVerticalList = ({ tags = '', layoutType, deleteAlert, navigateD
 };
 
 const styles = StyleSheet.create({
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', height: 140 },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 16 },
 });

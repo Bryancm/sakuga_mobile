@@ -4,6 +4,7 @@ import { Divider, Layout, Text, Icon, Button, OverflowMenu, MenuItem } from '@ui
 import { getRelativeTime } from '../util/date';
 import { tagStyles } from '../styles';
 import FastImage from 'react-native-fast-image';
+import { TagList } from './tagList';
 
 const StarIcon = (props) => <Icon {...props} name="star-outline" />;
 const StarIconGood = (props) => <Icon {...props} name="star-outline" fill="#207561" />;
@@ -98,24 +99,7 @@ export const Card = ({ item, tagsWithType, navigateDetail }) => {
         {title}
       </Text>
       <FastImage style={styles.image} source={{ uri: item.preview_url }} resizeMode="contain" />
-      <Layout style={styles.tagContainer}>
-        {tags.length > 0 &&
-          tags.map((t, i) =>
-            t.style ? (
-              <Layout key={i} style={{ ...t.style, marginRight: 4, marginBottom: 8 }}>
-                <Text category="c1" style={{ color: t.style.color, maxWidth: 114 }} numberOfLines={1}>
-                  {t.tag ? t.tag : t}
-                </Text>
-              </Layout>
-            ) : (
-              <Layout key={i} style={{ ...tagStyles.basic_outline, marginRight: 4, marginBottom: 8 }}>
-                <Text category="c1" style={{ maxWidth: 108 }} numberOfLines={1}>
-                  {t.tag ? t.tag : t}
-                </Text>
-              </Layout>
-            ),
-          )}
-      </Layout>
+      <TagList tags={tags} style={styles.tagContainer} level="1" />
       <Layout style={styles.buttonContainer}>
         <Text appearance="hint" category="c1" style={{ marginLeft: 6, lineHeight: 16 }}>
           {`${getRelativeTime(item.created_at * 1000)}\nPosted by ${item.author}`}

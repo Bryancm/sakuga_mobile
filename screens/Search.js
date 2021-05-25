@@ -223,7 +223,7 @@ export const SearchScreen = ({ navigation }) => {
                   <SortActions />
                 </Layout>
               </Layout>
-              <PostVerticalList data={postData.posts} tags={postData.tags} layoutType={layoutType} />
+              <PostVerticalList data={postData.posts} tags={postData.tags} layoutType={layoutType} fromSearch={true} />
             </Layout>
           </Tab>
 
