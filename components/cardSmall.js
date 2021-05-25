@@ -1,57 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
-import { Divider, Layout, Text, Icon, Button, OverflowMenu, MenuItem } from '@ui-kitten/components';
+import { Divider, Layout, Text } from '@ui-kitten/components';
 import { getRelativeTime } from '../util/date';
 import FastImage from 'react-native-fast-image';
 import { PostMenu } from './postMenu';
 
-const StarIcon = (props) => <Icon {...props} name="star-outline" />;
-const StarIconGood = (props) => <Icon {...props} name="star-outline" fill="#207561" />;
-const StarIconGreat = (props) => <Icon {...props} name="star-outline" fill="#649d66" />;
-const StarIconFav = (props) => <Icon {...props} name="star-outline" fill="#eebb4d" />;
-const DownloadIcon = (props) => <Icon {...props} name="download-outline" />;
-const MoreIcon = (props) => <Icon {...props} name="more-vertical-outline" />;
-const TrashIcon = (props) => <Icon {...props} name="trash-outline" fill="#E3170A" />;
-const LinkIcon = (props) => <Icon {...props} name="link-2-outline" />;
-const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
-const ArchiveIcon = (props) => <Icon {...props} name="archive-outline" />;
-
 export const CardSmall = ({ item, deleteAlert, navigateDetail }) => {
-  const [menuVisible, setMenuVisible] = useState(false);
-  const [menuVisible2, setMenuVisible2] = useState(false);
   const tags = item.tags;
   const title = item.title;
-
-  const toggleMenu = () => {
-    setMenuVisible(!menuVisible);
-  };
-
-  const toggleMenu2 = () => {
-    setMenuVisible2(!menuVisible2);
-  };
 
   const goToDetail = () => {
     navigateDetail(item, title, tags);
   };
-
-  const renderMenuAction = () => (
-    <Button
-      style={{ paddingLeft: 0 }}
-      status="basic"
-      appearance="ghost"
-      size="small"
-      accessoryLeft={MoreIcon}
-      onPress={toggleMenu}
-    />
-  );
-
-  const renderMenuAction2 = () => (
-    <Button appearance="ghost" size="small" accessoryLeft={StarIcon} onPress={toggleMenu2}>
-      <Text status="primary" category="c1">
-        {item.score}
-      </Text>
-    </Button>
-  );
 
   return (
     <TouchableOpacity
