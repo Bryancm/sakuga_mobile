@@ -30,7 +30,12 @@ export const AutoComplete = ({ data, onPress }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: '25%',
+    width: '100%',
+    maxHeight: '50%',
+    position: 'absolute',
+    top: 90,
+    left: 0,
+    zIndex: 10,
   },
-  text: { padding: 6 },
+  text: { paddingHorizontal: 8, paddingVertical: 6 },
 });

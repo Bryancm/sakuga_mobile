@@ -12,10 +12,9 @@ import {
   MenuItem,
   RangeDatepicker,
 } from '@ui-kitten/components';
+import { getTags } from '../api/tag';
 
 import tagData from '../tag_data.json';
-import postData from '../test-data-v2.json';
-import testData from '../test-tag-copy-data.json';
 
 import { AutoComplete } from '../components/autoComplete';
 import { PostVerticalList } from '../components/postVerticalList';
@@ -32,10 +31,12 @@ export const SearchScreen = ({ navigation }) => {
   const rangePicker = React.useRef();
   const [range, setRange] = React.useState({});
   const [value, setValue] = React.useState(null);
+  const [search, setSearch] = React.useState('');
   const [data, setData] = React.useState([]);
+  const [focus, setFocus] = React.useState(true);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
 
-  const [layoutType, setLayoutType] = React.useState('large');
+  const [layoutType, setLayoutType] = React.useState('small');
   const [sortType, setSortType] = React.useState('date');
   const [tagType, setTagType] = React.useState('all');
   const [tagSortType, setTagSortType] = React.useState('date');
@@ -52,10 +53,14 @@ export const SearchScreen = ({ navigation }) => {
 
   const onChangeText = (query) => {
     setValue(query);
-    const splittedQuery = query.split(' ');
-    const lastItem = splittedQuery[splittedQuery.length - 1];
-    const d = testData.filter((t) => t.name.toLowerCase().includes(lastItem.toLowerCase()));
-    setData(query ? d : []);
+    getTags({ name: query.toLowerCase(), order: 'count' })
+      .then((d) => {
+        setData(query ? d : []);
+      })
+      .catch((e) => {
+        console.log('CHANGE_SEARCH_TEXT_ERROR: ', e);
+        setData([]);
+      });
   };
 
   const onAutoCompletePress = (item) => {
@@ -63,6 +68,12 @@ export const SearchScreen = ({ navigation }) => {
     const index = splittedValue.length - 1;
     splittedValue[index] = item + ' ';
     setValue(splittedValue.join(' '));
+  };
+
+  const submitSearch = () => {
+    setFocus(false);
+    setSearch(value.toLowerCase());
+    setData([]);
   };
 
   const toggleMenu = () => {
@@ -181,6 +192,10 @@ export const SearchScreen = ({ navigation }) => {
       }, 500);
   };
 
+  const onFocus = () => {
+    setFocus(true);
+  };
+
   return (
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -192,6 +207,14 @@ export const SearchScreen = ({ navigation }) => {
             placeholder="Search"
             value={value}
             onChangeText={onChangeText}
+            onSubmitEditing={submitSearch}
+            autoCorrect={false}
+            autoFocus={true}
+            clearButtonMode="always"
+            enablesReturnKeyAutomatically={true}
+            keyboardAppearance="dark"
+            returnKeyType="search"
+            onFocus={onFocus}
           />
           <Button size="tiny" appearance="ghost" onPress={navigateBack} style={styles.cancelButton}>
             <Text status="info">Cancel</Text>
@@ -209,9 +232,14 @@ export const SearchScreen = ({ navigation }) => {
             <Layout style={styles.tabContainer}>
               <Layout style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 <RangeDatepicker
-                  placeholder="Date range"
+                  placeholder="Select a date range"
                   ref={rangePicker}
-                  style={{ marginTop: 5, marginLeft: 5 }}
+                  style={{
+                    marginTop: 5,
+                    marginLeft: 5,
+                    justifyContent: 'flex-start',
+                    alignItems: 'flex-start',
+                  }}
                   size="small"
                   range={range}
                   max={new Date()}
@@ -223,7 +251,11 @@ export const SearchScreen = ({ navigation }) => {
                   <SortActions />
                 </Layout>
               </Layout>
-              <PostVerticalList data={postData.posts} tags={postData.tags} layoutType={layoutType} fromSearch={true} />
+              {search && !focus ? (
+                <PostVerticalList layoutType={layoutType} fromSearch={true} search={search} />
+              ) : (
+                <Layout />
+              )}
             </Layout>
           </Tab>
 

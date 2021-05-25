@@ -11,11 +11,12 @@ const capitalize = (s) => {
   return s && s[0].toUpperCase() + s.slice(1);
 };
 
-export const PostVerticalList = ({ search = '', layoutType, deleteAlert, fromSearch = false }) => {
+export const PostVerticalList = ({ search = '', layoutType, deleteAlert, fromSearch }) => {
   const [page, setPage] = useState(1);
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [isFetching, setFetching] = useState(false);
+  const [isRefetching, setRefetching] = useState(false);
   const [message, setMessage] = useState('Nobody here but us chickens!');
   const navigation = useNavigation();
 
@@ -56,7 +57,7 @@ export const PostVerticalList = ({ search = '', layoutType, deleteAlert, fromSea
     return post;
   };
 
-  const fetchPost = async (page, isFirst) => {
+  const fetchPost = async (page, isFirst, search) => {
     try {
       if (!isFirst) setFetching(true);
       const response = await getPosts({ search, page, include_tags: 1 });
@@ -64,32 +65,41 @@ export const PostVerticalList = ({ search = '', layoutType, deleteAlert, fromSea
       const filteredPosts = postsWithTitle.filter((p) => !data.some((currentPost) => currentPost.id === p.id));
       let newData = [...data, ...filteredPosts];
       if (page === 1) newData = postsWithTitle;
+      if (!message || message === 'Error, please try again later :(') setMessage('Nobody here but us chickens!');
       setData(newData);
-      setLoading(false);
-      setFetching(false);
+      clearLoading();
     } catch (error) {
       console.log('FETCH_POST_ERROR: ', error);
       setData([]);
-      setMessage('Sorry an error ocurred, please try again later :(');
-      setLoading(false);
-      setFetching(false);
+      setMessage('Error, please try again later :(');
+      clearLoading();
     }
   };
 
+  const clearLoading = () => {
+    setLoading(false);
+    setFetching(false);
+    setRefetching(false);
+  };
+
   useEffect(() => {
-    if (!fromSearch) {
-      fetchPost(page, true);
-    } else {
-      setMessage('');
-      setLoading(false);
-      setFetching(false);
-    }
-  }, []);
+    if (search) setLoading(true);
+    if (search) fetchPost(1, true, search);
+  }, [search]);
 
   useEffect(() => {
     setLoading(true);
     refetch();
   }, [layoutType]);
+
+  useEffect(() => {
+    if (fromSearch) {
+      clearLoading();
+      setMessage('');
+    } else {
+      fetchPost(page, true);
+    }
+  }, []);
 
   const renderItem = useCallback(
     ({ item }) =>
@@ -103,7 +113,7 @@ export const PostVerticalList = ({ search = '', layoutType, deleteAlert, fromSea
 
   const onEndReached = useCallback(async () => {
     if (!isLoading && !isFetching) {
-      fetchPost(page + 1);
+      fetchPost(page + 1, false, search);
       setPage(page + 1);
     }
   }, [isLoading, isFetching, page]);
@@ -120,11 +130,12 @@ export const PostVerticalList = ({ search = '', layoutType, deleteAlert, fromSea
   const keyExtractor = useCallback((item) => item.id.toString(), []);
 
   const refetch = useCallback(() => {
-    if (!isLoading && !isFetching) {
-      fetchPost(1);
+    if (!isLoading && !isFetching && !isRefetching) {
+      setRefetching(true);
+      fetchPost(1, true, search);
       setPage(1);
     }
-  }, [isLoading, isFetching]);
+  }, [isLoading, isFetching, isRefetching]);
 
   if (isLoading)
     return (
@@ -152,8 +163,10 @@ export const PostVerticalList = ({ search = '', layoutType, deleteAlert, fromSea
       getItemLayout={getItemLayout}
       onEndReached={onEndReached}
       keyExtractor={keyExtractor}
-      refreshControl={<RefreshControl onRefresh={refetch} refreshing={isFetching} />}
-      ListFooterComponent={<Layout style={styles.center}>{isFetching && <ActivityIndicator />}</Layout>}
+      refreshControl={<RefreshControl onRefresh={refetch} refreshing={isRefetching} />}
+      ListFooterComponent={
+        <Layout style={styles.center}>{isFetching && !isRefetching && <ActivityIndicator />}</Layout>
+      }
       ListEmptyComponent={
         !isFetching && (
           <Layout style={{ ...styles.center, height: '100%' }}>
