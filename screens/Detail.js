@@ -114,12 +114,7 @@ export const DetailsScreen = ({ navigation, route }) => {
             <Layout level="2">
               <DetailHeader title={title} style={styles.titleContainer} url={converProxyUrl(item.file_url)} />
               <TagList tags={tags} style={styles.tagContainer} />
-              <DetailFooter
-                date={item.created_at}
-                author={item.author}
-                score={item.score}
-                style={styles.titleContainer}
-              />
+              <DetailFooter item={item} style={styles.titleContainer} />
               <Divider style={{ marginBottom: 12 }} />
               <Layout level="3" style={{ margin: 8, borderRadius: 2, padding: 0 }}>
                 <Input

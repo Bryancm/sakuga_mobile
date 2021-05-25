@@ -1,29 +1,79 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FlatList, ActivityIndicator, RefreshControl, StyleSheet } from 'react-native';
 import { CardSmall } from './cardSmall';
 import { Card } from '../components/card';
 import { getPosts } from '../api/post';
-import { useQuery, useInfiniteQuery } from 'react-query';
 import { Layout, Text } from '@ui-kitten/components';
+import { tagStyles } from '../styles';
+import { useNavigation } from '@react-navigation/native';
 
-const Loader = (props) => <Icon {...props} name="loader-outline" />;
+const capitalize = (s) => {
+  return s && s[0].toUpperCase() + s.slice(1);
+};
 
-export const PostVerticalList = ({ search = '', layoutType, deleteAlert, navigateDetail, fromSearch = false }) => {
+export const PostVerticalList = ({ search = '', layoutType, deleteAlert, fromSearch = false }) => {
   const [page, setPage] = useState(1);
   const [isLoading, setLoading] = useState(true);
-  const [data, setData] = useState({ posts: [], tags: {} });
+  const [data, setData] = useState([]);
   const [isFetching, setFetching] = useState(false);
   const [message, setMessage] = useState('Nobody here but us chickens!');
+  const navigation = useNavigation();
+
+  const navigateDetail = (item, title, tags) => {
+    navigation.navigate('Detail', { item, title, tags });
+  };
+
+  const postWithDetails = (tagsWithType, post) => {
+    var artist = '';
+    var copyright = '';
+    var tags = [];
+    for (const tag in tagsWithType) {
+      if (Object.hasOwnProperty.call(tagsWithType, tag)) {
+        const type = tagsWithType[tag];
+        if (post.tags.includes(tag)) {
+          var style = tagStyles.artist_outline;
+          if (type === 'artist') artist = artist + ' ' + capitalize(tag);
+          if (type === 'copyright') {
+            style = tagStyles.copyright_outline;
+            copyright = tag;
+          }
+          if (type === 'terminology') style = tagStyles.terminology_outline;
+          if (type === 'meta') style = tagStyles.meta_outline;
+          if (type === 'general') style = tagStyles.general_outline;
+          tags.push({ type, tag, style });
+        }
+      }
+    }
+    const name =
+      artist.trim() && artist.trim() !== 'Artist_unknown'
+        ? artist.replace('Artist_unknown', '').trim()
+        : copyright.trim();
+    const title = capitalize(name).replaceAll('_', ' ');
+
+    tags.sort((a, b) => a.type > b.type);
+    post.tags = tags;
+    post.title = title;
+    return post;
+  };
 
   const fetchPost = async (page, isFirst) => {
-    if (!isFirst) setFetching(true);
-    const response = await getPosts({ search, page, include_tags: 1 });
-    const filteredPosts = response.posts.filter((p) => !data.posts.some((currentPost) => currentPost.id === p.id));
-    let newData = { posts: [...data.posts, ...filteredPosts], tags: { ...data.tags, ...response.tags } };
-    if (page === 1) newData = response;
-    setData(newData);
-    setLoading(false);
-    setFetching(false);
+    try {
+      if (!isFirst) setFetching(true);
+      const response = await getPosts({ search, page, include_tags: 1 });
+      const postsWithTitle = response.posts.map((p) => postWithDetails(response.tags, p));
+      const filteredPosts = postsWithTitle.filter((p) => !data.some((currentPost) => currentPost.id === p.id));
+      let newData = [...data, ...filteredPosts];
+      if (page === 1) newData = postsWithTitle;
+      setData(newData);
+      setLoading(false);
+      setFetching(false);
+    } catch (error) {
+      console.log('FETCH_POST_ERROR: ', error);
+      setData([]);
+      setMessage('Sorry an error ocurred, please try again later :(');
+      setLoading(false);
+      setFetching(false);
+    }
   };
 
   useEffect(() => {
@@ -32,70 +82,81 @@ export const PostVerticalList = ({ search = '', layoutType, deleteAlert, navigat
     } else {
       setMessage('');
       setLoading(false);
+      setFetching(false);
     }
   }, []);
 
-  const renderItem = ({ item }) =>
-    layoutType === 'small' ? (
-      <CardSmall
-        key={item.id.toString()}
-        item={item}
-        tagsWithType={data.tags}
-        deleteAlert={deleteAlert}
-        navigateDetail={navigateDetail}
-      />
-    ) : (
-      <Card
-        key={item.id.toString()}
-        item={item}
-        tagsWithType={data.tags}
-        deleteAlert={deleteAlert}
-        navigateDetail={navigateDetail}
-      />
-    );
+  useEffect(() => {
+    setLoading(true);
+    refetch();
+  }, [layoutType]);
 
-  const onEndReached = async () => {
+  const renderItem = useCallback(
+    ({ item }) =>
+      layoutType === 'small' ? (
+        <CardSmall item={item} deleteAlert={deleteAlert} navigateDetail={navigateDetail} />
+      ) : (
+        <Card item={item} deleteAlert={deleteAlert} navigateDetail={navigateDetail} />
+      ),
+    [layoutType],
+  );
+
+  const onEndReached = useCallback(async () => {
     if (!isLoading && !isFetching) {
       fetchPost(page + 1);
       setPage(page + 1);
     }
-  };
+  }, [isLoading, isFetching, page]);
 
-  const refetch = () => {
+  const getItemLayout = useCallback(
+    (data, index) => ({
+      length: layoutType === 'small' ? 132 : 390,
+      offset: layoutType === 'small' ? 132 * index : 390 * index,
+      index,
+    }),
+    [layoutType],
+  );
+
+  const keyExtractor = useCallback((item) => item.id.toString(), []);
+
+  const refetch = useCallback(() => {
     if (!isLoading && !isFetching) {
       fetchPost(1);
       setPage(1);
     }
-  };
+  }, [isLoading, isFetching]);
 
   if (isLoading)
     return (
-      <Layout style={styles.center}>
+      <Layout style={{ ...styles.center, height: '100%' }}>
         <ActivityIndicator />
       </Layout>
     );
 
   return (
     <FlatList
-      data={data.posts}
+      data={data}
       renderItem={renderItem}
+      initialNumToRender={8}
+      maxToRenderPerBatch={5}
+      windowSize={10}
+      updateCellsBatchingPeriod={150}
+      onEndReachedThreshold={1}
+      viewabilityConfig={{
+        minimumViewTime: 200,
+        viewAreaCoveragePercentThreshold: 100,
+      }}
       contentContainerStyle={{
         paddingBottom: 10,
       }}
-      refreshControl={<RefreshControl onRefresh={refetch} refreshing={isFetching} />}
-      onEndReachedThreshold={4}
+      getItemLayout={getItemLayout}
       onEndReached={onEndReached}
-      ListFooterComponent={
-        isFetching &&
-        !isLoading && (
-          <Layout style={styles.center}>
-            <ActivityIndicator />
-          </Layout>
-        )
-      }
+      keyExtractor={keyExtractor}
+      refreshControl={<RefreshControl onRefresh={refetch} refreshing={isFetching} />}
+      ListFooterComponent={<Layout style={styles.center}>{isFetching && <ActivityIndicator />}</Layout>}
       ListEmptyComponent={
         !isFetching && (
-          <Layout style={styles.center}>
+          <Layout style={{ ...styles.center, height: '100%' }}>
             <Text>{message}</Text>
           </Layout>
         )
@@ -105,5 +166,5 @@ export const PostVerticalList = ({ search = '', layoutType, deleteAlert, navigat
 };
 
 const styles = StyleSheet.create({
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 16 },
+  center: { alignItems: 'center', justifyContent: 'center', height: 132, width: '100%' },
 });

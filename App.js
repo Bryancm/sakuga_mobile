@@ -18,7 +18,6 @@ import * as eva from '@eva-design/eva';
 import { default as theme } from './custom-theme.json';
 import { default as mapping } from './mapping.json';
 import { AppNavigator } from './navigation/Navigator';
-import { QueryClient, QueryClientProvider } from 'react-query';
 
 /**
  * Use any valid `name` property from eva icons (e.g `github`, or `heart-outline`)
@@ -26,25 +25,14 @@ import { QueryClient, QueryClientProvider } from 'react-query';
  */
 // const HeartIcon = (props) => <Icon {...props} name="heart" />;
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
-
 export default () => (
   <>
     <IconRegistry icons={EvaIconsPack} />
-    <QueryClientProvider client={queryClient}>
-      <ApplicationProvider {...eva} theme={{ ...eva.dark, ...theme }} customMapping={mapping}>
-        <Layout style={styles.container}>
-          <AppNavigator />
-        </Layout>
-      </ApplicationProvider>
-    </QueryClientProvider>
+    <ApplicationProvider {...eva} theme={{ ...eva.dark, ...theme }} customMapping={mapping}>
+      <Layout style={styles.container}>
+        <AppNavigator />
+      </Layout>
+    </ApplicationProvider>
   </>
 );
 

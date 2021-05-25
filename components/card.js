@@ -1,88 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { Divider, Layout, Text, Icon, Button, OverflowMenu, MenuItem } from '@ui-kitten/components';
+import React from 'react';
+import { StyleSheet, TouchableOpacity } from 'react-native';
+import { Divider, Layout, Text } from '@ui-kitten/components';
 import { getRelativeTime } from '../util/date';
-import { tagStyles } from '../styles';
 import FastImage from 'react-native-fast-image';
 import { TagList } from './tagList';
+import { PostMenu } from './postMenu';
 
-const StarIcon = (props) => <Icon {...props} name="star-outline" />;
-const StarIconGood = (props) => <Icon {...props} name="star-outline" fill="#207561" />;
-const StarIconGreat = (props) => <Icon {...props} name="star-outline" fill="#649d66" />;
-const StarIconFav = (props) => <Icon {...props} name="star-outline" fill="#eebb4d" />;
-const DownloadIcon = (props) => <Icon {...props} name="download-outline" />;
-const MoreIcon = (props) => <Icon {...props} name="more-vertical-outline" />;
-const LinkIcon = (props) => <Icon {...props} name="link-2-outline" />;
-const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
-const ArchiveIcon = (props) => <Icon {...props} name="archive-outline" />;
-
-const capitalize = (s) => {
-  return s && s[0].toUpperCase() + s.slice(1);
-};
-
-export const Card = ({ item, tagsWithType, navigateDetail }) => {
-  const [menuVisible, setMenuVisible] = React.useState(false);
-  const [menuVisible2, setMenuVisible2] = React.useState(false);
-  const [tags, setTags] = useState(item.tags.split(' ').map((tag) => ({ tag })));
-  const [title, setTitle] = useState(capitalize(tags[0].tag).replaceAll('_', ' '));
-
-  const toggleMenu = () => {
-    setMenuVisible(!menuVisible);
-  };
-
-  const toggleMenu2 = () => {
-    setMenuVisible2(!menuVisible2);
-  };
-
-  const renderMenuAction = () => (
-    <Button
-      style={{ paddingLeft: 0, paddingRight: 0 }}
-      status="basic"
-      appearance="ghost"
-      size="small"
-      accessoryLeft={MoreIcon}
-      onPress={toggleMenu}
-    />
-  );
-
-  const renderMenuAction2 = () => (
-    <Button appearance="ghost" size="small" accessoryLeft={StarIcon} onPress={toggleMenu2}>
-      <Text status="primary" category="c1">
-        {item.score}
-      </Text>
-    </Button>
-  );
-
-  useEffect(() => {
-    const setPostDetails = () => {
-      var artist = '';
-      var copyright = '';
-      var tags = [];
-      for (const tag in tagsWithType) {
-        if (Object.hasOwnProperty.call(tagsWithType, tag)) {
-          const type = tagsWithType[tag];
-          if (item.tags.includes(tag)) {
-            var style = tagStyles.artist_outline;
-            if (type === 'artist') artist = artist + ' ' + capitalize(tag);
-            if (type === 'copyright') {
-              style = tagStyles.copyright_outline;
-              copyright = tag;
-            }
-            if (type === 'terminology') style = tagStyles.terminology_outline;
-            if (type === 'meta') style = tagStyles.meta_outline;
-            if (type === 'general') style = tagStyles.general_outline;
-            tags.push({ type, tag, style });
-          }
-        }
-      }
-      const name = artist.trim() && artist.trim() !== 'Artist_unknown' ? artist.trim() : copyright.trim();
-      const t = capitalize(name).replaceAll('_', ' ');
-      setTitle(t);
-      setTags(tags.sort((a, b) => a.type > b.type));
-    };
-
-    setPostDetails();
-  }, []);
+export const Card = ({ item, navigateDetail }) => {
+  const tags = item.tags;
+  const title = item.title;
 
   const goToDetail = () => {
     navigateDetail(item, title, tags);
@@ -95,7 +21,7 @@ export const Card = ({ item, tagsWithType, navigateDetail }) => {
       activeOpacity={0.7}
       style={styles.container}
       onPress={goToDetail}>
-      <Text style={{ paddingHorizontal: 5, paddingVertical: 15 }} category="h6" numberOfLines={1}>
+      <Text style={{ paddingHorizontal: 8, paddingVertical: 15 }} category="h6" numberOfLines={1}>
         {title}
       </Text>
       <FastImage style={styles.image} source={{ uri: item.preview_url }} resizeMode="contain" />
@@ -104,20 +30,7 @@ export const Card = ({ item, tagsWithType, navigateDetail }) => {
         <Text appearance="hint" category="c1" style={{ marginLeft: 6, lineHeight: 16 }}>
           {`${getRelativeTime(item.created_at * 1000)}\nPosted by ${item.author}`}
         </Text>
-        <Layout style={{ flexDirection: 'row' }}>
-          <OverflowMenu anchor={renderMenuAction2} visible={menuVisible2} onBackdropPress={toggleMenu2}>
-            <MenuItem key="1" accessoryLeft={StarIconGood} title={<Text category="c1">Good</Text>} />
-            <MenuItem key="2" accessoryLeft={StarIconGreat} title={<Text category="c1">Great</Text>} />
-            <MenuItem key="3" accessoryLeft={StarIconFav} title={<Text category="c1">Favorite</Text>} />
-            <MenuItem key="4" accessoryLeft={CloseIcon} title={<Text category="c1">Clear</Text>} />
-          </OverflowMenu>
-
-          <OverflowMenu anchor={renderMenuAction} visible={menuVisible} onBackdropPress={toggleMenu}>
-            <MenuItem key="5" accessoryLeft={LinkIcon} title={<Text category="c1">Share post</Text>} />
-            <MenuItem key="6" accessoryLeft={DownloadIcon} title={<Text category="c1">Download</Text>} />
-            <MenuItem key="7" accessoryLeft={ArchiveIcon} title={<Text category="c1">Add to watch list</Text>} />
-          </OverflowMenu>
-        </Layout>
+        <PostMenu item={item} sizeStar="medium" sizeMore="medium" />
       </Layout>
       <Divider />
     </TouchableOpacity>
@@ -127,13 +40,14 @@ export const Card = ({ item, tagsWithType, navigateDetail }) => {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
+    minHeight: 390,
   },
   image: {
     width: '100%',
     height: 210,
   },
   tagContainer: {
-    paddingLeft: 4,
+    paddingLeft: 8,
     paddingVertical: 12,
     flexDirection: 'row',
     alignItems: 'center',
