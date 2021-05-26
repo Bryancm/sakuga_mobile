@@ -11,7 +11,7 @@ const capitalize = (s) => {
   return s && s[0].toUpperCase() + s.slice(1);
 };
 
-export const PostVerticalList = ({ search = '', layoutType, deleteAlert, fromSearch }) => {
+export const PostVerticalList = ({ search = '', layoutType, deleteAlert, fromSearch, focus }) => {
   const [page, setPage] = useState(1);
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
@@ -95,7 +95,6 @@ export const PostVerticalList = ({ search = '', layoutType, deleteAlert, fromSea
   useEffect(() => {
     if (fromSearch) {
       clearLoading();
-      setMessage('');
     } else {
       fetchPost(page, true);
     }
@@ -137,6 +136,7 @@ export const PostVerticalList = ({ search = '', layoutType, deleteAlert, fromSea
     }
   }, [isLoading, isFetching, isRefetching]);
 
+  if (focus) return <Layout style={{ ...styles.center, height: '100%' }} />;
   if (isLoading)
     return (
       <Layout style={{ ...styles.center, height: '100%' }}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
 import {
   Icon,
@@ -13,7 +13,7 @@ import {
   RangeDatepicker,
 } from '@ui-kitten/components';
 import { getTags } from '../api/tag';
-
+import { formatDateForSearch } from '../util/date';
 import tagData from '../tag_data.json';
 
 import { AutoComplete } from '../components/autoComplete';
@@ -28,23 +28,28 @@ const OptionsIcon = (props) => <Icon {...props} name="options-2-outline" />;
 const StarIcon = (props) => <Icon {...props} name="star-outline" />;
 
 export const SearchScreen = ({ navigation }) => {
-  const rangePicker = React.useRef();
-  const [range, setRange] = React.useState({});
-  const [value, setValue] = React.useState(null);
-  const [search, setSearch] = React.useState('');
-  const [data, setData] = React.useState([]);
-  const [focus, setFocus] = React.useState(true);
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const rangePicker = useRef();
+  const [range, setRange] = useState({});
+  const [value, setValue] = useState(null);
+  const [search, setSearch] = useState('');
+  const [data, setData] = useState(tagData); // init with search history
+  const [focus, setFocus] = useState(true);
+  const [autoFocus, setAutoFocus] = useState(true);
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const [layoutType, setLayoutType] = React.useState('small');
-  const [sortType, setSortType] = React.useState('date');
-  const [tagType, setTagType] = React.useState('all');
-  const [tagSortType, setTagSortType] = React.useState('date');
+  const [layoutType, setLayoutType] = useState('small');
+  const [sortType, setSortType] = useState('date');
+  const [tagType, setTagType] = useState('all');
+  const [tagSortType, setTagSortType] = useState('date');
 
-  const [menuVisible, setMenuVisible] = React.useState(false);
-  const [sortMenuVisible, setSortMenuVisible] = React.useState(false);
-  const [tagTypeMenuVisible, setTagTypeMenuVisible] = React.useState(false);
-  const [tagsortMenuVisible, setTagSortMenuVisible] = React.useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [sortMenuVisible, setSortMenuVisible] = useState(false);
+  const [tagTypeMenuVisible, setTagTypeMenuVisible] = useState(false);
+  const [tagsortMenuVisible, setTagSortMenuVisible] = useState(false);
+
+  useEffect(() => {
+    setAutoFocus(false);
+  }, []);
 
   const shouldLoadComponent = (index) => index === selectedIndex;
   const navigateBack = () => {
@@ -53,19 +58,22 @@ export const SearchScreen = ({ navigation }) => {
 
   const onChangeText = (query) => {
     setValue(query);
-    getTags({ name: query.toLowerCase(), order: 'count' })
+    const splittedQuery = query.split(' ');
+    const lastItem = splittedQuery[splittedQuery.length - 1];
+    if (!query) setRange({});
+    getTags({ name: lastItem.toLowerCase(), order: 'count' })
       .then((d) => {
-        setData(query ? d : []);
+        setData(query ? d : tagData);
       })
       .catch((e) => {
         console.log('CHANGE_SEARCH_TEXT_ERROR: ', e);
-        setData([]);
+        setData(tagData);
       });
   };
 
   const onAutoCompletePress = (item) => {
-    const splittedValue = value.split(' ');
-    const index = splittedValue.length - 1;
+    const splittedValue = value ? value.split(' ') : [];
+    const index = value ? splittedValue.length - 1 : 0;
     splittedValue[index] = item + ' ';
     setValue(splittedValue.join(' '));
   };
@@ -73,7 +81,8 @@ export const SearchScreen = ({ navigation }) => {
   const submitSearch = () => {
     setFocus(false);
     setSearch(value.toLowerCase());
-    setData([]);
+    setData(tagData);
+    setRange({});
   };
 
   const toggleMenu = () => {
@@ -96,18 +105,20 @@ export const SearchScreen = ({ navigation }) => {
     setLayoutType(type);
   };
 
-  const changeSort = (type) => {
+  const changeSort = (order) => {
     toggleSortMenu();
-    setSortType(type);
+    setSortType(order);
+    const newSearch = value.toLowerCase().trim() + ` order:${order}`;
+    setSearch(newSearch);
   };
 
   const changeTagType = (type) => {
     toggleMenuTagType();
     setTagType(type);
   };
-  const changeTagSort = (type) => {
+  const changeTagSort = (order) => {
     toggleTagSortMenu();
-    setTagSortType(type);
+    setTagSortType(order);
   };
 
   const renderMenuAction = () => (
@@ -161,7 +172,7 @@ export const SearchScreen = ({ navigation }) => {
     <OverflowMenu anchor={renderSortMenuAction} visible={sortMenuVisible} onBackdropPress={toggleSortMenu}>
       <MenuItem title="Sort by date" accessoryLeft={CalendarIcon} onPress={() => changeSort('date')} />
       <MenuItem title="Sort by score" accessoryLeft={StarIcon} onPress={() => changeSort('score')} />
-      <MenuItem title="Shuffle" accessoryLeft={ShuffleIcon} onPress={() => changeSort('shuffle')} />
+      <MenuItem title="Shuffle" accessoryLeft={ShuffleIcon} onPress={() => changeSort('random')} />
     </OverflowMenu>
   );
 
@@ -188,6 +199,10 @@ export const SearchScreen = ({ navigation }) => {
     setRange(nextRange);
     if (nextRange.startDate && nextRange.endDate)
       setTimeout(() => {
+        setSearch(
+          value.toLowerCase().trim() +
+            ` date:${formatDateForSearch(nextRange.startDate)}...${formatDateForSearch(nextRange.endDate)}`,
+        );
         rangePicker.current.blur();
       }, 500);
   };
@@ -209,7 +224,7 @@ export const SearchScreen = ({ navigation }) => {
             onChangeText={onChangeText}
             onSubmitEditing={submitSearch}
             autoCorrect={false}
-            autoFocus={true}
+            autoFocus={autoFocus}
             clearButtonMode="always"
             enablesReturnKeyAutomatically={true}
             keyboardAppearance="dark"
@@ -220,9 +235,7 @@ export const SearchScreen = ({ navigation }) => {
             <Text status="info">Cancel</Text>
           </Button>
         </Layout>
-
-        {data.length > 0 && <AutoComplete data={data} onPress={onAutoCompletePress} />}
-
+        {focus && <AutoComplete data={data} onPress={onAutoCompletePress} />}
         <TabView
           style={{ flex: 1 }}
           selectedIndex={selectedIndex}
@@ -242,20 +255,18 @@ export const SearchScreen = ({ navigation }) => {
                   }}
                   size="small"
                   range={range}
+                  min={new Date(1356998400 * 1000)}
                   max={new Date()}
                   onSelect={onRangeDateSelect}
                   accessoryLeft={CalendarIcon}
+                  clearButtonMode="always"
                 />
                 <Layout style={{ flexDirection: 'row' }}>
                   <LayoutActions />
                   <SortActions />
                 </Layout>
               </Layout>
-              {search && !focus ? (
-                <PostVerticalList layoutType={layoutType} fromSearch={true} search={search} />
-              ) : (
-                <Layout />
-              )}
+              <PostVerticalList layoutType={layoutType} fromSearch={true} search={search} focus={focus} />
             </Layout>
           </Tab>
 
@@ -284,5 +295,14 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     width: 80,
+  },
+  center: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    zIndex: 20,
   },
 });
