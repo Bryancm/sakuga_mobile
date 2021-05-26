@@ -83,8 +83,8 @@ export const PostVerticalList = ({ search = '', layoutType, deleteAlert, fromSea
   };
 
   useEffect(() => {
-    if (search) setLoading(true);
-    if (search) fetchPost(1, true, search);
+    setLoading(true);
+    fetchPost(1, true, search);
   }, [search]);
 
   useEffect(() => {

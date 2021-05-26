@@ -40,7 +40,7 @@ export const SearchScreen = ({ navigation }) => {
 
   const [layoutType, setLayoutType] = useState('small');
   const [sortType, setSortType] = useState('date');
-  const [tagType, setTagType] = useState('all');
+  const [tagType, setTagType] = useState('');
   const [tagSortType, setTagSortType] = useState('date');
 
   const [menuVisible, setMenuVisible] = useState(false);
@@ -60,7 +60,6 @@ export const SearchScreen = ({ navigation }) => {
 
   useEffect(() => {
     setAutoFocus(false);
-    initData();
   }, []);
 
   const shouldLoadComponent = (index) => index === selectedIndex;
@@ -221,7 +220,7 @@ export const SearchScreen = ({ navigation }) => {
 
   const TagTypeActions = () => (
     <OverflowMenu anchor={renderTagTypeAction} visible={tagTypeMenuVisible} onBackdropPress={toggleMenuTagType}>
-      <MenuItem title="Any" onPress={() => changeTagType('any')} />
+      <MenuItem title="Any" onPress={() => changeTagType('')} />
       <MenuItem title="General" onPress={() => changeTagType('general')} />
       <MenuItem title="Artist" onPress={() => changeTagType('artist')} />
       <MenuItem title="Copyright" onPress={() => changeTagType('copyright')} />
@@ -252,6 +251,7 @@ export const SearchScreen = ({ navigation }) => {
 
   const onFocus = () => {
     setFocus(true);
+    initData();
   };
 
   const cleanRange = () => {
@@ -330,7 +330,7 @@ export const SearchScreen = ({ navigation }) => {
                 <TagTypeActions />
                 <TagSortActions />
               </Layout>
-              <TagVerticalList data={tagData} />
+              <TagVerticalList search={search} focus={focus} order={tagSortType} type={tagType} />
             </Layout>
           </Tab>
         </TabView>
