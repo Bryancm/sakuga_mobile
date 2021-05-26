@@ -7,7 +7,7 @@ export const Tag = ({ tag }) => {
   const style = getTagStyle(tag.type);
   return (
     <Layout style={{ ...style, ...styles.container }}>
-      <Text category="c2" style={{ color: style.color, maxWidth: 140 }} numberOfLines={1}>
+      <Text category="c2" style={{ color: style.color, maxWidth: 130 }} numberOfLines={1}>
         {tag.name}
       </Text>
       <Text category="c2" style={{ color: style.color, marginLeft: 8 }} numberOfLines={1}>
