@@ -13,6 +13,7 @@ import {
   RangeDatepicker,
 } from '@ui-kitten/components';
 import { getTags } from '../api/tag';
+import { storeData, getData } from '../util/storage';
 import { formatDateForSearch } from '../util/date';
 import tagData from '../tag_data.json';
 
@@ -32,7 +33,7 @@ export const SearchScreen = ({ navigation }) => {
   const [range, setRange] = useState({});
   const [value, setValue] = useState(null);
   const [search, setSearch] = useState('');
-  const [data, setData] = useState(tagData); // init with search history
+  const [data, setData] = useState([]); // init with search history
   const [focus, setFocus] = useState(true);
   const [autoFocus, setAutoFocus] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -47,8 +48,19 @@ export const SearchScreen = ({ navigation }) => {
   const [tagTypeMenuVisible, setTagTypeMenuVisible] = useState(false);
   const [tagsortMenuVisible, setTagSortMenuVisible] = useState(false);
 
+  const initData = async () => {
+    try {
+      const currentHistory = await getData('tagHistory');
+      const newData = await getTags({});
+      currentHistory ? setData([...currentHistory, ...newData]) : setData(newData);
+    } catch (error) {
+      console.log('ERROR_INIT_DATA: ', error);
+    }
+  };
+
   useEffect(() => {
     setAutoFocus(false);
+    initData();
   }, []);
 
   const shouldLoadComponent = (index) => index === selectedIndex;
@@ -63,26 +75,54 @@ export const SearchScreen = ({ navigation }) => {
     if (!query) setRange({});
     getTags({ name: lastItem.toLowerCase(), order: 'count' })
       .then((d) => {
-        setData(query ? d : tagData);
+        query ? setData(d) : initData();
       })
       .catch((e) => {
         console.log('CHANGE_SEARCH_TEXT_ERROR: ', e);
-        setData(tagData);
+        initData();
       });
   };
 
-  const onAutoCompletePress = (item) => {
+  const onAutoCompletePress = (tag) => {
     const splittedValue = value ? value.split(' ') : [];
     const index = value ? splittedValue.length - 1 : 0;
-    splittedValue[index] = item + ' ';
+    splittedValue[index] = tag + ' ';
     setValue(splittedValue.join(' '));
   };
 
   const submitSearch = () => {
     setFocus(false);
-    setSearch(value.toLowerCase());
-    setData(tagData);
+    setSearch(value.toLowerCase().trim());
+    saveInHistory(value.toLowerCase().trim());
     setRange({});
+    initData();
+  };
+
+  const saveInHistory = async (value) => {
+    const historyItem = {
+      id: new Date().valueOf(),
+      name: value,
+      count: 0,
+      type: -1,
+      ambiguous: false,
+      isHistory: true,
+    };
+    var newHistory = [];
+    const currentHistory = await getData('tagHistory');
+    if (currentHistory) {
+      const filteredHistory = currentHistory.filter((i) => i.name !== historyItem.name);
+      newHistory = [historyItem, ...filteredHistory];
+    } else {
+      newHistory = [historyItem];
+    }
+    storeData('tagHistory', newHistory.slice(0, 9));
+  };
+
+  const deleteItemFromHistory = async (id) => {
+    const currentHistory = await getData('tagHistory');
+    const filteredHistory = currentHistory.filter((i) => i.id !== id);
+    storeData('tagHistory', filteredHistory);
+    initData();
   };
 
   const toggleMenu = () => {
@@ -108,7 +148,10 @@ export const SearchScreen = ({ navigation }) => {
   const changeSort = (order) => {
     toggleSortMenu();
     setSortType(order);
-    const newSearch = value.toLowerCase().trim() + ` order:${order}`;
+    let newSearch = value.toLowerCase().trim() + ` order:${order}`;
+    if (range.startDate && range.endDate) {
+      newSearch = newSearch + ` date:${formatDateForSearch(range.startDate)}...${formatDateForSearch(range.endDate)}`;
+    }
     setSearch(newSearch);
   };
 
@@ -199,17 +242,25 @@ export const SearchScreen = ({ navigation }) => {
     setRange(nextRange);
     if (nextRange.startDate && nextRange.endDate)
       setTimeout(() => {
-        setSearch(
-          value.toLowerCase().trim() +
-            ` date:${formatDateForSearch(nextRange.startDate)}...${formatDateForSearch(nextRange.endDate)}`,
-        );
         rangePicker.current.blur();
+        const v = value.toLowerCase().trim();
+        let s = v + ` date:${formatDateForSearch(nextRange.startDate)}...${formatDateForSearch(nextRange.endDate)}`;
+        s = s + ` order:${sortType}`;
+        setSearch(s);
       }, 500);
   };
 
   const onFocus = () => {
     setFocus(true);
   };
+
+  const cleanRange = () => {
+    setRange({});
+    const newSearch = `${value.toLowerCase().trim()} order:${sortType}`;
+    setSearch(newSearch);
+  };
+
+  const CloseIcon = (props) => <Icon {...props} name="close-outline" onPress={cleanRange} />;
 
   return (
     <Layout style={{ flex: 1 }}>
@@ -235,7 +286,9 @@ export const SearchScreen = ({ navigation }) => {
             <Text status="info">Cancel</Text>
           </Button>
         </Layout>
-        {focus && <AutoComplete data={data} onPress={onAutoCompletePress} />}
+        {focus && (
+          <AutoComplete data={data} onPress={onAutoCompletePress} deleteItemFromHistory={deleteItemFromHistory} />
+        )}
         <TabView
           style={{ flex: 1 }}
           selectedIndex={selectedIndex}
@@ -259,6 +312,7 @@ export const SearchScreen = ({ navigation }) => {
                   max={new Date()}
                   onSelect={onRangeDateSelect}
                   accessoryLeft={CalendarIcon}
+                  accessoryRight={range.startDate && range.endDate && CloseIcon}
                   clearButtonMode="always"
                 />
                 <Layout style={{ flexDirection: 'row' }}>

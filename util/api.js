@@ -1,7 +1,9 @@
-import {tagStyles} from '../styles';
+import { tagStyles } from '../styles';
 
 export const getTagStyle = (type) => {
   switch (type) {
+    case -1:
+      return tagStyles.basic_outline;
     case 1:
       return tagStyles.artist_outline;
     case 3:
@@ -22,9 +24,7 @@ export const fetchTags = async (tags) => {
     var newTags = [];
     var title = '';
     for (const tag of tags) {
-      tagFetches.push(
-        fetch('https://www.sakugabooru.com/tag.json?name=' + tag),
-      );
+      tagFetches.push(fetch('https://www.sakugabooru.com/tag.json?name=' + tag));
     }
     const responses = await Promise.all(tagFetches);
     for (const res of responses) {
@@ -41,12 +41,12 @@ export const fetchTags = async (tags) => {
         title = tg.name;
       }
 
-      newTags.push({name: tg.name, style});
+      newTags.push({ name: tg.name, style });
     }
     newTags.sort(function (a, b) {
       return ('' + a.type).localeCompare(b.type);
     });
-    return {tags: newTags, title};
+    return { tags: newTags, title };
   } catch (error) {
     console.log('FETCH_TAGS_ERROR: ', error);
   }
