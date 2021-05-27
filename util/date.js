@@ -7,14 +7,15 @@ const units = {
   second: 1000,
 };
 
-const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto', style: 'short' });
 
 export const getRelativeTime = (d1, d2 = new Date()) => {
   var elapsed = d1 - d2;
 
   // "Math.abs" accounts for both "past" & "future" scenarios
   for (var u in units)
-    if (Math.abs(elapsed) > units[u] || u == 'second') return rtf.format(Math.round(elapsed / units[u]), u);
+    if (Math.abs(elapsed) > units[u] || u == 'second')
+      return rtf.format(Math.round(elapsed / units[u]), u).replace('.', '');
 };
 
 export const formatDate = (date) => {

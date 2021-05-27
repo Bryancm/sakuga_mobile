@@ -25,13 +25,7 @@ export const ExploreScreen = ({ navigation }) => {
             flex: 1,
           }}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <PostHorizontalList
-              title="Trending"
-              data={data.posts}
-              tags={data.tags}
-              navigation={navigation}
-              menuType="date"
-            />
+            <PostHorizontalList title="Trending" menuType="date" />
             <TagHorizontalList title="New Artist" data={tag_data} navigation={navigation} menuType="tag" />
             <PostHorizontalList
               title="Week's Popular"

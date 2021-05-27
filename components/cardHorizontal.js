@@ -1,95 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Image, StyleSheet } from 'react-native';
-import { Layout, Text, Icon, Button, OverflowMenu, MenuItem } from '@ui-kitten/components';
-import { tagStyles } from '../styles';
+import { StyleSheet, TouchableOpacity } from 'react-native';
+import { Layout, Text } from '@ui-kitten/components';
 import { getRelativeTime } from '../util/date';
 import FastImage from 'react-native-fast-image';
+import { PostMenu } from './postMenu';
 
-const StarIcon = (props) => <Icon {...props} name="star-outline" />;
-const StarIconGood = (props) => <Icon {...props} name="star-outline" fill="#207561" />;
-const StarIconGreat = (props) => <Icon {...props} name="star-outline" fill="#649d66" />;
-const StarIconFav = (props) => <Icon {...props} name="star-outline" fill="#eebb4d" />;
-const DownloadIcon = (props) => <Icon {...props} name="download-outline" />;
-const MoreIcon = (props) => <Icon {...props} name="more-vertical-outline" />;
-const LinkIcon = (props) => <Icon {...props} name="link-2-outline" />;
-const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
-const ArchiveIcon = (props) => <Icon {...props} name="archive-outline" />;
+export const SmallCard = ({ item, navigateDetail }) => {
+  const tags = item.tags;
+  const title = item.title;
 
-const capitalize = (s) => {
-  return s && s[0].toUpperCase() + s.slice(1);
-};
-
-export const SmallCard = ({ item, tagsWithType }) => {
-  const [menuVisible, setMenuVisible] = React.useState(false);
-  const [menuVisible2, setMenuVisible2] = React.useState(false);
-  const [tags, setTags] = useState(item.tags.split(' ').map((tag) => ({ tag })));
-  const [title, setTitle] = useState(capitalize(tags[2].tag).replaceAll('_', ' '));
-
-  const toggleMenu = () => {
-    setMenuVisible(!menuVisible);
+  const goToDetail = () => {
+    navigateDetail(item, title, tags);
   };
-
-  const toggleMenu2 = () => {
-    setMenuVisible2(!menuVisible2);
-  };
-
-  const renderMenuAction = () => (
-    <Button
-      status="basic"
-      appearance="ghost"
-      size="small"
-      accessoryRight={MoreIcon}
-      onPress={toggleMenu}
-      style={{ paddingRight: 0, paddingVertical: 0, width: 20, paddingLeft: 24 }}
-    />
-  );
-
-  const renderMenuAction2 = () => (
-    <Button
-      appearance="ghost"
-      size="small"
-      accessoryLeft={StarIcon}
-      onPress={toggleMenu2}
-      style={{ paddingHorizontal: 0, paddingVertical: 0, width: 20, marginRight: 3 }}>
-      <Text status="primary" category="c1">
-        {item.score}
-      </Text>
-    </Button>
-  );
-
-  useEffect(() => {
-    const setPostDetails = () => {
-      var artist = '';
-      var copyright = '';
-      var tags = [];
-      for (const tag in tagsWithType) {
-        if (Object.hasOwnProperty.call(tagsWithType, tag)) {
-          const type = tagsWithType[tag];
-          if (item.tags.includes(tag)) {
-            var style = tagStyles.artist_outline;
-            if (type === 'artist') artist = artist + ' ' + capitalize(tag);
-            if (type === 'copyright') {
-              style = tagStyles.copyright_outline;
-              copyright = tag;
-            }
-            if (type === 'terminology') style = tagStyles.terminology_outline;
-            if (type === 'meta') style = tagStyles.meta_outline;
-            if (type === 'general') style = tagStyles.general_outline;
-            tags.push({ type, tag, style });
-          }
-        }
-      }
-      const name = artist.trim() && artist.trim() !== 'Artist_unknown' ? artist.trim() : copyright.trim();
-      const t = capitalize(name).replaceAll('_', ' ');
-      setTitle(t);
-      setTags(tags.sort((a, b) => a.type > b.type));
-    };
-
-    setPostDetails();
-  }, []);
 
   return (
-    <Layout style={styles.container}>
+    <TouchableOpacity
+      delayPressIn={0}
+      delayPressOut={0}
+      activeOpacity={0.7}
+      style={styles.container}
+      onPress={goToDetail}>
       <FastImage style={styles.image} source={{ uri: item.preview_url }} resizeMode="cover" />
       <Layout style={styles.tagContainer}>
         <Text category="c2" style={{ marginBottom: 6 }} numberOfLines={1}>
@@ -113,22 +43,15 @@ export const SmallCard = ({ item, tagsWithType }) => {
           <Text appearance="hint" category="c1">
             {getRelativeTime(item.created_at * 1000)}
           </Text>
-          <Layout style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <OverflowMenu anchor={renderMenuAction2} visible={menuVisible2} onBackdropPress={toggleMenu2}>
-              <MenuItem key="1" accessoryLeft={StarIconGood} title={<Text category="c1">Good</Text>} />
-              <MenuItem key="2" accessoryLeft={StarIconGreat} title={<Text category="c1">Great</Text>} />
-              <MenuItem key="3" accessoryLeft={StarIconFav} title={<Text category="c1">Favorite</Text>} />
-              <MenuItem key="4" accessoryLeft={CloseIcon} title={<Text category="c1">Clear</Text>} />
-            </OverflowMenu>
-            <OverflowMenu anchor={renderMenuAction} visible={menuVisible} onBackdropPress={toggleMenu}>
-              <MenuItem key="5" accessoryLeft={LinkIcon} title={<Text category="c1">Share post</Text>} />
-              <MenuItem key="6" accessoryLeft={DownloadIcon} title={<Text category="c1">Download</Text>} />
-              <MenuItem key="7" accessoryLeft={ArchiveIcon} title={<Text category="c1">Add to watch list</Text>} />
-            </OverflowMenu>
-          </Layout>
+
+          <PostMenu
+            item={item}
+            menuStyle={{ paddingHorizontal: 0, paddingVertical: 0, width: 20, marginRight: 3 }}
+            menuStyle2={{ paddingRight: 0, paddingVertical: 0, width: 20, paddingLeft: 24 }}
+          />
         </Layout>
       </Layout>
-    </Layout>
+    </TouchableOpacity>
   );
 };
 

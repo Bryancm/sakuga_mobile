@@ -12,7 +12,15 @@ const LinkIcon = (props) => <Icon {...props} name="link-2-outline" />;
 const ArchiveIcon = (props) => <Icon {...props} name="archive-outline" />;
 const TrashIcon = (props) => <Icon {...props} name="trash-outline" fill="#E3170A" />;
 
-export const PostMenu = ({ item, deleteAlert, level = '1', sizeStar = 'small', sizeMore = 'small' }) => {
+export const PostMenu = ({
+  item,
+  deleteAlert,
+  level = '1',
+  sizeStar = 'small',
+  sizeMore = 'small',
+  menuStyle,
+  menuStyle2,
+}) => {
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [menuVisible2, setMenuVisible2] = React.useState(false);
   const toggleMenu = () => {
@@ -24,7 +32,7 @@ export const PostMenu = ({ item, deleteAlert, level = '1', sizeStar = 'small', s
   const menuAnchor = () => (
     <Button
       size={sizeStar}
-      style={{ paddingHorizontal: 0 }}
+      style={menuStyle ? menuStyle : { paddingHorizontal: 0 }}
       appearance="ghost"
       accessoryLeft={StarIcon}
       onPress={toggleMenu}>
@@ -36,7 +44,7 @@ export const PostMenu = ({ item, deleteAlert, level = '1', sizeStar = 'small', s
   const menuAnchor2 = () => (
     <Button
       size={sizeMore}
-      style={{ paddingHorizontal: 0 }}
+      style={menuStyle2 ? menuStyle2 : { paddingHorizontal: 0 }}
       status="basic"
       appearance="ghost"
       accessoryRight={MoreIcon}
