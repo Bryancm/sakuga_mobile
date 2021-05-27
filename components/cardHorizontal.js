@@ -46,8 +46,9 @@ export const SmallCard = ({ item, navigateDetail }) => {
 
           <PostMenu
             item={item}
-            menuStyle={{ paddingHorizontal: 0, paddingVertical: 0, width: 20, marginRight: 3 }}
-            menuStyle2={{ paddingRight: 0, paddingVertical: 0, width: 20, paddingLeft: 24 }}
+            sizeStar={item.score > 99 ? 'tiny' : 'small'}
+            menuStyle={{ paddingHorizontal: 0, paddingVertical: 0, width: item.score > 99 ? 55 : 40 }}
+            menuStyle2={{ paddingRight: 0, paddingVertical: 0, width: 10, paddingLeft: 24 }}
           />
         </Layout>
       </Layout>

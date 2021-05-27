@@ -67,6 +67,7 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType }) => {
       clearLoading();
     }
   };
+
   const clearLoading = () => {
     setLoading(false);
   };
