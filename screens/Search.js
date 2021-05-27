@@ -221,11 +221,11 @@ export const SearchScreen = ({ navigation }) => {
   const TagTypeActions = () => (
     <OverflowMenu anchor={renderTagTypeAction} visible={tagTypeMenuVisible} onBackdropPress={toggleMenuTagType}>
       <MenuItem title="Any" onPress={() => changeTagType('')} />
-      <MenuItem title="General" onPress={() => changeTagType('general')} />
-      <MenuItem title="Artist" onPress={() => changeTagType('artist')} />
-      <MenuItem title="Copyright" onPress={() => changeTagType('copyright')} />
-      <MenuItem title="Terminology" onPress={() => changeTagType('terminology')} />
-      <MenuItem title="Meta" onPress={() => changeTagType('meta')} />
+      <MenuItem title="General" onPress={() => changeTagType('0')} />
+      <MenuItem title="Artist" onPress={() => changeTagType('1')} />
+      <MenuItem title="Copyright" onPress={() => changeTagType('3')} />
+      <MenuItem title="Terminology" onPress={() => changeTagType('4')} />
+      <MenuItem title="Meta" onPress={() => changeTagType('5')} />
     </OverflowMenu>
   );
 

@@ -35,24 +35,24 @@ export const ExploreScreen = ({ navigation }) => {
           }}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <PostHorizontalList title="Trending" menuType="date" search={`date:${yesterday}...${today} order:score`} />
-            <TagHorizontalList title="New Artist" data={tag_data} navigation={navigation} menuType="tag" />
+            <TagHorizontalList title="New Artist" menuType="tag" type="1" order="date" />
             <PostHorizontalList
               title="Week's Popular"
               menuType="week"
               search={`date:${formatDateForSearch(firstDayWeek)}...${formatDateForSearch(lastDayWeek)} order:score`}
             />
             <PostHorizontalList title="Character Acting" menuType="post" search="character_acting" />
-            <TagHorizontalList title="New Copyright" data={tag_copy_data} navigation={navigation} menuType="tag" />
+            <TagHorizontalList title="New Copyright" menuType="tag" type="3" order="date" />
             <PostHorizontalList
               title="Month's Popular"
               menuType="month"
               search={`date:${formatDateForSearch(firstDayMonth)}...${formatDateForSearch(lastDayMonth)} order:score`}
             />
             <PostHorizontalList title="Fighting" menuType="post" search="fighting" />
-            <TagHorizontalList title="Popular Artist" data={tag_data} navigation={navigation} menuType="tag" />
+            <TagHorizontalList title="Popular Artist" menuType="tag" type="1" order="count" />
             <PostHorizontalList title="Liquid" menuType="post" search="liquid" />
             <PostHorizontalList title="Explosions" menuType="post" search="explosions" />
-            <TagHorizontalList title="Popular Copyright" data={tag_copy_data} navigation={navigation} menuType="tag" />
+            <TagHorizontalList title="Popular Copyright" menuType="tag" type="3" order="count" />
             <PostHorizontalList title="Hair" menuType="post" search="hair" />
             <PostHorizontalList title="Production Materials" menuType="post" search="production_materials" />
             <PostHorizontalList
