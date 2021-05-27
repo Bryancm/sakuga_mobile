@@ -6,7 +6,7 @@ import tag_data from '../test-tag-data.json';
 import tag_copy_data from '../test-tag-copy-data.json';
 import { PostHorizontalList } from '../components/postHorizontalList';
 import { TagHorizontalList } from '../components/tagHorizontalList';
-import { formatDateForSearch } from '../util/date';
+import { formatDateForSearch, getYesterdayDate, getWeekDate, getMonthDate, getYearDate } from '../util/date';
 
 const SearchIcon = (props) => <Icon {...props} name="search-outline" />;
 
@@ -15,27 +15,14 @@ export const ExploreScreen = ({ navigation }) => {
     navigation.navigate('Search');
   };
   const renderSearchAction = () => <TopNavigationAction icon={SearchIcon} onPress={navigateSearch} />;
+
   const currentDate = new Date();
+  const today = formatDateForSearch(currentDate);
+  const yesterday = formatDateForSearch(getYesterdayDate(currentDate));
 
-  //day range
-  const day = currentDate.getDate();
-  const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-  const year = currentDate.getFullYear();
-  const today = `${year}-${month}-${day}`;
-  const yesterday = `${year}-${month}-${day - 1}`;
-
-  //week range
-  const first = currentDate.getDate() - currentDate.getDay() + 1; // First day is the day of the month - the day of the week
-  const last = first + 6; // last day is the first day + 6
-  const firstday = new Date(currentDate.setDate(first));
-  const lastday = new Date(currentDate.setDate(last));
-
-  //month range
-  const firstDayMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-  const lastDayMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-
-  //year range
-  const currentYearDate = `${year}-01-01`;
+  const { firstDayWeek, lastDayWeek } = getWeekDate(currentDate);
+  const { firstDayMonth, lastDayMonth } = getMonthDate(currentDate);
+  const { firstDayYear } = getYearDate(currentDate.getFullYear());
 
   return (
     <Layout style={{ flex: 1 }}>
@@ -52,7 +39,7 @@ export const ExploreScreen = ({ navigation }) => {
             <PostHorizontalList
               title="Week's Popular"
               menuType="week"
-              search={`date:${formatDateForSearch(firstday)}...${formatDateForSearch(lastday)} order:score`}
+              search={`date:${formatDateForSearch(firstDayWeek)}...${formatDateForSearch(lastDayWeek)} order:score`}
             />
             <PostHorizontalList title="Character Acting" menuType="post" search="character_acting" />
             <TagHorizontalList title="New Copyright" data={tag_copy_data} navigation={navigation} menuType="tag" />
@@ -71,7 +58,7 @@ export const ExploreScreen = ({ navigation }) => {
             <PostHorizontalList
               title="Year's Popular"
               menuType="year"
-              search={`date:${currentYearDate}...${today} order:score`}
+              search={`date:${formatDateForSearch(firstDayYear)}...${today} order:score`}
             />
           </ScrollView>
         </Layout>
