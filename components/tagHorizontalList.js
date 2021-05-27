@@ -39,7 +39,7 @@ export const TagHorizontalList = ({ title, menuType, search = '', order, type })
     setLoading(false);
   };
 
-  const navigatePostList = (from, data, isPosts, menuType) => {
+  const navigatePostList = (from, data, isPosts, menuType, search, order, type) => {
     navigation.navigate('PostList', { from, data, isPosts, menuType, search, order, type });
   };
 
@@ -54,7 +54,7 @@ export const TagHorizontalList = ({ title, menuType, search = '', order, type })
         <Button
           style={{ width: 100, paddingRight: 0 }}
           appearance="ghost"
-          onPress={() => navigatePostList(title, data, false, menuType)}>
+          onPress={() => navigatePostList(title, data, false, menuType, search, order, type)}>
           <Text category="p2">See more</Text>
         </Button>
       </Layout>

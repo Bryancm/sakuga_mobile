@@ -83,8 +83,8 @@ export const PostVerticalList = ({ search = '', layoutType, deleteAlert, fromSea
   };
 
   useEffect(() => {
-    setLoading(true);
-    fetchPost(1, true, search);
+    if (search) setLoading(true);
+    if (search) fetchPost(1, true, search);
   }, [search]);
 
   useEffect(() => {
@@ -96,7 +96,7 @@ export const PostVerticalList = ({ search = '', layoutType, deleteAlert, fromSea
     if (fromSearch) {
       clearLoading();
     } else {
-      fetchPost(page, true);
+      if (!search) fetchPost(page, true);
     }
   }, []);
 
@@ -149,9 +149,9 @@ export const PostVerticalList = ({ search = '', layoutType, deleteAlert, fromSea
       data={data}
       renderItem={renderItem}
       initialNumToRender={8}
-      maxToRenderPerBatch={5}
-      windowSize={10}
-      updateCellsBatchingPeriod={150}
+      maxToRenderPerBatch={8}
+      windowSize={16}
+      // updateCellsBatchingPeriod={150}
       onEndReachedThreshold={1}
       viewabilityConfig={{
         minimumViewTime: 200,
@@ -160,7 +160,7 @@ export const PostVerticalList = ({ search = '', layoutType, deleteAlert, fromSea
       contentContainerStyle={{
         paddingBottom: 10,
       }}
-      getItemLayout={getItemLayout}
+      // getItemLayout={getItemLayout}
       onEndReached={onEndReached}
       keyExtractor={keyExtractor}
       refreshControl={<RefreshControl onRefresh={refetch} refreshing={isRefetching} />}

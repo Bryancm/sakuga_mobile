@@ -11,7 +11,7 @@ export const Tag = ({ tag, navigatePostList }) => {
       delayPressOut={0}
       activeOpacity={0.7}
       style={{ ...style, ...styles.container }}
-      onPress={() => navigatePostList(tag.name, null, true, 'post')}>
+      onPress={() => navigatePostList(tag.name, null, true, 'post', tag.name, 'date', tag.type)}>
       <Text style={{ color: style.color }} numberOfLines={1}>
         {tag.name}
       </Text>

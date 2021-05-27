@@ -11,7 +11,7 @@ import {
 } from '@ui-kitten/components';
 import { PostVerticalList } from '../components/postVerticalList';
 import { TagVerticalList } from '../components/tagVerticalList';
-import postData from '../test-data-v2.json';
+import { formatDateForSearch, getYesterdayDate, getWeekDate, getMonthDate, getYearDate } from '../util/date';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 const CalendarIcon = (props) => <Icon {...props} name="calendar-outline" />;
@@ -25,32 +25,14 @@ const StarIconFav = (props) => <Icon {...props} name="star-outline" fill="#eebb4
 export const PostListScreen = ({ navigation, route }) => {
   const from = route.params.from;
   const isPosts = route.params.isPosts;
-  const [data, setData] = React.useState(route.params.data ? route.params.data : []);
-  const [tags, setTags] = React.useState(route.params.tags ? route.params.tags : []);
+  const [search, setSearch] = React.useState(route.params.search ? route.params.search : '');
+  const [order, setOrder] = React.useState(route.params.order ? route.params.order : 'date');
+  const [type, setType] = React.useState(route.params.type ? route.params.type : '');
 
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [secondMenuVisible, setSecondMenuVisible] = React.useState(false);
 
-  React.useEffect(() => {
-    if (data.length === 0) {
-      if (from === 'Favorites') {
-        setData(postData.posts);
-        setTags(postData.tags);
-      }
-      if (from === 'History') {
-        setData(postData.posts);
-        setTags(postData.tags);
-      }
-      if (from === 'Watch Later') {
-        setData(postData.posts);
-        setTags(postData.tags);
-      }
-      if (route.params.menuType === 'post') {
-        setData(postData.posts);
-        setTags(postData.tags);
-      }
-    }
-  }, []);
+  React.useEffect(() => {}, []);
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
@@ -95,10 +77,33 @@ export const PostListScreen = ({ navigation, route }) => {
   const renderFilterAction = () => <TopNavigationAction icon={FilterIcon} onPress={toggleMenu} />;
   const renderOptionsAction = () => <TopNavigationAction icon={OptionsIcon} onPress={toggleSecondMenu} />;
 
+  const changeTrendingDay = (date) => {
+    toggleMenu();
+    setSearch(`date:${formatDateForSearch(date)} order:score`);
+  };
+
   const dateItems = [
-    <MenuItem key="24 hours" title="24 hours" />,
-    <MenuItem key="Yesterday" title="Yesterday" />,
-    <MenuItem key="Before yesterday" title="Before yesterday" />,
+    <MenuItem key="24 hours" title="Today" onPress={() => changeTrendingDay(new Date())} />,
+    <MenuItem key="Yesterday" title="Yesterday" onPress={() => changeTrendingDay(getYesterdayDate(new Date()))} />,
+    <MenuItem
+      key="Before yesterday"
+      title="2 days ago"
+      onPress={() => {
+        const yesterdayDate = getYesterdayDate(new Date());
+        const beforeYesterday = getYesterdayDate(yesterdayDate);
+        changeTrendingDay(beforeYesterday);
+      }}
+    />,
+    <MenuItem
+      key="3 days ago"
+      title="3 days ago"
+      onPress={() => {
+        const yesterdayDate = getYesterdayDate(new Date());
+        const daysAgo2 = getYesterdayDate(yesterdayDate);
+        const daysAgo3 = getYesterdayDate(daysAgo2);
+        changeTrendingDay(daysAgo3);
+      }}
+    />,
   ];
 
   const weekItems = [
@@ -209,8 +214,8 @@ export const PostListScreen = ({ navigation, route }) => {
         />
         <Divider />
         <Layout style={{ flex: 1 }}>
-          {isPosts && <PostVerticalList data={data} tags={tags} layoutType="small" deleteAlert={showDeleteButton} />}
-          {!isPosts && <TagVerticalList data={data} />}
+          {isPosts && <PostVerticalList search={search} layoutType="small" deleteAlert={showDeleteButton} />}
+          {!isPosts && <TagVerticalList search={search} order={order} type={type} />}
         </Layout>
       </SafeAreaView>
     </Layout>

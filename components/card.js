@@ -40,7 +40,7 @@ export const Card = ({ item, navigateDetail }) => {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    minHeight: 390,
+    // minHeight: 390,
   },
   image: {
     width: '100%',

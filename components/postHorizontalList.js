@@ -84,7 +84,7 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType }) => {
   const renderItem = ({ item }) => <SmallCard item={item} navigateDetail={navigateDetail} />;
 
   const navigatePostList = () => {
-    navigation.navigate('PostList', { from: title, data, tags, isPosts: true, menuType });
+    navigation.navigate('PostList', { from: title, data, tags, isPosts: true, menuType, search });
   };
 
   const keyExtractor = (item) => item.id.toString();

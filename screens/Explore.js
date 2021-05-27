@@ -18,7 +18,7 @@ export const ExploreScreen = ({ navigation }) => {
 
   const currentDate = new Date();
   const today = formatDateForSearch(currentDate);
-  const yesterday = formatDateForSearch(getYesterdayDate(currentDate));
+  // const yesterday = formatDateForSearch(getYesterdayDate(currentDate));
 
   const { firstDayWeek, lastDayWeek } = getWeekDate(currentDate);
   const { firstDayMonth, lastDayMonth } = getMonthDate(currentDate);
@@ -34,7 +34,7 @@ export const ExploreScreen = ({ navigation }) => {
             flex: 1,
           }}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <PostHorizontalList title="Trending" menuType="date" search={`date:${yesterday}...${today} order:score`} />
+            <PostHorizontalList title="Today's popular" menuType="date" search={`date:${today} order:score`} />
             <TagHorizontalList title="New Artist" menuType="tag" type="1" order="date" />
             <PostHorizontalList
               title="Week's Popular"
