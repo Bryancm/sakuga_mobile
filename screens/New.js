@@ -1,5 +1,5 @@
-import React from 'react';
-import { SafeAreaView, StyleSheet, ActivityIndicator } from 'react-native';
+import React, { useCallback } from 'react';
+import { SafeAreaView } from 'react-native';
 import {
   Divider,
   Layout,
@@ -17,30 +17,37 @@ const SearchIcon = (props) => <Icon {...props} name="search-outline" />;
 export const NewScreen = ({ navigation }) => {
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [layoutType, setLayoutType] = React.useState('large');
-  const renderSearchIcon = () => <TopNavigationAction icon={SearchIcon} onPress={navigateSearch} />;
 
-  const toggleMenu = () => {
+  const renderSearchIcon = useCallback(() => <TopNavigationAction icon={SearchIcon} onPress={navigateSearch} />, []);
+
+  const toggleMenu = useCallback(() => {
     setMenuVisible(!menuVisible);
-  };
+  }, [menuVisible]);
 
-  const renderMenuAction = () => <TopNavigationAction icon={LayoutIcon} onPress={toggleMenu} />;
+  const renderMenuAction = useCallback(() => <TopNavigationAction icon={LayoutIcon} onPress={toggleMenu} />, []);
 
-  const changeLayout = (type) => {
-    toggleMenu();
-    setLayoutType(type);
-  };
+  const changeLayout = useCallback(
+    (type) => {
+      toggleMenu();
+      setLayoutType(type);
+    },
+    [menuVisible],
+  );
 
-  const navigateSearch = () => {
+  const navigateSearch = useCallback(() => {
     navigation.navigate('Search');
-  };
+  }, []);
 
-  const renderRightActions = () => (
-    <React.Fragment>
-      <OverflowMenu anchor={renderMenuAction} visible={menuVisible} onBackdropPress={toggleMenu}>
-        <MenuItem title="Large List" onPress={() => changeLayout('large')} />
-        <MenuItem title="Small list" onPress={() => changeLayout('small')} />
-      </OverflowMenu>
-    </React.Fragment>
+  const renderRightActions = useCallback(
+    () => (
+      <React.Fragment>
+        <OverflowMenu anchor={renderMenuAction} visible={menuVisible} onBackdropPress={toggleMenu}>
+          <MenuItem title="Large List" onPress={() => changeLayout('large')} />
+          <MenuItem title="Small list" onPress={() => changeLayout('small')} />
+        </OverflowMenu>
+      </React.Fragment>
+    ),
+    [menuVisible],
   );
 
   return (
@@ -58,7 +65,3 @@ export const NewScreen = ({ navigation }) => {
     </Layout>
   );
 };
-
-const styles = StyleSheet.create({
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 16 },
-});

@@ -39,7 +39,7 @@ export const getYesterdayDate = (date = new Date()) => {
 };
 
 export const getWeekDate = (date = new Date()) => {
-  const first = date.getDate() - date.getDay() + 1; // First day is the day of the month - the day of the week
+  const first = date.getDate() - date.getDay(); // First day is the day of the month - the day of the week
   const last = first + 6; // last day is the first day + 6
   const firstDayWeek = new Date(date.setDate(first));
   const lastDayWeek = new Date(date.setDate(last));

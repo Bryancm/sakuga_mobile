@@ -117,15 +117,6 @@ export const PostVerticalList = ({ search = '', layoutType, deleteAlert, fromSea
     }
   }, [isLoading, isFetching, page]);
 
-  const getItemLayout = useCallback(
-    (data, index) => ({
-      length: layoutType === 'small' ? 132 : 390,
-      offset: layoutType === 'small' ? 132 * index : 390 * index,
-      index,
-    }),
-    [layoutType],
-  );
-
   const keyExtractor = useCallback((item) => item.id.toString(), []);
 
   const refetch = useCallback(() => {
