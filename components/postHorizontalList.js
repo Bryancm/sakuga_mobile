@@ -10,7 +10,7 @@ const capitalize = (s) => {
   return s && s[0].toUpperCase() + s.slice(1);
 };
 
-export const PostHorizontalList = ({ search = '', title, tags, menuType }) => {
+export const PostHorizontalList = ({ search = '', title, tags, menuType, date, secondDate }) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [message, setMessage] = useState('Nobody here but us chickens!');
@@ -84,7 +84,16 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType }) => {
   const renderItem = ({ item }) => <SmallCard item={item} navigateDetail={navigateDetail} />;
 
   const navigatePostList = () => {
-    navigation.navigate('PostList', { from: title, data, tags, isPosts: true, menuType, search });
+    navigation.navigate('PostList', {
+      from: title,
+      data,
+      tags,
+      isPosts: true,
+      menuType,
+      search,
+      date: date ? date.toString() : undefined,
+      secondDate: secondDate ? secondDate.toString() : undefined,
+    });
   };
 
   const keyExtractor = (item) => item.id.toString();

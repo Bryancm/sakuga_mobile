@@ -11,8 +11,17 @@ import {
 } from '@ui-kitten/components';
 import { PostVerticalList } from '../components/postVerticalList';
 import { TagVerticalList } from '../components/tagVerticalList';
-import { formatDateForSearch, getYesterdayDate, getWeekDate, getMonthDate, getYearDate } from '../util/date';
+import {
+  formatDateForSearch,
+  getYesterdayDate,
+  getWeekDate,
+  getMonthDate,
+  getYearDate,
+  getTomorrowDate,
+} from '../util/date';
 
+const LeftIcon = (props) => <Icon {...props} name="chevron-left-outline" />;
+const RightIcon = (props) => <Icon {...props} name="chevron-right-outline" />;
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 const CalendarIcon = (props) => <Icon {...props} name="calendar-outline" />;
 const FilterIcon = (props) => <Icon {...props} name="funnel-outline" />;
@@ -25,14 +34,18 @@ const StarIconFav = (props) => <Icon {...props} name="star-outline" fill="#eebb4
 export const PostListScreen = ({ navigation, route }) => {
   const from = route.params.from;
   const isPosts = route.params.isPosts;
+  const menuType = route.params.menuType;
+  const dateParam = route.params.date;
+  const secondDateParam = route.params.secondDate;
+
   const [search, setSearch] = React.useState(route.params.search ? route.params.search : '');
   const [order, setOrder] = React.useState(route.params.order ? route.params.order : 'date');
   const [type, setType] = React.useState(route.params.type ? route.params.type : '');
+  const [date, setDate] = React.useState(dateParam ? new Date(dateParam) : undefined);
+  const [secondDate, setSecondDate] = React.useState(secondDateParam ? new Date(secondDateParam) : undefined);
 
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [secondMenuVisible, setSecondMenuVisible] = React.useState(false);
-
-  React.useEffect(() => {}, []);
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
@@ -73,82 +86,133 @@ export const PostListScreen = ({ navigation, route }) => {
     );
 
   const BackAction = () => <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
-  const renderMenuAction = () => <TopNavigationAction icon={CalendarIcon} onPress={toggleMenu} />;
   const renderFilterAction = () => <TopNavigationAction icon={FilterIcon} onPress={toggleMenu} />;
   const renderOptionsAction = () => <TopNavigationAction icon={OptionsIcon} onPress={toggleSecondMenu} />;
 
-  const changeTrendingDay = (date) => {
-    toggleMenu();
-    setSearch(`date:${formatDateForSearch(date)} order:score`);
+  const prevDate = () => {
+    if (menuType === 'date') {
+      const prevDate = getYesterdayDate(date);
+      setSearch(`date:${formatDateForSearch(prevDate)} order:score`);
+      setDate(prevDate);
+      return;
+    }
+    if (menuType === 'week') {
+      const yesterday = getYesterdayDate(date);
+      const twoDaysAgo = getYesterdayDate(yesterday);
+      const { firstDayWeek, lastDayWeek } = getWeekDate(twoDaysAgo);
+      setSearch(`date:${formatDateForSearch(firstDayWeek)}...${formatDateForSearch(lastDayWeek)} order:score`);
+      setDate(firstDayWeek);
+      setSecondDate(lastDayWeek);
+      return;
+    }
+    if (menuType === 'month') {
+      const yesterday = getYesterdayDate(date);
+      const { firstDayMonth, lastDayMonth } = getMonthDate(yesterday);
+      setSearch(`date:${formatDateForSearch(firstDayMonth)}...${formatDateForSearch(lastDayMonth)} order:score`);
+      setDate(firstDayMonth);
+      setSecondDate(lastDayMonth);
+      return;
+    }
+    if (menuType === 'year') {
+      const year =
+        getYesterdayDate(date).getFullYear() === date.getFullYear()
+          ? getYesterdayDate(date).getFullYear() - 1
+          : getYesterdayDate(date).getFullYear();
+      if (year >= 2013) {
+        const { firstDayYear, lastDayYear } = getYearDate(year);
+        setSearch(`date:${formatDateForSearch(firstDayYear)}...${formatDateForSearch(lastDayYear)} order:score`);
+        setDate(firstDayYear);
+        setSecondDate(lastDayYear);
+      }
+      return;
+    }
+  };
+  const nextDate = () => {
+    if (menuType === 'date') {
+      const nextDate = getTomorrowDate(date);
+      if (nextDate <= new Date()) {
+        setSearch(`date:${formatDateForSearch(nextDate)} order:score`);
+        setDate(nextDate);
+      }
+      return;
+    }
+    if (menuType === 'week') {
+      const tomorrow = getTomorrowDate(secondDate);
+      const { firstDayWeek, lastDayWeek } = getWeekDate(tomorrow);
+      if (firstDayWeek <= new Date()) {
+        setSearch(`date:${formatDateForSearch(firstDayWeek)}...${formatDateForSearch(lastDayWeek)} order:score`);
+        setDate(firstDayWeek);
+        setSecondDate(lastDayWeek);
+      }
+      return;
+    }
+    if (menuType === 'month') {
+      const tomorrow = getTomorrowDate(secondDate);
+      const { firstDayMonth, lastDayMonth } = getMonthDate(tomorrow);
+      if (firstDayMonth.getMonth() <= new Date().getMonth()) {
+        setSearch(`date:${formatDateForSearch(firstDayMonth)}...${formatDateForSearch(lastDayMonth)} order:score`);
+        setDate(firstDayMonth);
+        setSecondDate(lastDayMonth);
+      }
+      return;
+    }
+    if (menuType === 'year') {
+      const year = getTomorrowDate(secondDate).getFullYear();
+      if (year <= new Date().getFullYear()) {
+        const { firstDayYear, lastDayYear } = getYearDate(year);
+        setSearch(`date:${formatDateForSearch(firstDayYear)}...${formatDateForSearch(lastDayYear)} order:score`);
+        setDate(firstDayYear);
+        setSecondDate(lastDayYear);
+      }
+      return;
+    }
   };
 
-  const dateItems = [
-    <MenuItem key="24 hours" title="Today" onPress={() => changeTrendingDay(new Date())} />,
-    <MenuItem key="Yesterday" title="Yesterday" onPress={() => changeTrendingDay(getYesterdayDate(new Date()))} />,
-    <MenuItem
-      key="Before yesterday"
-      title="2 days ago"
-      onPress={() => {
-        const yesterdayDate = getYesterdayDate(new Date());
-        const beforeYesterday = getYesterdayDate(yesterdayDate);
-        changeTrendingDay(beforeYesterday);
-      }}
-    />,
-    <MenuItem
-      key="3 days ago"
-      title="3 days ago"
-      onPress={() => {
-        const yesterdayDate = getYesterdayDate(new Date());
-        const daysAgo2 = getYesterdayDate(yesterdayDate);
-        const daysAgo3 = getYesterdayDate(daysAgo2);
-        changeTrendingDay(daysAgo3);
-      }}
-    />,
-  ];
+  const prevButtonOpacity = () => {
+    const year =
+      getYesterdayDate(date).getFullYear() === date.getFullYear()
+        ? getYesterdayDate(date).getFullYear() - 1
+        : getYesterdayDate(date).getFullYear();
+    if (year < 2013) return { opacity: 0.5 };
+    return { opacity: 1 };
+  };
 
-  const weekItems = [
-    <MenuItem key="This week" title="This week" />,
-    <MenuItem key="Past week" title="Past week" />,
-    <MenuItem key="2 weeks ago" title="2 weeks ago" />,
-  ];
+  const nextButtonOpacity = () => {
+    if (menuType === 'date' && getTomorrowDate(date) > new Date()) {
+      return { opacity: 0.5 };
+    }
 
-  const monthItems = [
-    <MenuItem key="JAN" title="JAN" />,
-    <MenuItem key="FEB" title="FEB" />,
-    <MenuItem key="MAR" title="MAR" />,
-    <MenuItem key="APR" title="APR" />,
-    <MenuItem key="MAY" title="MAY" />,
-    <MenuItem key="JUNE" title="JUNE" />,
-    <MenuItem key="JULY" title="JULY" />,
-    <MenuItem key="AUG" title="AUG" />,
-    <MenuItem key="SEPT" title="SEPT" />,
-    <MenuItem key="OCT" title="OCT" />,
-    <MenuItem key="NOV" title="NOV" />,
-    <MenuItem key="DEC" title="DEC" />,
-  ];
-
-  const yearItems = [
-    <MenuItem key="2021" title="2021" />,
-    <MenuItem key="2020" title="2020" />,
-    <MenuItem key="2019" title="2019" />,
-    <MenuItem key="2018" title="2018" />,
-    <MenuItem key="2017" title="2017" />,
-    <MenuItem key="2016" title="2016" />,
-    <MenuItem key="2015" title="2015" />,
-    <MenuItem key="2014" title="2014" />,
-    <MenuItem key="2013" title="2013" />,
-  ];
+    if (menuType === 'week') {
+      const tomorrow = getTomorrowDate(secondDate);
+      const { firstDayWeek } = getWeekDate(tomorrow);
+      if (firstDayWeek > new Date()) return { opacity: 0.5 };
+    }
+    if (menuType === 'month') {
+      const tomorrow = getTomorrowDate(secondDate);
+      const { firstDayMonth } = getMonthDate(tomorrow);
+      if (firstDayMonth.getMonth() > new Date().getMonth()) return { opacity: 0.5 };
+    }
+    if (menuType === 'year') {
+      const year = getTomorrowDate(date).getFullYear();
+      if (year + 1 > new Date().getFullYear()) return { opacity: 0.5 };
+    }
+    return { opacity: 1 };
+  };
 
   var renderRightActions = () => (
     <React.Fragment>
-      {route.params.menuType && (
-        <OverflowMenu anchor={renderMenuAction} visible={menuVisible} onBackdropPress={toggleMenu}>
-          {route.params.menuType === 'date' && dateItems}
-          {route.params.menuType === 'week' && weekItems}
-          {route.params.menuType === 'month' && monthItems}
-          {route.params.menuType === 'year' && yearItems}
-        </OverflowMenu>
-      )}
+      <TopNavigationAction
+        icon={LeftIcon}
+        onPress={prevDate}
+        style={prevButtonOpacity()}
+        disabled={prevButtonOpacity().opacity !== 1}
+      />
+      <TopNavigationAction
+        icon={RightIcon}
+        onPress={nextDate}
+        style={nextButtonOpacity()}
+        disabled={nextButtonOpacity().opacity !== 1}
+      />
     </React.Fragment>
   );
 
@@ -203,11 +267,20 @@ export const PostListScreen = ({ navigation, route }) => {
     return title;
   };
 
+  const FormatSubtitle = () => {
+    if (menuType === 'date') return formatDateForSearch(date);
+    if (menuType === 'week') return `${formatDateForSearch(date)} - ${formatDateForSearch(secondDate)}`;
+    if (menuType === 'month') return ` ${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
+    if (menuType === 'year') return `${date.getFullYear()}`;
+    return '';
+  };
+
   return (
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
         <TopNavigation
           title={formatTitle(from)}
+          subtitle={FormatSubtitle()}
           alignment="center"
           accessoryLeft={BackAction}
           accessoryRight={renderRightActions}

@@ -35,14 +35,24 @@ export const formatDateForSearch = (date) => {
 };
 
 export const getYesterdayDate = (date = new Date()) => {
-  return new Date(date.setDate(date.getDate() - 1));
+  const newDate = new Date(date);
+  return new Date(newDate.setDate(newDate.getDate() - 1));
+};
+
+export const getTomorrowDate = (date = new Date()) => {
+  const newDate = new Date(date);
+  return new Date(newDate.setDate(newDate.getDate() + 1));
 };
 
 export const getWeekDate = (date = new Date()) => {
-  const first = date.getDate() - date.getDay(); // First day is the day of the month - the day of the week
+  const newDate = new Date(date);
+  const day = newDate.getDay();
+  const first = newDate.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
+  // const first = new Date(newDate.setDate(diff));
+  // const first = newDate.getDate() - newDate.getDay(); // First day is the day of the month - the day of the week
   const last = first + 6; // last day is the first day + 6
-  const firstDayWeek = new Date(date.setDate(first));
-  const lastDayWeek = new Date(date.setDate(last));
+  const firstDayWeek = new Date(newDate.setDate(first));
+  const lastDayWeek = new Date(new Date(date).setDate(last));
   return { firstDayWeek, lastDayWeek };
 };
 
