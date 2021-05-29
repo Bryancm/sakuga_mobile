@@ -1,12 +1,17 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
-import { Layout, Text, Icon } from '@ui-kitten/components';
+import { StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, Icon } from '@ui-kitten/components';
 import { getTagStyle } from '../util/api';
 
-export const Tag = ({ tag }) => {
+export const Tag = ({ tag, navigatePostList }) => {
   const style = getTagStyle(tag.type);
   return (
-    <Layout style={{ ...style, ...styles.container }}>
+    <TouchableOpacity
+      delayPressIn={0}
+      delayPressOut={0}
+      activeOpacity={0.7}
+      style={{ ...style, ...styles.container }}
+      onPress={() => navigatePostList(tag.name, true, 'post', tag.name, 'date', tag.type)}>
       <Text category="c2" style={{ color: style.color, maxWidth: 130 }} numberOfLines={1}>
         {tag.name}
       </Text>
@@ -14,7 +19,7 @@ export const Tag = ({ tag }) => {
       <Text category="c2" style={{ color: style.color, marginLeft: 2 }} numberOfLines={1}>
         {tag.count}
       </Text>
-    </Layout>
+    </TouchableOpacity>
   );
 };
 

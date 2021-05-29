@@ -19,11 +19,11 @@ import {
   getYearDate,
   getTomorrowDate,
 } from '../util/date';
+import { useNavigation } from '@react-navigation/native';
 
 const LeftIcon = (props) => <Icon {...props} name="chevron-left-outline" />;
 const RightIcon = (props) => <Icon {...props} name="chevron-right-outline" />;
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
-const CalendarIcon = (props) => <Icon {...props} name="calendar-outline" />;
 const FilterIcon = (props) => <Icon {...props} name="funnel-outline" />;
 const OptionsIcon = (props) => <Icon {...props} name="options-2-outline" />;
 const TrashIcon = (props) => <Icon {...props} name="trash-outline" />;
@@ -31,7 +31,8 @@ const StarIconGood = (props) => <Icon {...props} name="star-outline" fill="#2075
 const StarIconGreat = (props) => <Icon {...props} name="star-outline" fill="#649d66" />;
 const StarIconFav = (props) => <Icon {...props} name="star-outline" fill="#eebb4d" />;
 
-export const PostListScreen = ({ navigation, route }) => {
+export const PostListScreen = ({ route }) => {
+  const navigation = useNavigation();
   const from = route.params.from;
   const isPosts = route.params.isPosts;
   const menuType = route.params.menuType;

@@ -37,8 +37,8 @@ export const TagVerticalList = ({ search = '', focus, order, type }) => {
     fetchTags(1, true, search, order, type);
   }, [search, order, type]);
 
-  const navigatePostList = (from) => {
-    navigation.navigate('PostList', { from, isPosts: true });
+  const navigatePostList = (from, isPosts, menuType, search, order, type) => {
+    navigation.push('PostList', { from, isPosts, menuType, search, order, type });
   };
 
   const clearLoading = () => {
@@ -81,10 +81,6 @@ export const TagVerticalList = ({ search = '', focus, order, type }) => {
       contentContainerStyle={{ paddingHorizontal: 8, paddingVertical: 8 }}
       data={data}
       renderItem={renderItem}
-      // initialNumToRender={8}
-      // maxToRenderPerBatch={5}
-      // windowSize={10}
-      updateCellsBatchingPeriod={150}
       onEndReachedThreshold={1}
       onEndReached={onEndReached}
       keyExtractor={keyExtractor}
