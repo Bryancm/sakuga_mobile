@@ -71,15 +71,22 @@ export const PostListScreen = ({ route }) => {
     removeAll = f;
   };
 
-  const clearAlert = () =>
-    Alert.alert('Remove all', `Do you want to clear your ${from} ?`, [
-      {
-        text: 'Cancel',
-        onPress: () => console.log('Cancel Pressed'),
-        style: 'cancel',
-      },
-      { text: 'Confirm', onPress: clearItems, style: 'destructive' },
-    ]);
+  const clearAlert = async () => {
+    const key = from === 'History' ? 'postHistory' : 'watchList';
+    const items = await getData(key);
+    if (items) {
+      Alert.alert('Remove all', `Do you want to clear your ${from} ?`, [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        { text: 'Confirm', onPress: clearItems, style: 'destructive' },
+      ]);
+    } else {
+      Alert.alert(`The ${from} is alerady empty`);
+    }
+  };
 
   const BackAction = () => <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
   const renderFilterAction = () => <TopNavigationAction icon={FilterIcon} onPress={toggleMenu} />;
