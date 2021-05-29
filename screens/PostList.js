@@ -33,12 +33,13 @@ const StarIconFav = (props) => <Icon {...props} name="star-outline" fill="#eebb4
 
 export const PostListScreen = ({ route }) => {
   const navigation = useNavigation();
+  const user = route.params.user;
   const from = route.params.from;
   const isPosts = route.params.isPosts;
   const menuType = route.params.menuType;
   const dateParam = route.params.date;
   const secondDateParam = route.params.secondDate;
-
+  const [title, setTitle] = React.useState(from);
   const [search, setSearch] = React.useState(route.params.search ? route.params.search : '');
   const [order, setOrder] = React.useState(route.params.order ? route.params.order : 'date');
   const [type, setType] = React.useState(route.params.type ? route.params.type : '');
@@ -217,16 +218,48 @@ export const PostListScreen = ({ route }) => {
     </React.Fragment>
   );
 
+  const changeFavorites = (vote, title, order) => {
+    order ? toggleSecondMenu() : toggleMenu();
+    setTitle(title);
+    setSearch(`vote:${vote}:${user} order:${order}`);
+  };
+
   const favActions = () => (
     <React.Fragment>
       <OverflowMenu anchor={renderFilterAction} visible={menuVisible} onBackdropPress={toggleMenu}>
-        <MenuItem key="1" title="Good only" accessoryLeft={StarIconGood} />
-        <MenuItem key="2" title="Great only" accessoryLeft={StarIconGreat} />
-        <MenuItem key="3" title="Favorite only" accessoryLeft={StarIconFav} />
+        <MenuItem key="1" title="Good only" accessoryLeft={StarIconGood} onPress={() => changeFavorites(1, 'Good')} />
+        <MenuItem
+          key="2"
+          title="Great only"
+          accessoryLeft={StarIconGreat}
+          onPress={() => changeFavorites(2, 'Great')}
+        />
+        <MenuItem
+          key="3"
+          title="Favorite only"
+          accessoryLeft={StarIconFav}
+          onPress={() => changeFavorites(3, 'Favorites')}
+        />
       </OverflowMenu>
       <OverflowMenu anchor={renderOptionsAction} visible={secondMenuVisible} onBackdropPress={toggleSecondMenu}>
-        <MenuItem key="4" title="Sort by date" />
-        <MenuItem key="5" title="Sort by score" />
+        <MenuItem
+          key="4"
+          title="Sort by date"
+          onPress={() => {
+            if (title === 'Good') changeFavorites(1, 'Good', 'vote');
+            if (title === 'Great') changeFavorites(2, 'Great', 'vote');
+            if (title === 'Favorites') changeFavorites(3, 'Favorites', 'vote');
+          }}
+        />
+        <MenuItem
+          key="5"
+          title="Sort by score"
+          onPress={() => {
+            if (title === 'Good') changeFavorites(1, 'Good', 'score');
+            if (title === 'Great') changeFavorites(2, 'Great', 'score');
+            if (title === 'Favorites') changeFavorites(3, 'Favorites', 'score');
+          }}
+        />
       </OverflowMenu>
     </React.Fragment>
   );
@@ -280,7 +313,7 @@ export const PostListScreen = ({ route }) => {
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
         <TopNavigation
-          title={formatTitle(from)}
+          title={formatTitle(title)}
           subtitle={FormatSubtitle()}
           alignment="center"
           accessoryLeft={BackAction}

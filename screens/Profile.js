@@ -21,7 +21,7 @@ const HeartIcon = (props) => <Icon {...props} name="heart-outline" />;
 const SettingsIcon = (props) => <Icon {...props} name="settings-outline" />;
 const SearchIcon = (props) => <Icon {...props} name="search-outline" />;
 
-export const ProfileScreen = ({ navigation }) => {
+export const ProfileScreen = ({ navigation, user = 'bryan' }) => {
   const renderSearchAction = () => <TopNavigationAction icon={SearchIcon} onPress={navigateSearch} />;
   const renderFavIcon = () => <Button appearance="ghost" accessoryLeft={HeartIcon} />;
   const renderClockIcon = () => <Button appearance="ghost" accessoryLeft={ClockIcon} />;
@@ -34,8 +34,8 @@ export const ProfileScreen = ({ navigation }) => {
   const navigateSettings = () => {
     navigation.navigate('Settings');
   };
-  const navigatePostList = (from) => {
-    navigation.navigate('PostList', { from, isPosts: true });
+  const navigatePostList = (from, isPosts, menuType, search, order, type) => {
+    navigation.navigate('PostList', { from, isPosts, menuType, search, order, type, user });
   };
 
   return (
@@ -46,7 +46,7 @@ export const ProfileScreen = ({ navigation }) => {
         <ScrollView>
           <Layout style={{ flexDirection: 'row' }}>
             <Button size="giant" appearance="ghost" style={{ paddingLeft: 0 }}>
-              <Text category="h4">Welcome Bryan</Text>
+              <Text category="h4">{`Welcome ${user}`}</Text>
             </Button>
           </Layout>
           <ListItem
@@ -54,7 +54,7 @@ export const ProfileScreen = ({ navigation }) => {
             description="Good, great and favorites sakugas"
             accessoryLeft={renderFavIcon}
             accessoryRight={ArrowIcon}
-            onPress={() => navigatePostList('Favorites')}
+            onPress={() => navigatePostList('Favorites', true, 'Favorites', `vote:3:${user} order:vote`)}
           />
           <ListItem
             title="History"
