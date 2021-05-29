@@ -61,7 +61,7 @@ export const ProfileScreen = ({ navigation, user = 'bryan' }) => {
             description="Viewed sakugas"
             accessoryLeft={renderClockIcon}
             accessoryRight={ArrowIcon}
-            onPress={() => navigatePostList('History')}
+            onPress={() => navigatePostList('History', true, 'History')}
           />
           <ListItem
             title="Watch Later"

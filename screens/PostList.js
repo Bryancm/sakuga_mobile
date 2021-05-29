@@ -27,7 +27,6 @@ const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 const FilterIcon = (props) => <Icon {...props} name="funnel-outline" />;
 const OptionsIcon = (props) => <Icon {...props} name="options-2-outline" />;
 const TrashIcon = (props) => <Icon {...props} name="trash-outline" />;
-const StarIcon = (props) => <Icon {...props} name="star-outline" />;
 const StarIconGood = (props) => <Icon {...props} name="star-outline" fill="#207561" />;
 const StarIconGreat = (props) => <Icon {...props} name="star-outline" fill="#649d66" />;
 const StarIconFav = (props) => <Icon {...props} name="star-outline" fill="#eebb4d" />;
@@ -331,7 +330,9 @@ export const PostListScreen = ({ route }) => {
         />
         <Divider />
         <Layout style={{ flex: 1 }}>
-          {isPosts && <PostVerticalList search={search} layoutType="small" deleteAlert={showDeleteButton} />}
+          {isPosts && (
+            <PostVerticalList search={search} layoutType="small" deleteAlert={showDeleteButton} from={from} />
+          )}
           {!isPosts && <TagVerticalList search={search} order={order} type={type} />}
         </Layout>
       </SafeAreaView>

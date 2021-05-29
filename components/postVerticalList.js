@@ -6,12 +6,13 @@ import { getPosts } from '../api/post';
 import { Layout, Text } from '@ui-kitten/components';
 import { tagStyles } from '../styles';
 import { useNavigation } from '@react-navigation/native';
+import { getData } from '../util/storage';
 
 const capitalize = (s) => {
   return s && s[0].toUpperCase() + s.slice(1);
 };
 
-export const PostVerticalList = ({ search = '', layoutType, deleteAlert, fromSearch, focus }) => {
+export const PostVerticalList = ({ search = '', layoutType, deleteAlert, focus, from }) => {
   const [page, setPage] = useState(1);
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
@@ -76,6 +77,30 @@ export const PostVerticalList = ({ search = '', layoutType, deleteAlert, fromSea
     }
   };
 
+  const getPostHistory = async (page, isFirst) => {
+    try {
+      if (!isFirst) setFetching(true);
+      var newHistory = [];
+      const currentHistory = await getData('postHistory');
+      if (currentHistory) {
+        const pageIndex = 18 * (page - 1);
+        const start = pageIndex <= currentHistory.length - 1 ? pageIndex : currentHistory.length - 1;
+        const end = page * 18 <= currentHistory.length - 1 ? page * 18 : currentHistory.length - 1;
+        const newData = currentHistory.slice(start, end);
+        newHistory = [...data, ...newData];
+        if (page === 1) newHistory = newData;
+      }
+      if (!message || message === 'Error, please try again later :(') setMessage('Nobody here but us chickens!');
+      setData(newHistory);
+      clearLoading();
+    } catch (error) {
+      console.log('GET_HISTORY_ERROR: ', error);
+      setData([]);
+      setMessage('Error, please try again later :(');
+      clearLoading();
+    }
+  };
+
   const clearLoading = () => {
     setLoading(false);
     setFetching(false);
@@ -93,10 +118,14 @@ export const PostVerticalList = ({ search = '', layoutType, deleteAlert, fromSea
   }, [layoutType]);
 
   useEffect(() => {
-    if (fromSearch) {
+    if (from === 'Search') {
       clearLoading();
-    } else {
-      if (!search) fetchPost(page, true);
+    } else if (from === 'History') {
+      setLoading(true);
+      getPostHistory(page, true);
+    } else if (!search) {
+      setLoading(true);
+      fetchPost(page, true);
     }
   }, []);
 
@@ -110,19 +139,28 @@ export const PostVerticalList = ({ search = '', layoutType, deleteAlert, fromSea
     [layoutType],
   );
 
-  const onEndReached = useCallback(async () => {
+  const onEndReached = async () => {
     if (!isLoading && !isFetching) {
-      fetchPost(page + 1, false, search);
+      if (from === 'History') {
+        getPostHistory(page + 1);
+      } else {
+        fetchPost(page + 1, false, search);
+      }
       setPage(page + 1);
     }
-  }, [isLoading, isFetching, page]);
+  };
 
   const keyExtractor = useCallback((item) => item.id.toString(), []);
 
   const refetch = useCallback(() => {
     if (!isLoading && !isFetching && !isRefetching) {
       setRefetching(true);
-      fetchPost(1, true, search);
+      if (from === 'History') {
+        getPostHistory(1, true);
+      } else {
+        fetchPost(1, true, search);
+      }
+
       setPage(1);
     }
   }, [isLoading, isFetching, isRefetching]);

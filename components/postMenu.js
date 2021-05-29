@@ -1,5 +1,6 @@
 import React from 'react';
 import { Icon, Layout, Text, Button, OverflowMenu, MenuItem } from '@ui-kitten/components';
+import { storeData, getData } from '../util/storage';
 
 const MoreIcon = (props) => <Icon {...props} name="more-vertical-outline" />;
 const StarIcon = (props) => <Icon {...props} name="star-outline" />;
@@ -51,6 +52,7 @@ export const PostMenu = ({
       onPress={toggleMenu2}
     />
   );
+
   return (
     <Layout level={level} style={{ flexDirection: 'row' }}>
       <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>

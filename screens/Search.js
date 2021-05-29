@@ -320,7 +320,7 @@ export const SearchScreen = ({ navigation }) => {
                   <SortActions />
                 </Layout>
               </Layout>
-              <PostVerticalList layoutType={layoutType} fromSearch={true} search={search} focus={focus} />
+              <PostVerticalList layoutType={layoutType} from="Search" search={search} focus={focus} />
             </Layout>
           </Tab>
 

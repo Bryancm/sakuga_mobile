@@ -1,10 +1,11 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { SafeAreaView, Image, StyleSheet, Keyboard } from 'react-native';
 import { Divider, Icon, Layout, Input, Button, Text } from '@ui-kitten/components';
 import { DetailHeader } from '../components/detailHeader';
 import { TagList } from '../components/tagList';
 import { DetailFooter } from '../components/detailFooter';
 import { CommentList } from '../components/commentList';
+import { storeData, getData } from '../util/storage';
 import data from '../comment-data.json';
 
 import VideoPlayer from 'react-native-video-controls';
@@ -35,6 +36,19 @@ export const DetailsScreen = ({ navigation, route }) => {
 
   const [inputIsFocused, setInputIsFocused] = useState(false);
   const [text, setText] = useState();
+
+  const updatePostHistory = async () => {
+    var newHistory = [item];
+    const currentHistory = await getData('postHistory');
+    if (currentHistory) {
+      const filteredHistory = currentHistory.filter((p) => p.id !== item.id);
+      newHistory = [item, ...filteredHistory];
+    }
+    storeData('postHistory', newHistory);
+  };
+  useEffect(() => {
+    updatePostHistory();
+  }, []);
 
   const cancelInput = () => {
     setText();
