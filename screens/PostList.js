@@ -20,6 +20,7 @@ import {
   getTomorrowDate,
 } from '../util/date';
 import { useNavigation } from '@react-navigation/native';
+import { getData, storeData } from '../util/storage';
 
 const LeftIcon = (props) => <Icon {...props} name="chevron-left-outline" />;
 const RightIcon = (props) => <Icon {...props} name="chevron-right-outline" />;
@@ -45,6 +46,7 @@ export const PostListScreen = ({ route }) => {
   const [type, setType] = React.useState(route.params.type ? route.params.type : '');
   const [date, setDate] = React.useState(dateParam ? new Date(dateParam) : undefined);
   const [secondDate, setSecondDate] = React.useState(secondDateParam ? new Date(secondDateParam) : undefined);
+  var removeAll = undefined;
 
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [secondMenuVisible, setSecondMenuVisible] = React.useState(false);
@@ -61,31 +63,23 @@ export const PostListScreen = ({ route }) => {
     navigation.goBack();
   };
 
-  const clearHistory = () => {};
+  const clearItems = () => {
+    if (removeAll) removeAll();
+  };
+
+  const setRemoveAll = (f) => {
+    removeAll = f;
+  };
 
   const clearAlert = () =>
-    Alert.alert('Remove all', `Do you want to clear your ${from === 'History' ? 'History' : 'Watch List'} ?`, [
+    Alert.alert('Remove all', `Do you want to clear your ${from} ?`, [
       {
         text: 'Cancel',
         onPress: () => console.log('Cancel Pressed'),
         style: 'cancel',
       },
-      { text: 'Confirm', onPress: () => console.log('OK Pressed'), style: 'destructive' },
+      { text: 'Confirm', onPress: clearItems, style: 'destructive' },
     ]);
-
-  const deleteAlert = (item) =>
-    Alert.alert(
-      'Remove',
-      `Do you want to remove this post from your ${from === 'History' ? 'History' : 'Watch List'} ?`,
-      [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-        { text: 'Confirm', onPress: () => console.log('OK Pressed'), style: 'destructive' },
-      ],
-    );
 
   const BackAction = () => <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
   const renderFilterAction = () => <TopNavigationAction icon={FilterIcon} onPress={toggleMenu} />;
@@ -300,8 +294,7 @@ export const PostListScreen = ({ route }) => {
   if (route.params.menuType === 'tag') renderRightActions = TagSortActions;
   if (route.params.menuType === 'post') renderRightActions = PostSortActions;
 
-  var showDeleteButton = false;
-  if (from === 'History' || from === 'Watch Later') showDeleteButton = deleteAlert;
+  const showDeleteButton = from === 'History' || from === 'Watch Later';
 
   const formatTitle = (title) => {
     if (title.length > 30) {
@@ -331,7 +324,13 @@ export const PostListScreen = ({ route }) => {
         <Divider />
         <Layout style={{ flex: 1 }}>
           {isPosts && (
-            <PostVerticalList search={search} layoutType="small" deleteAlert={showDeleteButton} from={from} />
+            <PostVerticalList
+              search={search}
+              layoutType="small"
+              showDeleteButton={showDeleteButton}
+              from={from}
+              setRemoveAll={setRemoveAll}
+            />
           )}
           {!isPosts && <TagVerticalList search={search} order={order} type={type} />}
         </Layout>

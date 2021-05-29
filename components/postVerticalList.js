@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FlatList, ActivityIndicator, RefreshControl, StyleSheet } from 'react-native';
+import { FlatList, ActivityIndicator, RefreshControl, StyleSheet, Alert } from 'react-native';
 import { CardSmall } from './cardSmall';
 import { Card } from '../components/card';
 import { getPosts } from '../api/post';
 import { Layout, Text } from '@ui-kitten/components';
 import { tagStyles } from '../styles';
 import { useNavigation } from '@react-navigation/native';
-import { getData } from '../util/storage';
+import { getData, storeData, removeData } from '../util/storage';
 
 const capitalize = (s) => {
   return s && s[0].toUpperCase() + s.slice(1);
 };
 
-export const PostVerticalList = ({ search = '', layoutType, deleteAlert, focus, from }) => {
+export const PostVerticalList = ({ search = '', layoutType, showDeleteButton, focus, from, setRemoveAll }) => {
   const [page, setPage] = useState(1);
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
@@ -127,14 +127,41 @@ export const PostVerticalList = ({ search = '', layoutType, deleteAlert, focus, 
       setLoading(true);
       fetchPost(page, true);
     }
+    if (setRemoveAll) setRemoveAll(removeAllItems);
   }, []);
+
+  const removeAllItems = async () => {
+    setLoading(true);
+    const key = from === 'History' ? 'postHistory' : 'watchList';
+    await removeData(key);
+    getPostHistory(1, true);
+  };
+
+  const removeItem = async (item) => {
+    setLoading(true);
+    const key = from === 'History' ? 'postHistory' : 'watchList';
+    const items = await getData(key);
+    const newItems = items.filter((i) => i.id !== item.id);
+    await storeData(key, newItems);
+    getPostHistory(1, true);
+  };
+
+  const deleteAlert = (item) =>
+    Alert.alert('Remove', `Do you want to remove this post from your ${from} ?`, [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      { text: 'Confirm', onPress: () => removeItem(item), style: 'destructive' },
+    ]);
 
   const renderItem = useCallback(
     ({ item }) =>
       layoutType === 'small' ? (
-        <CardSmall item={item} deleteAlert={deleteAlert} navigateDetail={navigateDetail} />
+        <CardSmall item={item} deleteAlert={showDeleteButton ? deleteAlert : false} navigateDetail={navigateDetail} />
       ) : (
-        <Card item={item} deleteAlert={deleteAlert} navigateDetail={navigateDetail} />
+        <Card item={item} deleteAlert={showDeleteButton ? deleteAlert : false} navigateDetail={navigateDetail} />
       ),
     [layoutType],
   );

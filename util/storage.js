@@ -17,3 +17,12 @@ export const getData = async (key) => {
     console.log('GET_STORAGE_DATA_ERROR: ', e);
   }
 };
+
+export const removeData = async (key) => {
+  try {
+    await AsyncStorage.removeItem(key);
+    return true;
+  } catch (exception) {
+    return false;
+  }
+};

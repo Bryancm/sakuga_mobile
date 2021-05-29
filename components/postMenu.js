@@ -53,6 +53,11 @@ export const PostMenu = ({
     />
   );
 
+  const remove = () => {
+    toggleMenu2();
+    deleteAlert(item);
+  };
+
   return (
     <Layout level={level} style={{ flexDirection: 'row' }}>
       <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>
@@ -74,7 +79,7 @@ export const PostMenu = ({
                 Remove
               </Text>
             }
-            onPress={() => deleteAlert(item)}
+            onPress={remove}
           />
         )}
       </OverflowMenu>
