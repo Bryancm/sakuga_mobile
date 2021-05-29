@@ -1,6 +1,7 @@
 import React from 'react';
 import { Icon, Layout, Text, Button, OverflowMenu, MenuItem } from '@ui-kitten/components';
 import { storeData, getData } from '../util/storage';
+import Toast from 'react-native-simple-toast';
 
 const MoreIcon = (props) => <Icon {...props} name="more-vertical-outline" />;
 const StarIcon = (props) => <Icon {...props} name="star-outline" />;
@@ -58,6 +59,23 @@ export const PostMenu = ({
     deleteAlert(item);
   };
 
+  const addToWatchList = async () => {
+    try {
+      toggleMenu2();
+      var newWatchList = [item];
+      const currentWatchList = await getData('watchList');
+      if (currentWatchList) {
+        const filteredWatchList = currentWatchList.filter((p) => p.id !== item.id);
+        newWatchList = [item, ...filteredWatchList];
+      }
+      await storeData('watchList', newWatchList);
+      Toast.show('Added to watch later');
+    } catch (error) {
+      console.log('ADD_WATCH_LATER_ERROR: ', error);
+      Toast.show('Error');
+    }
+  };
+
   return (
     <Layout level={level} style={{ flexDirection: 'row' }}>
       <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>
@@ -69,7 +87,12 @@ export const PostMenu = ({
       <OverflowMenu anchor={menuAnchor2} visible={menuVisible2} onBackdropPress={toggleMenu2}>
         <MenuItem key="5" accessoryLeft={LinkIcon} title={<Text category="c1">Copy link</Text>} />
         <MenuItem key="6" accessoryLeft={DownloadIcon} title={<Text category="c1">Download</Text>} />
-        <MenuItem key="7" accessoryLeft={ArchiveIcon} title={<Text category="c1">Add to watch list</Text>} />
+        <MenuItem
+          key="7"
+          accessoryLeft={ArchiveIcon}
+          title={<Text category="c1">Add to watch list</Text>}
+          onPress={addToWatchList}
+        />
         {deleteAlert && (
           <MenuItem
             key="8"

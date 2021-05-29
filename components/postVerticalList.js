@@ -7,6 +7,7 @@ import { Layout, Text } from '@ui-kitten/components';
 import { tagStyles } from '../styles';
 import { useNavigation } from '@react-navigation/native';
 import { getData, storeData, removeData } from '../util/storage';
+import Toast from 'react-native-simple-toast';
 
 const capitalize = (s) => {
   return s && s[0].toUpperCase() + s.slice(1);
@@ -77,11 +78,11 @@ export const PostVerticalList = ({ search = '', layoutType, showDeleteButton, fo
     }
   };
 
-  const getPostHistory = async (page, isFirst) => {
+  const getLocalPost = async (page, isFirst, key) => {
     try {
       if (!isFirst) setFetching(true);
       var newHistory = [];
-      const currentHistory = await getData('postHistory');
+      const currentHistory = await getData(key);
       if (currentHistory) {
         const pageIndex = 18 * (page - 1);
         const start = pageIndex <= currentHistory.length - 1 ? pageIndex : currentHistory.length - 1;
@@ -122,7 +123,10 @@ export const PostVerticalList = ({ search = '', layoutType, showDeleteButton, fo
       clearLoading();
     } else if (from === 'History') {
       setLoading(true);
-      getPostHistory(page, true);
+      getLocalPost(page, true, 'postHistory');
+    } else if (from === 'Watch Later') {
+      setLoading(true);
+      getLocalPost(page, true, 'watchList');
     } else if (!search) {
       setLoading(true);
       fetchPost(page, true);
@@ -134,7 +138,8 @@ export const PostVerticalList = ({ search = '', layoutType, showDeleteButton, fo
     setLoading(true);
     const key = from === 'History' ? 'postHistory' : 'watchList';
     await removeData(key);
-    getPostHistory(1, true);
+    getLocalPost(1, true, key);
+    Toast.show(`${from} list cleared`);
   };
 
   const removeItem = async (item) => {
@@ -143,11 +148,12 @@ export const PostVerticalList = ({ search = '', layoutType, showDeleteButton, fo
     const items = await getData(key);
     const newItems = items.filter((i) => i.id !== item.id);
     await storeData(key, newItems);
-    getPostHistory(1, true);
+    getLocalPost(1, true, key);
+    Toast.show(`Post removed`);
   };
 
   const deleteAlert = (item) =>
-    Alert.alert('Remove', `Do you want to remove this post from your ${from} ?`, [
+    Alert.alert('Remove', `Do you want to remove this post from your ${from} list ?`, [
       {
         text: 'Cancel',
         onPress: () => console.log('Cancel Pressed'),
@@ -168,8 +174,9 @@ export const PostVerticalList = ({ search = '', layoutType, showDeleteButton, fo
 
   const onEndReached = async () => {
     if (!isLoading && !isFetching) {
-      if (from === 'History') {
-        getPostHistory(page + 1);
+      if (from === 'History' || from === 'Watch Later') {
+        const key = from === 'History' ? 'postHistory' : 'watchList';
+        getLocalPost(page + 1, false, key);
       } else {
         fetchPost(page + 1, false, search);
       }
@@ -182,8 +189,9 @@ export const PostVerticalList = ({ search = '', layoutType, showDeleteButton, fo
   const refetch = useCallback(() => {
     if (!isLoading && !isFetching && !isRefetching) {
       setRefetching(true);
-      if (from === 'History') {
-        getPostHistory(1, true);
+      if (from === 'History' || from === 'Watch Later') {
+        const key = from === 'History' ? 'postHistory' : 'watchList';
+        getLocalPost(1, true, key);
       } else {
         fetchPost(1, true, search);
       }
@@ -207,7 +215,6 @@ export const PostVerticalList = ({ search = '', layoutType, showDeleteButton, fo
       initialNumToRender={8}
       maxToRenderPerBatch={8}
       windowSize={16}
-      // updateCellsBatchingPeriod={150}
       onEndReachedThreshold={1}
       viewabilityConfig={{
         minimumViewTime: 200,
@@ -216,7 +223,6 @@ export const PostVerticalList = ({ search = '', layoutType, showDeleteButton, fo
       contentContainerStyle={{
         paddingBottom: 10,
       }}
-      // getItemLayout={getItemLayout}
       onEndReached={onEndReached}
       keyExtractor={keyExtractor}
       refreshControl={<RefreshControl onRefresh={refetch} refreshing={isRefetching} />}

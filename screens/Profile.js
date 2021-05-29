@@ -68,7 +68,7 @@ export const ProfileScreen = ({ navigation, user = 'bryan' }) => {
             description="Do not lose it"
             accessoryLeft={renderArchiveIcon}
             accessoryRight={ArrowIcon}
-            onPress={() => navigatePostList('Watch Later')}
+            onPress={() => navigatePostList('Watch Later', true, 'Watch Later')}
           />
           <ListItem
             title="Settings"

@@ -38,14 +38,19 @@ export const DetailsScreen = ({ navigation, route }) => {
   const [text, setText] = useState();
 
   const updatePostHistory = async () => {
-    var newHistory = [item];
-    const currentHistory = await getData('postHistory');
-    if (currentHistory) {
-      const filteredHistory = currentHistory.filter((p) => p.id !== item.id);
-      newHistory = [item, ...filteredHistory];
+    try {
+      var newHistory = [item];
+      const currentHistory = await getData('postHistory');
+      if (currentHistory) {
+        const filteredHistory = currentHistory.filter((p) => p.id !== item.id);
+        newHistory = [item, ...filteredHistory];
+      }
+      await storeData('postHistory', newHistory);
+    } catch (error) {
+      console.log('ADD_TO_HISTORY_ERROR: ', error);
     }
-    storeData('postHistory', newHistory);
   };
+
   useEffect(() => {
     updatePostHistory();
   }, []);

@@ -20,7 +20,7 @@ import {
   getTomorrowDate,
 } from '../util/date';
 import { useNavigation } from '@react-navigation/native';
-import { getData, storeData } from '../util/storage';
+import { getData } from '../util/storage';
 
 const LeftIcon = (props) => <Icon {...props} name="chevron-left-outline" />;
 const RightIcon = (props) => <Icon {...props} name="chevron-right-outline" />;
@@ -75,7 +75,7 @@ export const PostListScreen = ({ route }) => {
     const key = from === 'History' ? 'postHistory' : 'watchList';
     const items = await getData(key);
     if (items) {
-      Alert.alert('Remove all', `Do you want to clear your ${from} ?`, [
+      Alert.alert('Remove all', `Do you want to clear your ${from} list ?`, [
         {
           text: 'Cancel',
           onPress: () => console.log('Cancel Pressed'),
