@@ -27,6 +27,7 @@ const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 const FilterIcon = (props) => <Icon {...props} name="funnel-outline" />;
 const OptionsIcon = (props) => <Icon {...props} name="options-2-outline" />;
 const TrashIcon = (props) => <Icon {...props} name="trash-outline" />;
+const StarIcon = (props) => <Icon {...props} name="star-outline" />;
 const StarIconGood = (props) => <Icon {...props} name="star-outline" fill="#207561" />;
 const StarIconGreat = (props) => <Icon {...props} name="star-outline" fill="#649d66" />;
 const StarIconFav = (props) => <Icon {...props} name="star-outline" fill="#eebb4d" />;
@@ -243,12 +244,21 @@ export const PostListScreen = ({ route }) => {
       </OverflowMenu>
       <OverflowMenu anchor={renderOptionsAction} visible={secondMenuVisible} onBackdropPress={toggleSecondMenu}>
         <MenuItem
-          key="4"
-          title="Sort by date"
+          key="6"
+          title="Sort by voted date"
           onPress={() => {
             if (title === 'Good') changeFavorites(1, 'Good', 'vote');
             if (title === 'Great') changeFavorites(2, 'Great', 'vote');
             if (title === 'Favorites') changeFavorites(3, 'Favorites', 'vote');
+          }}
+        />
+        <MenuItem
+          key="4"
+          title="Sort by post date"
+          onPress={() => {
+            if (title === 'Good') changeFavorites(1, 'Good', 'date');
+            if (title === 'Great') changeFavorites(2, 'Great', 'date');
+            if (title === 'Favorites') changeFavorites(3, 'Favorites', 'date');
           }}
         />
         <MenuItem
