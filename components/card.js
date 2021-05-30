@@ -1,14 +1,29 @@
-import React from 'react';
+import React, { forwardRef, useImperativeHandle, useState } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import { Divider, Layout, Text } from '@ui-kitten/components';
 import { getRelativeTime } from '../util/date';
 import FastImage from 'react-native-fast-image';
 import { TagList } from './tagList';
 import { PostMenu } from './postMenu';
+import VideoPlayer from 'react-native-video';
+import converProxyUrl from 'react-native-video-cache';
 
-export const Card = ({ item, navigateDetail }) => {
+export const Card = forwardRef((props, ref) => {
+  const { item, navigateDetail } = props;
   const tags = item.tags;
   const title = item.title;
+  const isVideo =
+    item.file_ext !== 'gif' && item.file_ext !== 'jpg' && item.file_ext !== 'jpeg' && item.file_ext !== 'png';
+  const [paused, setPaused] = useState(true);
+
+  useImperativeHandle(ref, () => ({
+    playVideo() {
+      setPaused(false);
+    },
+    pauseVideo() {
+      setPaused(true);
+    },
+  }));
 
   const goToDetail = () => {
     navigateDetail(item, title, tags);
@@ -24,7 +39,20 @@ export const Card = ({ item, navigateDetail }) => {
       <Text style={{ paddingHorizontal: 8, paddingVertical: 15 }} category="h6" numberOfLines={1}>
         {title}
       </Text>
-      <FastImage style={styles.image} source={{ uri: item.preview_url }} resizeMode="contain" />
+      <Layout style={styles.imageContainer}>
+        <FastImage style={styles.image} source={{ uri: item.preview_url }} resizeMode="contain" />
+        {isVideo && (
+          <VideoPlayer
+            paused={paused}
+            repeat={true}
+            muted={true}
+            source={{ uri: converProxyUrl(item.file_url) }}
+            poster={item.preview_url}
+            style={styles.image}
+          />
+        )}
+      </Layout>
+
       <TagList tags={tags} style={styles.tagContainer} level="1" />
       <Layout style={styles.buttonContainer}>
         <Text appearance="hint" category="c1" style={{ marginLeft: 6, lineHeight: 16 }}>
@@ -35,16 +63,23 @@ export const Card = ({ item, navigateDetail }) => {
       <Divider />
     </TouchableOpacity>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    // minHeight: 390,
+    zIndex: 10,
+  },
+  imageContainer: {
+    width: '100%',
+    height: 210,
+    overflow: 'hidden',
   },
   image: {
     width: '100%',
-    height: 210,
+    height: '100%',
+    position: 'absolute',
+    zIndex: 5,
   },
   tagContainer: {
     paddingLeft: 8,

@@ -14,6 +14,7 @@ const capitalize = (s) => {
 };
 
 export const PostVerticalList = ({ search = '', layoutType, showDeleteButton, focus, from, setRemoveAll }) => {
+  let cellRefs = {};
   const [page, setPage] = useState(1);
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
@@ -163,12 +164,18 @@ export const PostVerticalList = ({ search = '', layoutType, showDeleteButton, fo
     ]);
 
   const renderItem = useCallback(
-    ({ item }) =>
-      layoutType === 'small' ? (
+    ({ item, index }) => {
+      return layoutType === 'small' ? (
         <CardSmall item={item} deleteAlert={showDeleteButton ? deleteAlert : false} navigateDetail={navigateDetail} />
       ) : (
-        <Card item={item} deleteAlert={showDeleteButton ? deleteAlert : false} navigateDetail={navigateDetail} />
-      ),
+        <Card
+          ref={(ref) => (cellRefs[index] = ref)}
+          item={item}
+          deleteAlert={showDeleteButton ? deleteAlert : false}
+          navigateDetail={navigateDetail}
+        />
+      );
+    },
     [layoutType],
   );
 
@@ -200,6 +207,18 @@ export const PostVerticalList = ({ search = '', layoutType, showDeleteButton, fo
     }
   }, [isLoading, isFetching, isRefetching]);
 
+  const onViewableItemsChanged = useCallback(({ changed }) => {
+    const item = changed[0];
+    const cell = cellRefs[item.index];
+    if (cell) {
+      if (item.isViewable) {
+        cell.playVideo();
+      } else {
+        cell.pauseVideo();
+      }
+    }
+  }, []);
+
   if (focus) return <Layout style={{ ...styles.center, height: '100%' }} />;
   if (isLoading)
     return (
@@ -212,10 +231,12 @@ export const PostVerticalList = ({ search = '', layoutType, showDeleteButton, fo
     <FlatList
       data={data}
       renderItem={renderItem}
-      initialNumToRender={8}
-      maxToRenderPerBatch={8}
-      windowSize={16}
+      initialNumToRender={layoutType === 'small' ? 8 : 4}
+      maxToRenderPerBatch={layoutType === 'small' ? 8 : 4}
+      windowSize={layoutType === 'small' ? 16 : 8}
       onEndReachedThreshold={1}
+      updateCellsBatchingPeriod={layoutType === 'small' ? 50 : 100}
+      onViewableItemsChanged={onViewableItemsChanged}
       viewabilityConfig={{
         minimumViewTime: 200,
         viewAreaCoveragePercentThreshold: 100,
