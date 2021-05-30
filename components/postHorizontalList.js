@@ -41,7 +41,7 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType, date, s
       artist.trim() && artist.trim() !== 'Artist_unknown'
         ? artist.replace('Artist_unknown', '').trim()
         : copyright.trim();
-    const title = capitalize(name).replaceAll('_', ' ');
+    const title = name ? capitalize(name).replace(/_/g, ' ') : name;
 
     tags.sort((a, b) => a.type > b.type);
     post.tags = tags;

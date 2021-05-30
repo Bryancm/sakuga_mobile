@@ -1,3 +1,6 @@
+import RelativeTimeFormat from 'relative-time-format';
+import en from 'relative-time-format/locale/en.json';
+
 const units = {
   year: 24 * 60 * 60 * 1000 * 365,
   month: (24 * 60 * 60 * 1000 * 365) / 12,
@@ -7,7 +10,8 @@ const units = {
   second: 1000,
 };
 
-const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto', style: 'short' });
+RelativeTimeFormat.addLocale(en);
+const rtf = new RelativeTimeFormat('en', { numeric: 'auto', style: 'short' });
 
 export const getRelativeTime = (d1, d2 = new Date()) => {
   var elapsed = d1 - d2;
@@ -20,17 +24,23 @@ export const getRelativeTime = (d1, d2 = new Date()) => {
 
 export const formatDate = (date) => {
   const d = new Date(date * 1000);
-  const ye = new Intl.DateTimeFormat('en', { year: '2-digit' }).format(d);
-  const mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(d);
-  const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
+  // const ye = new Intl.DateTimeFormat('en', { year: '2-digit' }).format(d);
+  // const mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(d);
+  // const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
+  const ye = d.getFullYear().toString().slice(2);
+  const mo = d.getMonth();
+  const da = d.getDay();
   return `${da}-${mo}-${ye}`;
 };
 
 export const formatDateForSearch = (date) => {
   const d = new Date(date);
-  const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
-  const mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(d);
-  const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
+  // const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
+  // const mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(d);
+  // const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
+  const ye = d.getFullYear().toString();
+  const mo = d.getMonth();
+  const da = d.getDay();
   return `${ye}-${mo}-${da}`;
 };
 

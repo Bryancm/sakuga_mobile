@@ -33,7 +33,8 @@
     "react-native-video-cache": "^2.0.5",
     "react-native-video-controls": "^2.8.1",
     "react-native-video-processing": "^2.0.0",
-    "react-query": "^3.16.0"
+    "react-query": "^3.16.0",
+    "relative-time-format": "^1.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",

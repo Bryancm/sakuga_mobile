@@ -66,6 +66,7 @@ export const Card = forwardRef((props, ref) => {
             style={styles.image}
             onLoad={onLoad}
             onLoadStart={onLoadStart}
+            resizeMode="contain"
           />
         )}
       </Layout>
@@ -100,6 +101,8 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 210,
     overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   image: {
     width: '100%',

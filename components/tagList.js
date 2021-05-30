@@ -12,7 +12,7 @@ const ChevronUpIcon = (props) => (
 
 export const TagList = ({ tags, style, level = '2' }) => {
   const [more, setMore] = React.useState();
-  const tgs = more ? tags : tags.slice(0, 7);
+  const tgs = more ? tags : tags.slice(0, 4);
   const toggleMore = () => {
     setMore(!more);
   };
