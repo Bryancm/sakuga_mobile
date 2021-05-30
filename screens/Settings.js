@@ -1,5 +1,5 @@
-import React from 'react';
-import { SafeAreaView, ScrollView, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import {
   Divider,
   Icon,
@@ -12,26 +12,58 @@ import {
   Radio,
   Toggle,
 } from '@ui-kitten/components';
+import { storeData, getData } from '../util/storage';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 const LayoutIcon = (props) => <Icon {...props} name="layout-outline" />;
 const PlayIcon = (props) => <Icon {...props} name="play-circle-outline" />;
 
 export const SettingScreen = ({ navigation }) => {
-  const [sizeForNew, setSizeForNew] = React.useState('large');
-  const [sizeForSearch, setSizeForSearch] = React.useState('large');
-  const [autoplay, setAutoplay] = React.useState(true);
+  const [settings, setSettings] = useState();
+
+  const loadSettings = async () => {
+    const userSettings = await getData('userSettings');
+    if (userSettings) return setSettings(userSettings);
+    const defaultSettings = { sizeForNew: 'large', sizeForSearch: 'small', autoPlay: true };
+    await storeData('userSettings', defaultSettings);
+    setSettings(defaultSettings);
+  };
+
+  useEffect(() => {
+    loadSettings();
+  }, []);
+
+  const changeSettings = async ({
+    sizeForNew = settings.sizeForNew,
+    sizeForSearch = settings.sizeForSearch,
+    autoPlay = settings.autoPlay,
+  }) => {
+    const newSettings = { ...settings, sizeForNew, sizeForSearch, autoPlay };
+    await storeData('userSettings', newSettings);
+    setSettings(newSettings);
+  };
+
   const navigateBack = () => {
     navigation.goBack();
   };
 
   const BackAction = () => <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
 
-  const radioLarge = () => <Radio checked={sizeForNew == 'large'} onChange={() => setSizeForNew('large')} />;
-  const radioSmall = () => <Radio checked={sizeForNew == 'small'} onChange={() => setSizeForNew('small')} />;
-  const radioLarge2 = () => <Radio checked={sizeForSearch == 'large'} onChange={() => setSizeForSearch('large')} />;
-  const radioSmall2 = () => <Radio checked={sizeForSearch == 'small'} onChange={() => setSizeForSearch('small')} />;
-  const toggleAutoplay = () => <Toggle size="small" checked={autoplay} onChange={(checked) => setAutoplay(checked)} />;
+  const radioLarge = () => (
+    <Radio checked={settings.sizeForNew == 'large'} onChange={() => changeSettings({ sizeForNew: 'large' })} />
+  );
+  const radioSmall = () => (
+    <Radio checked={settings.sizeForNew == 'small'} onChange={() => changeSettings({ sizeForNew: 'small' })} />
+  );
+  const radioLarge2 = () => (
+    <Radio checked={settings.sizeForSearch == 'large'} onChange={() => changeSettings({ sizeForSearch: 'large' })} />
+  );
+  const radioSmall2 = () => (
+    <Radio checked={settings.sizeForSearch == 'small'} onChange={() => changeSettings({ sizeForSearch: 'small' })} />
+  );
+  const toggleAutoplay = () => (
+    <Toggle size="small" checked={settings.autoPlay} onChange={(autoPlay) => changeSettings({ autoPlay })} />
+  );
 
   const logOutAlert = () =>
     Alert.alert('Log out', 'Do you want to log out ?', [
@@ -42,6 +74,13 @@ export const SettingScreen = ({ navigation }) => {
       },
       { text: 'OK', onPress: () => console.log('OK Pressed') },
     ]);
+
+  if (!settings)
+    return (
+      <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator />
+      </Layout>
+    );
 
   return (
     <Layout style={{ flex: 1 }}>
@@ -55,9 +94,17 @@ export const SettingScreen = ({ navigation }) => {
             </Button>
           </Layout>
           <Layout>
-            <ListItem title="Large list" accessoryRight={radioLarge} onPress={() => setSizeForNew('large')} />
+            <ListItem
+              title="Large list"
+              accessoryRight={radioLarge}
+              onPress={() => changeSettings({ sizeForNew: 'large' })}
+            />
             <Divider />
-            <ListItem title="Small list" accessoryRight={radioSmall} onPress={() => setSizeForNew('small')} />
+            <ListItem
+              title="Small list"
+              accessoryRight={radioSmall}
+              onPress={() => changeSettings({ sizeForNew: 'small' })}
+            />
           </Layout>
           <Layout level="2">
             <Button appearance="ghost" accessoryRight={LayoutIcon} style={{ paddingLeft: 0, width: 240 }}>
@@ -65,9 +112,17 @@ export const SettingScreen = ({ navigation }) => {
             </Button>
           </Layout>
           <Layout>
-            <ListItem title="Large list" accessoryRight={radioLarge2} onPress={() => setSizeForSearch('large')} />
+            <ListItem
+              title="Large list"
+              accessoryRight={radioLarge2}
+              onPress={() => changeSettings({ sizeForSearch: 'large' })}
+            />
             <Divider />
-            <ListItem title="Small list" accessoryRight={radioSmall2} onPress={() => setSizeForSearch('small')} />
+            <ListItem
+              title="Small list"
+              accessoryRight={radioSmall2}
+              onPress={() => changeSettings({ sizeForSearch: 'small' })}
+            />
           </Layout>
           <Layout level="2">
             <Button appearance="ghost" accessoryRight={PlayIcon} style={{ paddingLeft: 0, width: 143 }}>
@@ -79,7 +134,7 @@ export const SettingScreen = ({ navigation }) => {
               title="Autoplay"
               description="Only applies to a large list layout"
               accessoryRight={toggleAutoplay}
-              onPress={() => setAutoplay(!autoplay)}
+              onPress={() => changeSettings({ autoPlay: !settings.autoPlay })}
             />
             <Divider />
           </Layout>

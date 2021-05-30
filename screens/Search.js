@@ -15,7 +15,6 @@ import {
 import { getTags } from '../api/tag';
 import { storeData, getData } from '../util/storage';
 import { formatDateForSearch } from '../util/date';
-import tagData from '../tag_data.json';
 
 import { AutoComplete } from '../components/autoComplete';
 import { PostVerticalList } from '../components/postVerticalList';
@@ -33,12 +32,12 @@ export const SearchScreen = ({ navigation }) => {
   const [range, setRange] = useState({});
   const [value, setValue] = useState(null);
   const [search, setSearch] = useState('');
-  const [data, setData] = useState([]); // init with search history
+  const [data, setData] = useState([]);
   const [focus, setFocus] = useState(true);
   const [autoFocus, setAutoFocus] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const [layoutType, setLayoutType] = useState('small');
+  const [layoutType, setLayoutType] = useState();
   const [sortType, setSortType] = useState('date');
   const [tagType, setTagType] = useState('');
   const [tagSortType, setTagSortType] = useState('date');
@@ -47,6 +46,13 @@ export const SearchScreen = ({ navigation }) => {
   const [sortMenuVisible, setSortMenuVisible] = useState(false);
   const [tagTypeMenuVisible, setTagTypeMenuVisible] = useState(false);
   const [tagsortMenuVisible, setTagSortMenuVisible] = useState(false);
+
+  const loadSettings = async () => {
+    const settings = await getData('userSettings');
+    if (settings && settings.sizeForSearch && settings.sizeForSearch !== layoutType)
+      return setLayoutType(settings.sizeForSearch);
+    setLayoutType('large');
+  };
 
   const initData = async () => {
     try {
@@ -60,6 +66,7 @@ export const SearchScreen = ({ navigation }) => {
 
   useEffect(() => {
     setAutoFocus(false);
+    loadSettings();
   }, []);
 
   const shouldLoadComponent = (index) => index === selectedIndex;
@@ -316,7 +323,7 @@ export const SearchScreen = ({ navigation }) => {
                   clearButtonMode="always"
                 />
                 <Layout style={{ flexDirection: 'row' }}>
-                  <LayoutActions />
+                  {/* <LayoutActions /> */}
                   <SortActions />
                 </Layout>
               </Layout>

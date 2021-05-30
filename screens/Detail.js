@@ -1,5 +1,5 @@
-import React, { useCallback, useRef, useState, useEffect } from 'react';
-import { SafeAreaView, Image, StyleSheet, Keyboard } from 'react-native';
+import React, { useRef, useState, useEffect } from 'react';
+import { SafeAreaView, StyleSheet, Keyboard } from 'react-native';
 import { Divider, Icon, Layout, Input, Button, Text } from '@ui-kitten/components';
 import { DetailHeader } from '../components/detailHeader';
 import { TagList } from '../components/tagList';
