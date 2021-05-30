@@ -27,10 +27,6 @@ export const NewScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    loadSettings();
-  }, []);
-
-  useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
       loadSettings();
     });
