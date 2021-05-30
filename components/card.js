@@ -11,7 +11,7 @@ import converProxyUrl from 'react-native-video-cache';
 const ImageIcon = (props) => <Icon {...props} name="image-outline" />;
 
 export const Card = forwardRef((props, ref) => {
-  const { item, navigateDetail } = props;
+  const { item, navigateDetail, autoPlay } = props;
   const tags = item.tags;
   const title = item.title;
   const isVideo =
@@ -45,7 +45,7 @@ export const Card = forwardRef((props, ref) => {
         {title}
       </Text>
       <Layout style={styles.imageContainer}>
-        {loading && (
+        {loading && autoPlay && (
           <Layout style={styles.loaderContainer}>
             <ActivityIndicator />
           </Layout>
@@ -56,7 +56,7 @@ export const Card = forwardRef((props, ref) => {
           </Layout>
         )}
         <FastImage style={styles.image} source={{ uri: item.preview_url }} resizeMode="contain" />
-        {isVideo && (
+        {isVideo && !paused && autoPlay && (
           <VideoPlayer
             paused={paused}
             repeat={true}
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     opacity: 0.8,
     position: 'absolute',
-    right: 6,
+    right: 2,
     bottom: 2,
     zIndex: 6,
   },

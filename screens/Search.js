@@ -36,6 +36,7 @@ export const SearchScreen = ({ navigation }) => {
   const [autoFocus, setAutoFocus] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
+  const [autoPlay, setAutoPlay] = useState();
   const [layoutType, setLayoutType] = useState();
   const [sortType, setSortType] = useState('date');
   const [tagType, setTagType] = useState('');
@@ -46,10 +47,18 @@ export const SearchScreen = ({ navigation }) => {
   const [tagsortMenuVisible, setTagSortMenuVisible] = useState(false);
 
   const loadSettings = async () => {
+    let autoPlaySetting = autoPlay ? autoPlay : true;
+    let layoutSetting = layoutType ? layoutType : 'large';
     const settings = await getData('userSettings');
-    if (settings && settings.sizeForSearch && settings.sizeForSearch !== layoutType)
-      return setLayoutType(settings.sizeForSearch);
-    setLayoutType('large');
+    if (settings && settings.autoPlay !== autoPlay) {
+      autoPlaySetting = settings.autoPlay;
+      setAutoPlay();
+    }
+    if (settings && settings.sizeForNew !== layoutType) {
+      layoutSetting = settings.sizeForNew;
+    }
+    setAutoPlay(autoPlaySetting);
+    setLayoutType(layoutSetting);
   };
 
   const initData = async () => {
@@ -298,8 +307,14 @@ export const SearchScreen = ({ navigation }) => {
                   <SortActions />
                 </Layout>
               </Layout>
-              {layoutType ? (
-                <PostVerticalList layoutType={layoutType} from="Search" search={search} focus={focus} />
+              {layoutType && autoPlay !== undefined ? (
+                <PostVerticalList
+                  layoutType={layoutType}
+                  from="Search"
+                  search={search}
+                  focus={focus}
+                  autoPlay={autoPlay}
+                />
               ) : (
                 <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                   <ActivityIndicator />

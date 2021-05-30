@@ -13,7 +13,15 @@ const capitalize = (s) => {
   return s && s[0].toUpperCase() + s.slice(1);
 };
 
-export const PostVerticalList = ({ search = '', layoutType, showDeleteButton, focus, from, setRemoveAll }) => {
+export const PostVerticalList = ({
+  search = '',
+  layoutType,
+  showDeleteButton,
+  focus,
+  from,
+  setRemoveAll,
+  autoPlay,
+}) => {
   let cellRefs = {};
   const [page, setPage] = useState(1);
   const [isLoading, setLoading] = useState(true);
@@ -117,7 +125,7 @@ export const PostVerticalList = ({ search = '', layoutType, showDeleteButton, fo
   useEffect(() => {
     setLoading(true);
     refetch();
-  }, [layoutType]);
+  }, [layoutType, autoPlay]);
 
   useEffect(() => {
     if (from === 'Search') {
@@ -173,10 +181,11 @@ export const PostVerticalList = ({ search = '', layoutType, showDeleteButton, fo
           item={item}
           deleteAlert={showDeleteButton ? deleteAlert : false}
           navigateDetail={navigateDetail}
+          autoPlay={autoPlay}
         />
       );
     },
-    [layoutType],
+    [layoutType, autoPlay],
   );
 
   const onEndReached = async () => {

@@ -7,13 +7,23 @@ import { getData } from '../util/storage';
 const SearchIcon = (props) => <Icon {...props} name="search-outline" />;
 
 export const NewScreen = ({ navigation }) => {
+  const [autoPlay, setAutoPlay] = useState();
   const [layoutType, setLayoutType] = useState();
 
   const loadSettings = async () => {
+    let autoPlaySetting = autoPlay ? autoPlay : true;
+    let layoutSetting = layoutType ? layoutType : 'large';
     const settings = await getData('userSettings');
-    if (settings && settings.sizeForNew && settings.sizeForNew !== layoutType)
-      return setLayoutType(settings.sizeForNew);
-    setLayoutType('large');
+    if (settings && settings.autoPlay !== autoPlay) {
+      autoPlaySetting = settings.autoPlay;
+      setAutoPlay();
+    }
+    if (settings && settings.sizeForNew !== layoutType) {
+      layoutSetting = settings.sizeForNew;
+    }
+
+    setAutoPlay(autoPlaySetting);
+    setLayoutType(layoutSetting);
   };
 
   useEffect(() => {
@@ -38,8 +48,8 @@ export const NewScreen = ({ navigation }) => {
       <SafeAreaView style={{ flex: 1 }}>
         <TopNavigation title="New" alignment="center" accessoryRight={renderSearchIcon} />
         <Divider />
-        {layoutType ? (
-          <PostVerticalList layoutType={layoutType} />
+        {layoutType && autoPlay !== undefined ? (
+          <PostVerticalList layoutType={layoutType} autoPlay={autoPlay} />
         ) : (
           <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <ActivityIndicator />
