@@ -1,12 +1,14 @@
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
-import { Divider, Layout, Text } from '@ui-kitten/components';
+import { StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Divider, Layout, Text, Icon } from '@ui-kitten/components';
 import { getRelativeTime } from '../util/date';
 import FastImage from 'react-native-fast-image';
 import { TagList } from './tagList';
 import { PostMenu } from './postMenu';
 import VideoPlayer from 'react-native-video';
 import converProxyUrl from 'react-native-video-cache';
+
+const ImageIcon = (props) => <Icon {...props} name="image-outline" />;
 
 export const Card = forwardRef((props, ref) => {
   const { item, navigateDetail } = props;
@@ -15,6 +17,7 @@ export const Card = forwardRef((props, ref) => {
   const isVideo =
     item.file_ext !== 'gif' && item.file_ext !== 'jpg' && item.file_ext !== 'jpeg' && item.file_ext !== 'png';
   const [paused, setPaused] = useState(true);
+  const [loading, setLoading] = useState(isVideo);
 
   useImperativeHandle(ref, () => ({
     playVideo() {
@@ -29,6 +32,8 @@ export const Card = forwardRef((props, ref) => {
     navigateDetail(item, title, tags);
   };
 
+  const onLoad = () => setLoading(false);
+
   return (
     <TouchableOpacity
       delayPressIn={0}
@@ -40,6 +45,16 @@ export const Card = forwardRef((props, ref) => {
         {title}
       </Text>
       <Layout style={styles.imageContainer}>
+        {loading && (
+          <Layout style={styles.loaderContainer}>
+            <ActivityIndicator />
+          </Layout>
+        )}
+        {!isVideo && (
+          <Layout style={styles.loaderContainer}>
+            <ImageIcon style={{ width: 20, height: 20 }} fill="#fff" />
+          </Layout>
+        )}
         <FastImage style={styles.image} source={{ uri: item.preview_url }} resizeMode="contain" />
         {isVideo && (
           <VideoPlayer
@@ -49,6 +64,7 @@ export const Card = forwardRef((props, ref) => {
             source={{ uri: converProxyUrl(item.file_url) }}
             poster={item.preview_url}
             style={styles.image}
+            onLoad={onLoad}
           />
         )}
       </Layout>
@@ -69,6 +85,15 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     zIndex: 10,
+  },
+  loaderContainer: {
+    padding: 2,
+    borderRadius: 15,
+    opacity: 0.8,
+    position: 'absolute',
+    right: 6,
+    bottom: 2,
+    zIndex: 6,
   },
   imageContainer: {
     width: '100%',

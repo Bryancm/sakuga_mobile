@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
+import { SafeAreaView, StyleSheet, ActivityIndicator } from 'react-native';
 import {
   Icon,
   Layout,
@@ -20,7 +20,6 @@ import { AutoComplete } from '../components/autoComplete';
 import { PostVerticalList } from '../components/postVerticalList';
 import { TagVerticalList } from '../components/tagVerticalList';
 
-const LayoutIcon = (props) => <Icon {...props} name="layout-outline" />;
 const CalendarIcon = (props) => <Icon {...props} name="calendar-outline" />;
 const FilterIcon = (props) => <Icon {...props} name="funnel-outline" />;
 const ShuffleIcon = (props) => <Icon {...props} name="shuffle-outline" />;
@@ -42,7 +41,6 @@ export const SearchScreen = ({ navigation }) => {
   const [tagType, setTagType] = useState('');
   const [tagSortType, setTagSortType] = useState('date');
 
-  const [menuVisible, setMenuVisible] = useState(false);
   const [sortMenuVisible, setSortMenuVisible] = useState(false);
   const [tagTypeMenuVisible, setTagTypeMenuVisible] = useState(false);
   const [tagsortMenuVisible, setTagSortMenuVisible] = useState(false);
@@ -131,10 +129,6 @@ export const SearchScreen = ({ navigation }) => {
     initData();
   };
 
-  const toggleMenu = () => {
-    setMenuVisible(!menuVisible);
-  };
-
   const toggleSortMenu = () => {
     setSortMenuVisible(!sortMenuVisible);
   };
@@ -144,11 +138,6 @@ export const SearchScreen = ({ navigation }) => {
 
   const toggleTagSortMenu = () => {
     setTagSortMenuVisible(!tagsortMenuVisible);
-  };
-
-  const changeLayout = (type) => {
-    toggleMenu();
-    setLayoutType(type);
   };
 
   const changeSort = (order) => {
@@ -169,16 +158,6 @@ export const SearchScreen = ({ navigation }) => {
     toggleTagSortMenu();
     setTagSortType(order);
   };
-
-  const renderMenuAction = () => (
-    <Button
-      status="basic"
-      appearance="ghost"
-      accessoryLeft={LayoutIcon}
-      style={{ paddingHorizontal: 0 }}
-      onPress={toggleMenu}
-    />
-  );
 
   const renderSortMenuAction = () => (
     <Button
@@ -208,13 +187,6 @@ export const SearchScreen = ({ navigation }) => {
       style={{ paddingVertical: 0 }}
       onPress={toggleTagSortMenu}
     />
-  );
-
-  const LayoutActions = () => (
-    <OverflowMenu anchor={renderMenuAction} visible={menuVisible} onBackdropPress={toggleMenu}>
-      <MenuItem title="Large list" onPress={() => changeLayout('large')} />
-      <MenuItem title="Small list" onPress={() => changeLayout('small')} />
-    </OverflowMenu>
   );
 
   const SortActions = () => (
@@ -323,11 +295,16 @@ export const SearchScreen = ({ navigation }) => {
                   clearButtonMode="always"
                 />
                 <Layout style={{ flexDirection: 'row' }}>
-                  {/* <LayoutActions /> */}
                   <SortActions />
                 </Layout>
               </Layout>
-              <PostVerticalList layoutType={layoutType} from="Search" search={search} focus={focus} />
+              {layoutType ? (
+                <PostVerticalList layoutType={layoutType} from="Search" search={search} focus={focus} />
+              ) : (
+                <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                  <ActivityIndicator />
+                </Layout>
+              )}
             </Layout>
           </Tab>
 
