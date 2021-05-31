@@ -16,7 +16,7 @@ export const NewScreen = ({ navigation }) => {
     const settings = await getData('userSettings');
     if (settings && settings.autoPlay !== autoPlay) {
       autoPlaySetting = settings.autoPlay;
-      setAutoPlay();
+      // setAutoPlay();
     }
     if (settings && settings.sizeForNew !== layoutType) {
       layoutSetting = settings.sizeForNew;

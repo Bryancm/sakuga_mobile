@@ -77,7 +77,7 @@ const BottomTabBar = ({ navigation, state }) => (
     onSelect={(index) => navigation.navigate(state.routeNames[index])}>
     <BottomNavigationTab title="New" icon={FilmIcon} />
     <BottomNavigationTab title="Explore" icon={CompassIcon} />
-    <BottomNavigationTab title="Profile" icon={PersonIcon} />
+    <BottomNavigationTab title="Library" icon={PersonIcon} />
   </BottomNavigation>
 );
 
@@ -87,7 +87,7 @@ const TabNavigator = () => (
   <Tab.Navigator initialRouteName="Explore" tabBar={(props) => <BottomTabBar {...props} />}>
     <Tab.Screen name="Home" component={HomeStackNavigator} />
     <Tab.Screen name="Explore" component={ExploreStackNavigator} />
-    <Tab.Screen name="Profile" component={ProfileStackNavigator} />
+    <Tab.Screen name="Library" component={ProfileStackNavigator} />
   </Tab.Navigator>
 );
 

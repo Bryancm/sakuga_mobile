@@ -61,7 +61,7 @@ export const ProfileScreen = ({ navigation }) => {
   return (
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
-        <TopNavigation title="Profile" alignment="center" accessoryRight={renderSearchAction} />
+        <TopNavigation title="Library" alignment="center" accessoryRight={renderSearchAction} />
         <Divider />
         {user === false ? (
           <ScrollView>
@@ -115,11 +115,14 @@ export const ProfileScreen = ({ navigation }) => {
                 style={{ paddingLeft: 0, paddingBottom: 8 }}>
                 <Text category="h4">Uploads</Text>
               </Button>
-              <Button style={{ width: 100, paddingRight: 0 }} appearance="ghost">
+              <Button
+                style={{ width: 100, paddingRight: 0 }}
+                appearance="ghost"
+                onPress={() => navigatePostList('Uploads', true, 'Uploads')}>
                 <Text category="p2">See more</Text>
               </Button>
             </Layout>
-            <PostHorizontalList title="" data={data.posts} tags={data.tags} navigation={navigation} />
+            <PostHorizontalList title="" search={`user:${user}`} />
           </ScrollView>
         )}
       </SafeAreaView>
