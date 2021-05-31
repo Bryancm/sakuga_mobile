@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { FlatList, ActivityIndicator, StyleSheet } from 'react-native';
-import { Layout, Text, Button } from '@ui-kitten/components';
+import { Layout, Text, Button, Icon } from '@ui-kitten/components';
 import { SmallCard } from './cardHorizontal';
 import { useNavigation } from '@react-navigation/native';
 import { getPosts } from '../api/post';
 import { tagStyles } from '../styles';
 
+const PlusIcon = (props) => <Icon {...props} name="plus-circle-outline" />;
+
 const capitalize = (s) => {
   return s && s[0].toUpperCase() + s.slice(1);
 };
 
-export const PostHorizontalList = ({ search = '', title, tags, menuType, date, secondDate }) => {
+export const PostHorizontalList = ({ search = '', title, tags, menuType, date, secondDate, from }) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [message, setMessage] = useState('Nobody here but us chickens!');
@@ -124,6 +126,19 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType, date, s
           initialNumToRender={4}
           maxToRenderPerBatch={4}
           keyExtractor={keyExtractor}
+          contentContainerStyle={{
+            width: '100%',
+          }}
+          ListEmptyComponent={
+            <Layout style={styles.center}>
+              {from === 'Uploads' && (
+                <Button size="giant" status="basic" appearance="ghost" accessoryRight={PlusIcon} />
+              )}
+              <Text appearance="hint" category="s1">
+                {from === 'Uploads' ? 'Add a post' : 'Nobody here but us chickens!'}
+              </Text>
+            </Layout>
+          }
         />
       )}
     </Layout>

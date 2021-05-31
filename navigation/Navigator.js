@@ -18,8 +18,8 @@ import { FramesListScreen } from '../screens/FramesList';
 
 const { multiply } = Animated;
 
-const PersonIcon = (props) => <Icon {...props} name="person-outline" />;
-const FilmIcon = (props) => <Icon {...props} name="film-outline" />;
+const PersonIcon = (props) => <Icon {...props} name="film-outline" />;
+const FilmIcon = (props) => <Icon {...props} name="play-circle-outline" />;
 const CompassIcon = (props) => <Icon {...props} name="compass-outline" />;
 
 const forFade = ({ current }) => ({

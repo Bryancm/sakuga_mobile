@@ -15,7 +15,7 @@ export const Tag = ({ tag, navigatePostList }) => {
       <Text category="c2" style={{ color: style.color, maxWidth: 130 }} numberOfLines={1}>
         {tag.name}
       </Text>
-      <Icon fill={style.color} name="film-outline" style={{ width: 13, height: 13, marginLeft: 2 }} />
+      <Icon fill={style.color} name="play-circle-outline" style={{ width: 13, height: 13, marginLeft: 2 }} />
       <Text category="c2" style={{ color: style.color, marginLeft: 2 }} numberOfLines={1}>
         {tag.count}
       </Text>

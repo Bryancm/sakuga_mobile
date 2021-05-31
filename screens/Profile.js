@@ -76,14 +76,14 @@ export const ProfileScreen = ({ navigation }) => {
             </Layout>
             <ListItem
               title="Favorites"
-              description="Good, great and favorites sakugas"
+              description="Good, great and favorites posts"
               accessoryLeft={renderFavIcon}
               accessoryRight={ArrowIcon}
               onPress={() => navigatePostList('Favorites', true, 'Favorites', `vote:3:${user} order:vote`)}
             />
             <ListItem
               title="History"
-              description="Viewed sakugas"
+              description="Viewed posts"
               accessoryLeft={renderClockIcon}
               accessoryRight={ArrowIcon}
               onPress={() => navigatePostList('History', true, 'History')}
@@ -122,7 +122,7 @@ export const ProfileScreen = ({ navigation }) => {
                 <Text category="p2">See more</Text>
               </Button>
             </Layout>
-            <PostHorizontalList title="" search={`user:${user}`} />
+            <PostHorizontalList title="" search={`user:${user}`} from="Uploads" />
           </ScrollView>
         )}
       </SafeAreaView>

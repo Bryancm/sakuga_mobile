@@ -24,23 +24,23 @@ export const getRelativeTime = (d1, d2 = new Date()) => {
 
 export const formatDate = (date) => {
   const d = new Date(date * 1000);
-  // const ye = new Intl.DateTimeFormat('en', { year: '2-digit' }).format(d);
-  // const mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(d);
-  // const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
-  const ye = d.getFullYear().toString().slice(2);
-  const mo = d.getMonth();
-  const da = d.getDay();
+  const ye = new Intl.DateTimeFormat('en', { year: '2-digit' }).format(d);
+  const mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(d);
+  const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
+  // const ye = d.getFullYear().toString().slice(2);
+  // const mo = d.getMonth();
+  // const da = d.getDay();
   return `${da}-${mo}-${ye}`;
 };
 
 export const formatDateForSearch = (date) => {
   const d = new Date(date);
-  // const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
-  // const mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(d);
-  // const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
-  const ye = d.getFullYear().toString();
-  const mo = d.getMonth();
-  const da = d.getDay();
+  const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
+  const mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(d);
+  const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
+  // const ye = d.getFullYear().toString();
+  // const mo = d.getMonth();
+  // const da = d.getDay();
   return `${ye}-${mo}-${da}`;
 };
 
