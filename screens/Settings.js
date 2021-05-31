@@ -12,14 +12,23 @@ import {
   Radio,
   Toggle,
 } from '@ui-kitten/components';
-import { storeData, getData } from '../util/storage';
+import { storeData, getData, removeData } from '../util/storage';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 const LayoutIcon = (props) => <Icon {...props} name="layout-outline" />;
 const PlayIcon = (props) => <Icon {...props} name="play-circle-outline" />;
 
-export const SettingScreen = ({ navigation }) => {
+export const SettingScreen = ({ navigation, route }) => {
+  const loadUser = route.params.loadUser;
   const [settings, setSettings] = useState();
+
+  const logOut = async () => {
+    const removed = await removeData('user');
+    if (removed) {
+      navigateBack();
+      loadUser();
+    }
+  };
 
   const loadSettings = async () => {
     const userSettings = await getData('userSettings');
@@ -72,7 +81,7 @@ export const SettingScreen = ({ navigation }) => {
         onPress: () => console.log('Cancel Pressed'),
         style: 'cancel',
       },
-      { text: 'OK', onPress: () => console.log('OK Pressed') },
+      { text: 'OK', onPress: logOut, style: 'destructive' },
     ]);
 
   if (!settings)

@@ -32,7 +32,7 @@ export const ProfileScreen = ({ navigation }) => {
   const [user, setUser] = useState();
 
   const loadUser = async () => {
-    let newUser = user ? user : false;
+    let newUser = false;
     const currentUser = await getData('user');
     if (currentUser && currentUser.name !== user) newUser = currentUser.name;
     setUser(newUser);
@@ -45,7 +45,7 @@ export const ProfileScreen = ({ navigation }) => {
     navigation.navigate('Search');
   };
   const navigateSettings = () => {
-    navigation.navigate('Settings');
+    navigation.navigate('Settings', { loadUser });
   };
   const navigatePostList = (from, isPosts, menuType, search, order, type) => {
     navigation.navigate('PostList', { from, isPosts, menuType, search, order, type, user });
