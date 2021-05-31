@@ -258,7 +258,12 @@ export const PostVerticalList = ({
       keyExtractor={keyExtractor}
       refreshControl={<RefreshControl onRefresh={refetch} refreshing={isRefetching} />}
       ListFooterComponent={
-        <Layout style={styles.center}>{isFetching && !isRefetching && <ActivityIndicator />}</Layout>
+        isFetching &&
+        !isRefetching && (
+          <Layout style={styles.center}>
+            <ActivityIndicator />
+          </Layout>
+        )
       }
       ListEmptyComponent={
         !isFetching && (

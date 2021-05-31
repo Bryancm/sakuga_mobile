@@ -126,9 +126,6 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType, date, s
           initialNumToRender={4}
           maxToRenderPerBatch={4}
           keyExtractor={keyExtractor}
-          contentContainerStyle={{
-            width: '100%',
-          }}
           ListEmptyComponent={
             <Layout style={styles.center}>
               {from === 'Uploads' && (

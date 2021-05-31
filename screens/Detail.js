@@ -1,12 +1,13 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { SafeAreaView, StyleSheet, Keyboard } from 'react-native';
+import { SafeAreaView, StyleSheet, Keyboard, ActivityIndicator, Alert } from 'react-native';
 import { Divider, Icon, Layout, Input, Button, Text } from '@ui-kitten/components';
 import { DetailHeader } from '../components/detailHeader';
 import { TagList } from '../components/tagList';
 import { DetailFooter } from '../components/detailFooter';
 import { CommentList } from '../components/commentList';
 import { storeData, getData } from '../util/storage';
-import data from '../comment-data.json';
+import { getComments, addComment, editComment, deleteComment, flagComment } from '../api/comment';
+import Toast from 'react-native-simple-toast';
 
 import VideoPlayer from 'react-native-video-controls';
 import converProxyUrl from 'react-native-video-cache';
@@ -29,6 +30,7 @@ const SendIcon = (props) => <Icon {...props} name="corner-down-right-outline" />
 export const DetailsScreen = ({ navigation, route }) => {
   const video = useRef();
   const commentList = useRef();
+  const input = useRef();
 
   const item = route.params.item;
   const title = route.params.title;
@@ -36,6 +38,19 @@ export const DetailsScreen = ({ navigation, route }) => {
 
   const [inputIsFocused, setInputIsFocused] = useState(false);
   const [text, setText] = useState();
+  const [comments, setComments] = useState([]);
+  const [isFetching, setFetching] = useState(true);
+  const [isRefetching, setRefetching] = useState(false);
+  const [commentLoading, setCommentLoading] = useState(false);
+  const [editId, setEditId] = useState(false);
+  const [user, setUser] = useState();
+
+  const loadUser = async () => {
+    let newUser = false;
+    const currentUser = await getData('user');
+    if (currentUser && currentUser.name !== user) newUser = currentUser.name;
+    setUser(newUser);
+  };
 
   const updatePostHistory = async () => {
     try {
@@ -51,8 +66,141 @@ export const DetailsScreen = ({ navigation, route }) => {
     }
   };
 
+  const fetchComments = async () => {
+    try {
+      const data = await getComments({ id: item.id });
+      setComments(data);
+      clearLoading();
+    } catch (error) {
+      console.log('FETCH_COMMENTS_ERROR: ', error);
+      setComments([]);
+      clearLoading();
+    }
+  };
+
+  const clearLoading = () => {
+    setFetching(false);
+    setRefetching(false);
+    setCommentLoading(false);
+  };
+
+  const refetchComments = () => {
+    setRefetching(true);
+    fetchComments();
+  };
+
+  const addPostComment = async () => {
+    try {
+      setCommentLoading(true);
+      const user = await getData('user');
+      if (!user) return console.log('NO USER, GO TO LOGIN'); // go to login
+      // const body = text.replace(/\n/g, '%0D%0A');
+      const response = await addComment({
+        id: item.id,
+        body: text,
+        user: user.name,
+        password_hash: user.password_hash,
+      });
+      console.log({ response });
+      fetchComments();
+      cancelInput();
+      Toast.show('Comment added');
+    } catch (error) {
+      console.log('ADD COMMENT ERROR', error);
+
+      clearLoading();
+      Toast.show('Error, please try again later :(');
+    }
+  };
+
+  const editPostComment = async (id) => {
+    try {
+      setCommentLoading(true);
+      const user = await getData('user');
+      if (!user) return console.log('NO USER, GO TO LOGIN'); // go to login
+      const body = text.replace(/\n/g, '%0D%0A');
+      const response = await editComment({ id, body, user: user.name, password_hash: user.password_hash });
+      console.log({ response });
+      fetchComments();
+      cancelInput();
+      Toast.show('Comment edited');
+    } catch (error) {
+      console.log('EDIT COMMENT ERROR', error);
+      clearLoading();
+      Toast.show('Error, please try again later :(');
+    }
+  };
+
+  const onCommentButtonPress = () => {
+    if (!text || !text.trim()) return console.log('PLEASE TYPE A COMMENT'); // show toast
+    editId ? editPostComment(editId) : addPostComment();
+  };
+
+  const onEditCommentButtonPress = ({ id, body, isQuote }) => {
+    setEditId(false);
+    if (!isQuote) setEditId(id);
+    setText(body);
+    input.current.focus();
+  };
+
+  const deleteCommentAlert = (id) => {
+    Alert.alert('Delete', `Do you want to delete this comment ?`, [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      { text: 'Confirm', onPress: () => onDeleteComment(id), style: 'destructive' },
+    ]);
+  };
+
+  const onDeleteComment = async (id) => {
+    try {
+      setFetching(true);
+      setComments([]);
+      const user = await getData('user');
+      if (!user) return console.log('NO USER, GO TO LOGIN'); // go to login
+      const response = await deleteComment({ id, user: user.name, password_hash: user.password_hash });
+      console.log({ response });
+      fetchComments();
+      Toast.show('Comment deleted');
+    } catch (error) {
+      console.log('DELETE COMMENT ERROR', error);
+      clearLoading();
+      Toast.show('Error, please try again later :(');
+    }
+  };
+
+  const flagCommentAlert = (id) => {
+    Alert.alert('Flag', `Do you want to flag for delete this comment ?`, [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      { text: 'Confirm', onPress: () => onFlagComment(id), style: 'destructive' },
+    ]);
+  };
+
+  const onFlagComment = async (id) => {
+    try {
+      setFetching(true);
+      setComments([]);
+      const user = await getData('user');
+      if (!user) return console.log('NO USER, GO TO LOGIN'); // go to login
+      const response = await flagComment({ id, user: user.name, password_hash: user.password_hash });
+      console.log({ response });
+      fetchComments();
+      Toast.show('Comment flaged for delete');
+    } catch (error) {
+      console.log('DELETE COMMENT ERROR', error);
+      clearLoading();
+      Toast.show('Error, please try again later :(');
+    }
+  };
+
   useEffect(() => {
+    loadUser();
     updatePostHistory();
+    fetchComments();
   }, []);
 
   const cancelInput = () => {
@@ -64,7 +212,7 @@ export const DetailsScreen = ({ navigation, route }) => {
 
   const CommentButtons = () => (
     <Layout style={{ backgroundColor: 'transparent', flexDirection: 'row', alignItems: 'center' }}>
-      {inputIsFocused && (
+      {inputIsFocused && !commentLoading && (
         <Button
           style={{ paddingHorizontal: 0, paddingVertical: 0, height: 10 }}
           status="basic"
@@ -74,14 +222,17 @@ export const DetailsScreen = ({ navigation, route }) => {
         />
       )}
 
-      {inputIsFocused && (
+      {inputIsFocused && !commentLoading && (
         <Button
           style={{ paddingHorizontal: 0, paddingVertical: 0, height: 10 }}
           status="info"
           appearance="ghost"
           accessoryLeft={SendIcon}
+          onPress={onCommentButtonPress}
         />
       )}
+
+      {commentLoading && <ActivityIndicator />}
     </Layout>
   );
 
@@ -128,7 +279,14 @@ export const DetailsScreen = ({ navigation, route }) => {
         </Layout>
         <CommentList
           commentList={commentList}
-          data={data}
+          data={user === undefined ? [] : comments}
+          isFetching={isFetching}
+          isRefetching={isRefetching}
+          refetch={refetchComments}
+          onEditCommentButtonPress={onEditCommentButtonPress}
+          onDeleteComment={deleteCommentAlert}
+          onFlagComment={flagCommentAlert}
+          user={user}
           header={
             <Layout level="2">
               <DetailHeader title={title} style={styles.titleContainer} url={converProxyUrl(item.file_url)} />
@@ -137,6 +295,7 @@ export const DetailsScreen = ({ navigation, route }) => {
               <Divider style={{ marginBottom: 12 }} />
               <Layout level="3" style={{ margin: 8, borderRadius: 2, padding: 0 }}>
                 <Input
+                  ref={input}
                   keyboardAppearance="dark"
                   multiline={true}
                   style={{ backgroundColor: 'transparent', minHeight: 40, maxHeight: 160, borderColor: 'transparent' }}

@@ -1,14 +1,43 @@
 import React from 'react';
 import { Linking } from 'react-native';
-import { Divider, Icon, Layout, Text, Button, Input } from '@ui-kitten/components';
+import { Icon, Layout, Text, Button, OverflowMenu, MenuItem } from '@ui-kitten/components';
 import { getRelativeTime } from '../util/date';
 import ParsedText from 'react-native-parsed-text';
 
+const DeleteIcon = (props) => <Icon {...props} name="trash-outline" fill="#E3170A" />;
+const EditIcon = (props) => <Icon {...props} name="edit-outline" />;
 const QuoteIcon = (props) => <Icon {...props} name="message-square-outline" />;
-const FlagIcon = (props) => <Icon {...props} name="flag-outline" />;
+const FlagIcon = (props) => <Icon {...props} name="alert-circle-outline" />;
 const MoreIcon = (props) => <Icon {...props} name="more-vertical-outline" />;
 
-export const CommentItem = ({ item, user }) => {
+export const CommentItem = ({ item, user, onEdit, onDelete, onFlagComment }) => {
+  const [menuVisible, setMenuVisible] = React.useState(false);
+
+  const toggleMenu = () => {
+    setMenuVisible(!menuVisible);
+  };
+
+  const onQuotePress = () => {
+    toggleMenu();
+    item.isQuote = true;
+    onEdit(item);
+  };
+
+  const onEditPress = () => {
+    toggleMenu();
+    onEdit(item);
+  };
+
+  const onDeleteComment = () => {
+    toggleMenu();
+    onDelete(item.id);
+  };
+
+  const onFlag = () => {
+    toggleMenu();
+    onFlagComment(item.id);
+  };
+
   const urlPress = (url) => {
     Linking.canOpenURL(url).then((supported) => {
       if (!supported) return console.log("Don't know how to open URI: " + url);
@@ -45,6 +74,17 @@ export const CommentItem = ({ item, user }) => {
     });
   }
 
+  const menuAnchor = () => (
+    <Button
+      status="basic"
+      size="small"
+      appearance="ghost"
+      style={{ paddingVertical: 0, paddingHorizontal: 0 }}
+      accessoryRight={MoreIcon}
+      onPress={toggleMenu}
+    />
+  );
+
   return (
     <Layout level="2" style={{ paddingLeft: 8, paddingTop: 0, marginBottom: 22 }}>
       <Layout level="2" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -54,13 +94,33 @@ export const CommentItem = ({ item, user }) => {
             {getRelativeTime(date)}
           </Text>
         </Text>
-        <Button
-          status="basic"
-          size="small"
-          appearance="ghost"
-          style={{ paddingVertical: 0, paddingHorizontal: 0 }}
-          accessoryRight={MoreIcon}
-        />
+        {isUser ? (
+          <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>
+            <MenuItem
+              key="1"
+              accessoryLeft={QuoteIcon}
+              onPress={onQuotePress}
+              title={<Text category="c1">Quote</Text>}
+            />
+            <MenuItem key="2" accessoryLeft={EditIcon} onPress={onEditPress} title={<Text category="c1">Edit</Text>} />
+            <MenuItem
+              key="3"
+              accessoryLeft={DeleteIcon}
+              onPress={onDeleteComment}
+              title={<Text category="c1">Delete</Text>}
+            />
+          </OverflowMenu>
+        ) : (
+          <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>
+            <MenuItem
+              key="1"
+              accessoryLeft={QuoteIcon}
+              onPress={onQuotePress}
+              title={<Text category="c1">Quote</Text>}
+            />
+            <MenuItem key="2" accessoryLeft={FlagIcon} onPress={onFlag} title={<Text category="c1">Flag</Text>} />
+          </OverflowMenu>
+        )}
       </Layout>
 
       {hasQuotes ? (
