@@ -6417,6 +6417,11 @@ react-native-screens@^3.1.1:
   resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-3.1.1.tgz#2cd4496c5e3ed1ffbaf77962b8fcc10be3af2158"
   integrity sha512-cjhK85T8LQ7uqqmwvLb8FKNk1RfgJd1jtbUm1lOxUmJreFki5Wh2SUlx0DAvNG35U6quGD15KPYRducGa+M04g==
 
+react-native-sha1@^1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/react-native-sha1/-/react-native-sha1-1.2.3.tgz#d3438c692e509c75b84ce3a77c1686785f915bd3"
+  integrity sha512-XXkmK/lNY0JqWH0qeI4AOnKdm5Xx1H0CYAA1XsxUN+ihPvC9KY2gL7fVwcBodiuDYUJ8SMBvw6yMTacCk/Gwyg==
+
 react-native-simple-toast@^1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/react-native-simple-toast/-/react-native-simple-toast-1.1.3.tgz#4d0835891fe5c9342341fc4a88ed01ebb1a34bd5"

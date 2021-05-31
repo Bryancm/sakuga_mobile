@@ -311,6 +311,8 @@ PODS:
     - Yoga
   - RNScreens (3.1.1):
     - React-Core
+  - RNSha1 (1.2.3):
+    - React
   - RNSVG (12.1.1):
     - React
   - SDWebImage (5.11.0):
@@ -361,6 +363,7 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - RNSha1 (from `../node_modules/react-native-sha1`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -446,6 +449,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNSha1:
+    :path: "../node_modules/react-native-sha1"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   Yoga:
@@ -492,6 +497,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNReanimated: f49140a8bebe531c4cfb2c7cac3757590ed04931
   RNScreens: bd1523c3bde7069b8e958e5a16e1fc7722ad0bdd
+  RNSha1: 6de589cd0b0397d0f6248a2e5ee9e5f0d7da38dc
   RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
   SDWebImage: 7acbb57630ac7db4a495547fb73916ff3e432f6b
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
