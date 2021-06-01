@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { SafeAreaView, StyleSheet, Dimensions } from 'react-native';
+import { SafeAreaView, StyleSheet, Dimensions, ActivityIndicator, Platform } from 'react-native';
 import { Divider, Icon, Layout, Button, Text, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { VideoPlayer, Trimmer } from 'react-native-video-processing';
+import { RNFFmpeg } from 'react-native-ffmpeg';
+import RNFS from 'react-native-fs';
+import RNFetchBlob from 'rn-fetch-blob';
 
 const GifIcon = () => (
   <Text style={{ paddingTop: 3, fontWeight: 'bold' }} category="s1">
@@ -15,31 +18,56 @@ const PauseIcon = () => <Icon name="pause-circle-outline" style={{ width: 25, he
 const screenWidth = Dimensions.get('window').width;
 
 const formatSeconds = (seconds) => {
-  return new Date(seconds ? seconds * 1000 : 0).toISOString().substr(14, 5);
+  return new Date(seconds ? seconds * 1000 : 0).toISOString().substr(14, 8);
 };
 
 export const GifEditorScreen = ({ navigation, route }) => {
   const videoPlayer = React.useRef();
-  const url = route.params.url;
+  const id = route.params.id;
+  const title = route.params.title;
+  const file_ext = route.params.file_ext;
+
+  const [url, setUrl] = useState(route.params.url);
   const [currentTime, setCurrentTime] = useState(0);
   const [currentTimeTrimmer, setCurrentTimeTrimmer] = useState(0);
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState();
-  const [play, setPlay] = useState(false);
+  const [play, setPlay] = useState(true);
   const [replay, setReplay] = useState(false);
   const [fps, setFPS] = useState(8);
+  const [loading, setLoading] = useState(true);
+  const [loadingGIF, setLoadingGIF] = useState(false);
+
+  const deleteGIFCache = async () => {
+    const dir = `${RNFS.CachesDirectoryPath}/gifCache`;
+    const exist = await RNFS.exists(dir);
+    if (exist) await RNFS.unlink(dir);
+    console.log({ exist });
+  };
+
+  useEffect(() => {
+    fetch(url)
+      .then(() => setLoading(false))
+      .catch((e) => {
+        console.log('DOWNLOAD_VIDEO_ERROR: ', e);
+        setLoading(false);
+      });
+    return () => {
+      deleteGIFCache();
+    };
+  }, []);
 
   useEffect(() => {
     if (videoPlayer.current) {
       videoPlayer.current
         .getVideoInfo()
         .then((r) => {
-          // console.log(r);
+          console.log(r);
           setEndTime(r.duration);
         })
         .catch((e) => console.log(e));
     }
-  }, []);
+  }, [loading]);
 
   const onVideoChange = useCallback(
     ({ nativeEvent }) => {
@@ -88,20 +116,68 @@ export const GifEditorScreen = ({ navigation, route }) => {
     setFPS(fps);
   }, []);
 
-  const renderLeftAction = () => <TopNavigationAction icon={CloseIcon} onPress={() => navigation.goBack()} />;
+  const navigateBack = () => {
+    const setPaused = route.params.setPaused;
+    if (setPaused) setPaused(false);
+    navigation.goBack();
+  };
+
+  const renderLeftAction = () => <TopNavigationAction icon={CloseIcon} onPress={navigateBack} />;
+
+  const onNextPressed = useCallback(async () => {
+    const dir = `${RNFS.CachesDirectoryPath}/gifCache`;
+    try {
+      setLoadingGIF(true);
+      const isIOS = Platform.OS === 'ios';
+      await RNFS.mkdir(dir);
+      const date = new Date().valueOf();
+      const t = title ? title.replace(/\s/g, '_') : id;
+      const dir_with_filename = `${dir}/${t}_${date}_${id}.gif`;
+      const file_url = url;
+      const command = `-nostats -loglevel 0 -ss ${startTime} -to ${endTime}  -i ${file_url} -vf "fps=${fps},scale=480:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 ${dir_with_filename}`;
+      await RNFFmpeg.execute(command);
+      const d = await RNFS.readDir(dir);
+      d.sort((a, b) => new Date(a.mtime) - new Date(b.mtime));
+      const lastItem = d.pop();
+      const path = Platform.OS === 'android' ? 'file://' + lastItem.path : lastItem.path;
+      console.log(path);
+      if (isIOS) RNFetchBlob.ios.openDocument(path);
+      setLoadingGIF(false);
+    } catch (error) {
+      console.log('SHARE GIF ERROR: ', error);
+      setLoadingGIF(false);
+    }
+  }, [startTime, endTime, title, id, file_ext, fps]);
 
   const renderRightActions = () => (
     <React.Fragment>
-      <TopNavigationAction icon={GifIcon} />
-      {/* <TopNavigationAction icon={GridIcon} /> */}
+      {loadingGIF ? <ActivityIndicator /> : <TopNavigationAction icon={GifIcon} onPress={onNextPressed} />}
     </React.Fragment>
   );
+
+  if (loading)
+    return (
+      <Layout style={{ flex: 1 }}>
+        <SafeAreaView style={{ flex: 1 }}>
+          <TopNavigation
+            title="Gif Trim"
+            subtitle={`${formatSeconds(startTime)} ~ ${formatSeconds(endTime)}`}
+            alignment="center"
+            accessoryLeft={renderLeftAction}
+          />
+          <Divider />
+          <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <ActivityIndicator />
+          </Layout>
+        </SafeAreaView>
+      </Layout>
+    );
 
   return (
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
         <TopNavigation
-          title="Trim"
+          title="Gif Trim"
           subtitle={`${formatSeconds(startTime)} ~ ${formatSeconds(endTime)}`}
           alignment="center"
           accessoryLeft={renderLeftAction}

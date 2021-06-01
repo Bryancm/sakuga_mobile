@@ -43,6 +43,7 @@ export const DetailsScreen = ({ navigation, route }) => {
   const [commentLoading, setCommentLoading] = useState(false);
   const [editId, setEditId] = useState(false);
   const [user, setUser] = useState();
+  const [paused, setPaused] = useState(false);
 
   const loadUser = async () => {
     let newUser = false;
@@ -261,6 +262,7 @@ export const DetailsScreen = ({ navigation, route }) => {
         <Layout style={styles.image}>
           <VideoPlayer
             ref={video}
+            paused={paused}
             source={{ uri: converProxyUrl(item.file_url) }}
             navigator={navigation}
             controlAnimationTiming={250}
@@ -288,7 +290,14 @@ export const DetailsScreen = ({ navigation, route }) => {
           user={user}
           header={
             <Layout level="2">
-              <DetailHeader title={title} style={styles.titleContainer} url={converProxyUrl(item.file_url)} />
+              <DetailHeader
+                title={title}
+                style={styles.titleContainer}
+                url={converProxyUrl(item.file_url)}
+                file_ext={item.file_ext}
+                setPaused={setPaused}
+                id={item.id}
+              />
               <TagList tags={tags} style={styles.tagContainer} />
               <DetailFooter item={item} style={styles.titleContainer} />
               <Divider style={{ marginBottom: 12 }} />

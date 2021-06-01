@@ -6,7 +6,6 @@ import { vote } from '../api/post';
 import Toast from 'react-native-simple-toast';
 import Clipboard from '@react-native-community/clipboard';
 import RNFetchBlob from 'rn-fetch-blob';
-import converProxyUrl from 'react-native-video-cache';
 
 const MoreIcon = (props) => <Icon {...props} name="more-vertical-outline" />;
 const StarIcon = (props) => <Icon {...props} name="star-outline" />;

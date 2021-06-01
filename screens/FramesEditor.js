@@ -87,7 +87,13 @@ export const FramesEditorScreen = ({ navigation, route }) => {
     setReplay(!replay);
   }, [play, replay]);
 
-  const renderLeftAction = () => <TopNavigationAction icon={CloseIcon} onPress={() => navigation.goBack()} />;
+  const navigateBack = () => {
+    const setPaused = route.params.setPaused;
+    if (setPaused) setPaused(false);
+    navigation.goBack();
+  };
+
+  const renderLeftAction = () => <TopNavigationAction icon={CloseIcon} onPress={navigateBack} />;
 
   const navigateFramesList = () => {
     navigation.navigate('FramesList', { startTime, endTime });
