@@ -1,9 +1,12 @@
 import React from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Platform } from 'react-native';
 import { Icon, Layout, Text, Button, OverflowMenu, MenuItem } from '@ui-kitten/components';
 import { storeData, getData } from '../util/storage';
 import { vote } from '../api/post';
 import Toast from 'react-native-simple-toast';
+import Clipboard from '@react-native-community/clipboard';
+import RNFetchBlob from 'rn-fetch-blob';
+import converProxyUrl from 'react-native-video-cache';
 
 const MoreIcon = (props) => <Icon {...props} name="more-vertical-outline" />;
 const StarIcon = (props) => <Icon {...props} name="star-outline" />;
@@ -95,7 +98,7 @@ export const PostMenu = ({
       Toast.show('Added to watch later');
     } catch (error) {
       console.log('ADD_WATCH_LATER_ERROR: ', error);
-      Toast.show('Error');
+      Toast.show('Error, please try again later :(');
     }
   };
 
@@ -111,9 +114,66 @@ export const PostMenu = ({
       setItemScore(newItemScore);
       setUserScore(score);
       setLoading(false);
+      Toast.show(score === 0 ? 'Score removed' : 'Score added');
     } catch (error) {
       console.log('ADD_SCORE_ERROR: ', error);
       setLoading(false);
+      Toast.show('Error, please try again later :(');
+    }
+  };
+
+  const copyToClipboard = () => {
+    toggleMenu2();
+    Clipboard.setString(`https://www.sakugabooru.com/post/show/${item.id}`);
+    Toast.show('Link copied');
+  };
+
+  const downloadIOS = () => {
+    console.log('download ios');
+  };
+
+  const download = async () => {
+    try {
+      toggleMenu2();
+      const {
+        dirs: { DownloadDir, DocumentDir },
+      } = RNFetchBlob.fs;
+      const directoryPath = Platform.select({
+        ios: DocumentDir,
+        android: DownloadDir,
+      });
+      const isIOS = Platform.OS === 'ios';
+      const filePath = `${directoryPath}/${item.title}_${item.id}`;
+      const fileExt = item.file_ext;
+      const isVideo = fileExt !== 'gif' && fileExt !== 'jpg' && fileExt !== 'jpeg' && fileExt !== 'png';
+      const mimeType = isVideo ? 'video/*' : 'image/*';
+      const configOptions = Platform.select({
+        ios: {
+          fileCache: true,
+          path: filePath,
+          appendExt: fileExt,
+          notification: true,
+        },
+        android: {
+          fileCache: true,
+          appendExt: fileExt,
+          addAndroidDownloads: {
+            useDownloadManager: true,
+            mime: mimeType,
+            title: item.title,
+            mediaScannable: true,
+            notification: true,
+          },
+        },
+      });
+      const downloadUrl = isIOS ? converProxyUrl(item.file_url) : item.file_url;
+      const response = await RNFetchBlob.config(configOptions).fetch('GET', downloadUrl);
+      console.log({ response });
+      if (isIOS) RNFetchBlob.ios.openDocument(response.data);
+      Toast.show('Downloaded');
+    } catch (error) {
+      Toast.show('Error, please try again later :(');
+      console.log('download error: ', error);
     }
   };
 
@@ -150,8 +210,13 @@ export const PostMenu = ({
         </OverflowMenu>
       )}
       <OverflowMenu anchor={menuAnchor2} visible={menuVisible2} onBackdropPress={toggleMenu2}>
-        <MenuItem key="5" accessoryLeft={LinkIcon} title={<Text category="c1">Copy link</Text>} />
-        <MenuItem key="6" accessoryLeft={DownloadIcon} title={<Text category="c1">Download</Text>} />
+        <MenuItem
+          key="5"
+          accessoryLeft={LinkIcon}
+          title={<Text category="c1">Copy link</Text>}
+          onPress={copyToClipboard}
+        />
+        <MenuItem key="6" accessoryLeft={DownloadIcon} title={<Text category="c1">Download</Text>} onPress={download} />
         <MenuItem
           key="7"
           accessoryLeft={ArchiveIcon}
