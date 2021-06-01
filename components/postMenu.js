@@ -164,7 +164,6 @@ export const PostMenu = ({
         },
       });
       const response = await RNFetchBlob.config(configOptions).fetch('GET', item.file_url);
-      console.log({ response });
       if (isIOS) RNFetchBlob.ios.previewDocument(response.path());
       setLoadingDownload(false);
     } catch (error) {
