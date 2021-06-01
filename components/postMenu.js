@@ -33,6 +33,7 @@ export const PostMenu = ({
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [menuVisible2, setMenuVisible2] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const [loadingDownload, setLoadingDownload] = React.useState(false);
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
@@ -128,13 +129,10 @@ export const PostMenu = ({
     Toast.show('Link copied');
   };
 
-  const downloadIOS = () => {
-    console.log('download ios');
-  };
-
   const download = async () => {
     try {
       toggleMenu2();
+      setLoadingDownload(item.id);
       const {
         dirs: { DownloadDir, DocumentDir },
       } = RNFetchBlob.fs;
@@ -142,21 +140,20 @@ export const PostMenu = ({
         ios: DocumentDir,
         android: DownloadDir,
       });
-      const isIOS = Platform.OS === 'ios';
-      const filePath = `${directoryPath}/${item.title}_${item.id}`;
       const fileExt = item.file_ext;
+      const isIOS = Platform.OS === 'ios';
+      const filePath = `${directoryPath}/${item.title}_${item.id}.${fileExt}`;
       const isVideo = fileExt !== 'gif' && fileExt !== 'jpg' && fileExt !== 'jpeg' && fileExt !== 'png';
       const mimeType = isVideo ? 'video/*' : 'image/*';
       const configOptions = Platform.select({
         ios: {
           fileCache: true,
           path: filePath,
-          appendExt: fileExt,
           notification: true,
         },
         android: {
           fileCache: true,
-          appendExt: fileExt,
+          path: filePath,
           addAndroidDownloads: {
             useDownloadManager: true,
             mime: mimeType,
@@ -166,14 +163,14 @@ export const PostMenu = ({
           },
         },
       });
-      const downloadUrl = isIOS ? converProxyUrl(item.file_url) : item.file_url;
-      const response = await RNFetchBlob.config(configOptions).fetch('GET', downloadUrl);
+      const response = await RNFetchBlob.config(configOptions).fetch('GET', item.file_url);
       console.log({ response });
-      if (isIOS) RNFetchBlob.ios.openDocument(response.data);
-      Toast.show('Downloaded');
+      if (isIOS) RNFetchBlob.ios.previewDocument(response.path());
+      setLoadingDownload(false);
     } catch (error) {
       Toast.show('Error, please try again later :(');
       console.log('download error: ', error);
+      setLoadingDownload(false);
     }
   };
 
@@ -209,33 +206,42 @@ export const PostMenu = ({
           />
         </OverflowMenu>
       )}
-      <OverflowMenu anchor={menuAnchor2} visible={menuVisible2} onBackdropPress={toggleMenu2}>
-        <MenuItem
-          key="5"
-          accessoryLeft={LinkIcon}
-          title={<Text category="c1">Copy link</Text>}
-          onPress={copyToClipboard}
-        />
-        <MenuItem key="6" accessoryLeft={DownloadIcon} title={<Text category="c1">Download</Text>} onPress={download} />
-        <MenuItem
-          key="7"
-          accessoryLeft={ArchiveIcon}
-          title={<Text category="c1">Add to watch list</Text>}
-          onPress={addToWatchList}
-        />
-        {deleteAlert && (
+      {loadingDownload === item.id ? (
+        <ActivityIndicator />
+      ) : (
+        <OverflowMenu anchor={menuAnchor2} visible={menuVisible2} onBackdropPress={toggleMenu2}>
           <MenuItem
-            key="8"
-            accessoryLeft={TrashIcon}
-            title={
-              <Text status="primary" category="c1">
-                Remove
-              </Text>
-            }
-            onPress={remove}
+            key="5"
+            accessoryLeft={LinkIcon}
+            title={<Text category="c1">Copy link</Text>}
+            onPress={copyToClipboard}
           />
-        )}
-      </OverflowMenu>
+          <MenuItem
+            key="6"
+            accessoryLeft={DownloadIcon}
+            title={<Text category="c1">Download</Text>}
+            onPress={download}
+          />
+          <MenuItem
+            key="7"
+            accessoryLeft={ArchiveIcon}
+            title={<Text category="c1">Add to watch list</Text>}
+            onPress={addToWatchList}
+          />
+          {deleteAlert && (
+            <MenuItem
+              key="8"
+              accessoryLeft={TrashIcon}
+              title={
+                <Text status="primary" category="c1">
+                  Remove
+                </Text>
+              }
+              onPress={remove}
+            />
+          )}
+        </OverflowMenu>
+      )}
     </Layout>
   );
 };
