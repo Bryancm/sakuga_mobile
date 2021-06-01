@@ -5,6 +5,7 @@ import { SmallCard } from './cardHorizontal';
 import { useNavigation } from '@react-navigation/native';
 import { getPosts } from '../api/post';
 import { tagStyles } from '../styles';
+import { getData } from '../util/storage';
 
 const PlusIcon = (props) => <Icon {...props} name="plus-circle-outline" />;
 
@@ -18,7 +19,7 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType, date, s
   const [message, setMessage] = useState('Nobody here but us chickens!');
   const navigation = useNavigation();
 
-  const postWithDetails = (tagsWithType, post) => {
+  const postWithDetails = (tagsWithType, post, votes) => {
     var artist = '';
     var copyright = '';
     var tags = [];
@@ -45,7 +46,16 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType, date, s
         : copyright.trim();
     const title = name ? capitalize(name).replace(/_/g, ' ') : name;
 
+    var userScore = 0;
+    for (const post_id in votes) {
+      if (Object.hasOwnProperty.call(votes, post_id)) {
+        const vote = votes[post_id];
+        if (Number(post_id) === post.id) userScore = vote;
+      }
+    }
+
     tags.sort((a, b) => a.type > b.type);
+    post.userScore = userScore;
     post.tags = tags;
     post.title = title;
     return post;
@@ -54,8 +64,11 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType, date, s
   const fetchPost = async (page, isFirst, search) => {
     try {
       if (!isFirst) setFetching(true);
-      const response = await getPosts({ search, page, include_tags: 1 });
-      const postsWithTitle = response.posts.map((p) => postWithDetails(response.tags, p));
+      var params = { search, page, include_tags: 1, include_votes: 1 };
+      const user = await getData('user');
+      if (user) params = { ...params, user: user.name, password_hash: user.password_hash };
+      const response = await getPosts(params);
+      const postsWithTitle = response.posts.map((p) => postWithDetails(response.tags, p, response.votes));
       const filteredPosts = postsWithTitle.filter((p) => !data.some((currentPost) => currentPost.id === p.id));
       let newData = [...data, ...filteredPosts];
       if (page === 1) newData = postsWithTitle;

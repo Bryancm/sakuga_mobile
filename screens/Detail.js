@@ -18,7 +18,6 @@ const SortIcon = () => (
     style={{
       width: 14,
       height: 14,
-
       transform: [{ rotate: '90deg' }],
     }}
     fill="#808080"
