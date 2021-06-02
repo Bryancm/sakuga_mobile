@@ -39,6 +39,13 @@ export const PostVerticalList = ({
     return unsubscribe;
   }, [navigation]);
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      if (cellRefs && cellRefs[viewableIndex]) cellRefs[viewableIndex].pauseVideo();
+    });
+    return unsubscribe;
+  }, [navigation]);
+
   const navigateDetail = (item, title, tags) => {
     navigation.navigate('Detail', { item, title, tags });
   };

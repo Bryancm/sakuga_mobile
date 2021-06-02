@@ -44,7 +44,6 @@ export default () => {
   };
 
   const cleanCache = async () => {
-    console.log('CLEAN CACHE');
     try {
       if (Platform.OS === 'android') {
         const dir = `/storage/emulated/0/Android/data/com.sakugamobile/cache/video-cache`;
