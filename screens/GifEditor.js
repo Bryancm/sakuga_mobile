@@ -12,7 +12,6 @@ const GifIcon = () => (
   </Text>
 );
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
-const GridIcon = (props) => <Icon {...props} name="grid-outline" />;
 const PlayIcon = () => <Icon name="play-circle-outline" style={{ width: 25, height: 25 }} fill="#D4D4D4" />;
 const PauseIcon = () => <Icon name="pause-circle-outline" style={{ width: 25, height: 25 }} fill="#D4D4D4" />;
 const screenWidth = Dimensions.get('window').width;
@@ -26,8 +25,8 @@ export const GifEditorScreen = ({ navigation, route }) => {
   const id = route.params.id;
   const title = route.params.title;
   const file_ext = route.params.file_ext;
+  const url = route.params.url;
 
-  const [url, setUrl] = useState(route.params.url);
   const [currentTime, setCurrentTime] = useState(0);
   const [currentTimeTrimmer, setCurrentTimeTrimmer] = useState(0);
   const [startTime, setStartTime] = useState(0);
@@ -62,7 +61,6 @@ export const GifEditorScreen = ({ navigation, route }) => {
       videoPlayer.current
         .getVideoInfo()
         .then((r) => {
-          console.log(r);
           setEndTime(r.duration);
         })
         .catch((e) => console.log(e));
@@ -140,7 +138,6 @@ export const GifEditorScreen = ({ navigation, route }) => {
       d.sort((a, b) => new Date(a.mtime) - new Date(b.mtime));
       const lastItem = d.pop();
       const path = Platform.OS === 'android' ? 'file://' + lastItem.path : lastItem.path;
-      console.log(path);
       if (isIOS) RNFetchBlob.ios.openDocument(path);
       setLoadingGIF(false);
     } catch (error) {

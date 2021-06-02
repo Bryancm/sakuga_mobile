@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { SafeAreaView, StyleSheet, Dimensions } from 'react-native';
+import { SafeAreaView, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
 import { Divider, Icon, Layout, Button, Text, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { VideoPlayer, Trimmer } from 'react-native-video-processing';
+import RNFS from 'react-native-fs';
 
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const GridIcon = (props) => <Icon {...props} name="grid-outline" />;
@@ -12,12 +13,16 @@ const PauseIcon = () => <Icon name="pause-circle-outline" style={{ width: 25, he
 const screenWidth = Dimensions.get('window').width;
 
 const formatSeconds = (seconds) => {
-  return new Date(seconds ? seconds * 1000 : 0).toISOString().substr(14, 5);
+  return new Date(seconds ? seconds * 1000 : 0).toISOString().substr(14, 8);
 };
 
 export const FramesEditorScreen = ({ navigation, route }) => {
   const videoPlayer = React.useRef();
+  const id = route.params.id;
+  const title = route.params.title;
+  const file_ext = route.params.file_ext;
   const url = route.params.url;
+
   const [currentTime, setCurrentTime] = useState(0);
   const [currentTimeTrimmer, setCurrentTimeTrimmer] = useState(0);
   const [startTime, setStartTime] = useState(0);
@@ -27,27 +32,49 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   const [totalFPS, setTotalFPS] = useState(0);
   const [currentFPS, setCurrentFPS] = useState(0);
   const [stepCount, setStepCount] = useState(1);
-  // const [longPressInterval, setLongPressInterval] = useState();
+  const [stepSize, setStepSize] = useState(0.042);
+  const [loading, setLoading] = useState(true);
+
+  const deleteFramesCache = async () => {
+    const dir = `${RNFS.CachesDirectoryPath}/framesCache`;
+    const exist = await RNFS.exists(dir);
+    if (exist) await RNFS.unlink(dir);
+  };
+
+  useEffect(() => {
+    fetch(url)
+      .then(() => setLoading(false))
+      .catch((e) => {
+        console.log('DOWNLOAD_VIDEO_ERROR: ', e);
+        setLoading(false);
+      });
+    return () => {
+      deleteFramesCache();
+    };
+  }, []);
 
   useEffect(() => {
     if (videoPlayer.current) {
       videoPlayer.current
         .getVideoInfo()
         .then((r) => {
-          // console.log(r);
+          const step = 1 / r.frameRate;
+          const stepSize = Number(step.toFixed(4));
+          const totalFps = Math.round(r.duration / stepSize);
+          setStepSize(stepSize);
+          setTotalFPS(totalFps);
           setEndTime(r.duration);
-          setTotalFPS(Math.round(r.duration / 0.042));
         })
         .catch((e) => console.log(e));
     }
-  }, []);
+  }, [loading]);
 
   const onVideoChange = useCallback(
     ({ nativeEvent }) => {
       if (play) setCurrentTimeTrimmer(nativeEvent.currentTime);
-      setCurrentFPS(Math.round(nativeEvent.currentTime / 0.042));
+      setCurrentFPS(Math.round(nativeEvent.currentTime / stepSize));
     },
-    [play],
+    [play, stepSize],
   );
 
   const onTrackerMove = useCallback(
@@ -96,7 +123,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   const renderLeftAction = () => <TopNavigationAction icon={CloseIcon} onPress={navigateBack} />;
 
   const navigateFramesList = () => {
-    navigation.navigate('FramesList', { startTime, endTime });
+    navigation.navigate('FramesList', { startTime, endTime, title, id, file_ext, url });
   };
 
   const renderRightActions = () => (
@@ -106,7 +133,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   );
 
   const stepFoward = useCallback(() => {
-    const stepTime = 0.042 * stepCount;
+    const stepTime = stepSize * stepCount;
     const current = play ? currentTimeTrimmer : currentTime;
     setCurrentTime(current + stepTime);
     setCurrentTimeTrimmer(current + stepTime);
@@ -114,10 +141,10 @@ export const FramesEditorScreen = ({ navigation, route }) => {
       setPlay(false);
       setReplay(false);
     }
-  }, [currentTime, play, stepCount, currentTimeTrimmer]);
+  }, [currentTime, play, stepCount, currentTimeTrimmer, stepSize]);
 
   const stepBackward = useCallback(() => {
-    const stepTime = 0.042 * stepCount;
+    const stepTime = stepSize * stepCount;
     const current = play ? currentTimeTrimmer : currentTime;
     setCurrentTime(current - stepTime);
     setCurrentTimeTrimmer(current - stepTime);
@@ -125,7 +152,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
       setPlay(false);
       setReplay(false);
     }
-  }, [currentTime, play, stepCount, currentTimeTrimmer]);
+  }, [currentTime, play, stepCount, currentTimeTrimmer, stepSize]);
 
   const changeStepCount = useCallback(() => {
     if (stepCount === 1) setStepCount(2);
@@ -133,20 +160,29 @@ export const FramesEditorScreen = ({ navigation, route }) => {
     if (stepCount === 3) setStepCount(1);
   }, [stepCount]);
 
-  // const onLongPressBackward = useCallback(() => {
-  //   setLongPressInterval(setInterval(() => stepBackward(), 2000));
-  // }, []);
-
-  // const onPressOut = useCallback(() => {
-  //   window.clearInterval(longPressInterval);
-  //   setLongPressInterval();
-  // }, [longPressInterval]);
+  if (loading)
+    return (
+      <Layout style={{ flex: 1 }}>
+        <SafeAreaView style={{ flex: 1 }}>
+          <TopNavigation
+            title="Frames Trim"
+            subtitle={`${formatSeconds(startTime)} ~ ${formatSeconds(endTime)}`}
+            alignment="center"
+            accessoryLeft={renderLeftAction}
+          />
+          <Divider />
+          <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <ActivityIndicator />
+          </Layout>
+        </SafeAreaView>
+      </Layout>
+    );
 
   return (
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
         <TopNavigation
-          title="Trim"
+          title="Frames Trim"
           subtitle={`${formatSeconds(startTime)} ~ ${formatSeconds(endTime)}`}
           alignment="center"
           accessoryLeft={renderLeftAction}
@@ -192,8 +228,6 @@ export const FramesEditorScreen = ({ navigation, route }) => {
                 style={styles.pauseButton}
                 onPress={stepBackward}
                 accessoryRight={ArrowLeftIcon}
-                // onLongPress={onLongPressBackward}
-                // onPressOut={onPressOut}
               />
               <Button
                 appearance="ghost"
