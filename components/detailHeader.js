@@ -17,13 +17,13 @@ export const DetailHeader = ({ title, style, url, setPaused, file_ext, id }) => 
   const navigateGifEditor = () => {
     setPaused(true);
     toggleMenu();
-    navigation.navigate('GifEditor', { url, setPaused, title, file_ext, id });
+    navigation.navigate('GifEditor', { url, title, file_ext, id });
   };
 
   const navigateFramesEditor = () => {
     setPaused(true);
     toggleMenu();
-    navigation.navigate('FramesEditor', { url, setPaused, title, file_ext, id });
+    navigation.navigate('FramesEditor', { url, title, file_ext, id });
   };
 
   const menuAnchor = () => (

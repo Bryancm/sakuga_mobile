@@ -45,6 +45,13 @@ export const DetailsScreen = ({ navigation, route }) => {
   const [user, setUser] = useState();
   const [paused, setPaused] = useState(false);
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', async () => {
+      setPaused(false);
+    });
+    return unsubscribe;
+  }, [navigation]);
+
   const loadUser = async () => {
     let newUser = false;
     const currentUser = await getData('user');
@@ -298,7 +305,7 @@ export const DetailsScreen = ({ navigation, route }) => {
                 setPaused={setPaused}
                 id={item.id}
               />
-              <TagList tags={tags} style={styles.tagContainer} />
+              <TagList tags={tags} style={styles.tagContainer} loadCount={true} />
               <DetailFooter item={item} style={styles.titleContainer} />
               <Divider style={{ marginBottom: 12 }} />
               <Layout level="3" style={{ margin: 8, borderRadius: 2, padding: 0 }}>

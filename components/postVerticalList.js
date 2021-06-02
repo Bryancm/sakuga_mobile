@@ -23,6 +23,7 @@ export const PostVerticalList = ({
   autoPlay,
 }) => {
   let cellRefs = {};
+  let viewableIndex = 0;
   const [page, setPage] = useState(1);
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
@@ -30,6 +31,13 @@ export const PostVerticalList = ({
   const [isRefetching, setRefetching] = useState(false);
   const [message, setMessage] = useState('Nobody here but us chickens!');
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', async () => {
+      if (cellRefs && cellRefs[viewableIndex]) cellRefs[viewableIndex].playVideo();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   const navigateDetail = (item, title, tags) => {
     navigation.navigate('Detail', { item, title, tags });
@@ -234,6 +242,7 @@ export const PostVerticalList = ({
     if (cell) {
       if (item.isViewable) {
         cell.playVideo();
+        viewableIndex = item.index;
       } else {
         cell.pauseVideo();
       }

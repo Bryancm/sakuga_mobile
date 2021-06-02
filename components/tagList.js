@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { TouchableOpacity } from 'react-native';
 import { Layout, Text, Button, Icon } from '@ui-kitten/components';
 import { tagStyles } from '../styles';
+import { useNavigation } from '@react-navigation/native';
+import { findTag } from '../api/tag';
 
-const MoreIcon = (props) => <Icon {...props} name="more-horizontal-outline" />;
 const ChevronDownIcon = (props) => (
   <Icon name="arrow-ios-downward-outline" style={{ width: 18, height: 18 }} fill="#808080" />
 );
@@ -10,31 +12,72 @@ const ChevronUpIcon = (props) => (
   <Icon name="arrow-ios-upward-outline" style={{ width: 18, height: 18 }} fill="#808080" />
 );
 
-export const TagList = ({ tags, style, level = '2' }) => {
-  const [more, setMore] = React.useState();
-  const tgs = more ? tags : tags.slice(0, 4);
+export const TagList = ({ tags, style, level = '2', loadCount = false, setPaused }) => {
+  const [more, setMore] = useState();
+  const [allTags, setAllTags] = useState(tags);
+  const [postTags, setTags] = useState(allTags.slice(0, 5));
+  const navigation = useNavigation();
+
+  const navigatePostList = (from, isPosts, menuType, search, order, type) => {
+    if (setPaused) setPaused(true);
+    navigation.navigate('PostList', { from, isPosts, menuType, search, order, type });
+  };
+
+  const getTagCount = async () => {
+    try {
+      var tagFetches = [];
+      var newTags = [];
+      for (const tag of tags) {
+        tagFetches.push(findTag({ name: tag.tag }));
+      }
+      const responses = await Promise.all(tagFetches);
+
+      for (let index = 0; index < responses.length; index++) {
+        const response = responses[index];
+        const responseTag = response.find((t) => t.name === tags[index].tag);
+        const newTag = { ...tags[index], count: responseTag.count };
+        newTags.push(newTag);
+      }
+      setAllTags(newTags);
+      const t = more ? newTags : newTags.slice(0, 5);
+      setTags(t);
+    } catch (error) {
+      console.log('GET_TAG_COUNT_ERROR: ', error);
+    }
+  };
+  useEffect(() => {
+    if (loadCount) getTagCount();
+  }, []);
   const toggleMore = () => {
+    if (more) setTags(allTags.slice(0, 5));
+    if (!more) setTags(allTags);
     setMore(!more);
   };
   return (
     <Layout level={level} style={style}>
-      {tgs.length > 0 &&
-        tgs.map((t, i) =>
+      {postTags.length > 0 &&
+        postTags.map((t, i) =>
           t.style ? (
-            <Layout level={level} key={i} style={{ ...t.style, marginRight: 4, marginBottom: 8 }}>
+            <TouchableOpacity
+              key={i}
+              delayPressIn={0}
+              delayPressOut={0}
+              activeOpacity={0.7}
+              style={{ ...t.style, marginRight: 4, marginBottom: 8 }}
+              onPress={() => navigatePostList(t.tag, true, 'post', t.tag)}>
               <Text category="c1" style={{ color: t.style.color }} numberOfLines={1}>
-                {`${t.tag ? t.tag : t}  ${i}`}
+                {`${t.tag ? t.tag : t}  ${t.count ? t.count : ''}`}
               </Text>
-            </Layout>
+            </TouchableOpacity>
           ) : (
             <Layout level={level} key={i} style={{ ...tagStyles.basic_outline, marginRight: 4, marginBottom: 8 }}>
               <Text category="c1" numberOfLines={1}>
-                {t.tag ? t.tag : t}
+                {`${t.tag ? t.tag : t}  ${t.count ? t.count : ''}`}
               </Text>
             </Layout>
           ),
         )}
-      {tags.length > 7 && (
+      {tags.length > 5 && (
         <Button
           size="small"
           status="basic"

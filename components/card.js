@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useState, useEffect, useRef } from 'react';
 import { StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Divider, Layout, Text, Icon } from '@ui-kitten/components';
 import { getRelativeTime } from '../util/date';
@@ -7,6 +7,7 @@ import { TagList } from './tagList';
 import { PostMenu } from './postMenu';
 import VideoPlayer from 'react-native-video';
 import converProxyUrl from 'react-native-video-cache';
+import { useNavigation } from '@react-navigation/native';
 
 const ImageIcon = (props) => <Icon {...props} name="image-outline" />;
 
@@ -29,6 +30,7 @@ export const Card = forwardRef((props, ref) => {
   }));
 
   const goToDetail = () => {
+    setPaused(true);
     navigateDetail(item, title, tags);
   };
 
@@ -71,7 +73,7 @@ export const Card = forwardRef((props, ref) => {
         )}
       </Layout>
 
-      <TagList tags={tags} style={styles.tagContainer} level="1" />
+      <TagList tags={tags} style={styles.tagContainer} level="1" setPaused={setPaused} />
       <Layout style={styles.buttonContainer}>
         <Text appearance="hint" category="c1" style={{ marginLeft: 6, lineHeight: 16 }}>
           {`${getRelativeTime(item.created_at * 1000)}\nPosted by ${item.author}`}
