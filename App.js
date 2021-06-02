@@ -27,6 +27,11 @@ import RNFS from 'react-native-fs';
 // const HeartIcon = (props) => <Icon {...props} name="heart" />;
 
 export default () => {
+  const removeDir = async (dir) => {
+    const exist = await RNFS.exists(dir);
+    if (exist) await RNFS.unlink(dir);
+  };
+
   const removeFiles = async (directory) => {
     const cache_file_limit = 10;
     const exist = await RNFS.exists(directory);
@@ -51,8 +56,12 @@ export default () => {
       } else {
         const video_dir = `${RNFS.DocumentDirectoryPath}/KTVHTTPCache`;
         const sdimage_dir = `${RNFS.CachesDirectoryPath}/com.hackemist.SDImageCache/default`;
+        const frames_dir = `${RNFS.CachesDirectoryPath}/framesCache`;
+        const gif_dir = `${RNFS.CachesDirectoryPath}/gifCache`;
         removeFiles(video_dir);
         removeFiles(sdimage_dir);
+        removeDir(frames_dir);
+        removeDir(gif_dir);
       }
     } catch (error) {
       console.log('CLEAN_CACHE_ERROR: ', error);
