@@ -7,7 +7,7 @@ const GridIcon = (props) => <Icon {...props} name="grid-outline" />;
 const EditIcon = (props) => <Icon {...props} name="edit-outline" />;
 const ImageIcon = (props) => <Icon {...props} name="image-outline" />;
 
-export const DetailHeader = ({ title, style, url, setPaused, file_ext, id }) => {
+export const DetailHeader = ({ title, style, url, setPaused, file_ext, id, isVideo }) => {
   const [menuVisible, setMenuVisible] = React.useState(false);
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
@@ -41,23 +41,25 @@ export const DetailHeader = ({ title, style, url, setPaused, file_ext, id }) => 
       <Text category="h6" style={{ lineHeight: 22, paddingVertical: 14, width: '90%' }}>
         {title}
       </Text>
-      <Layout level="2" style={{ flexDirection: 'row', height: '100%', alignItems: 'flex-start' }}>
-        <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>
-          <MenuItem
-            key="1"
-            onPress={navigateFramesEditor}
-            title={<Text category="c1">Frames</Text>}
-            accessoryLeft={GridIcon}
-          />
-          <MenuItem
-            key="2"
-            onPress={navigateGifEditor}
-            title={<Text category="c1">GIF</Text>}
-            accessoryLeft={ImageIcon}
-          />
-          <MenuItem key="3" title={<Text category="c1">Edit</Text>} accessoryLeft={EditIcon} />
-        </OverflowMenu>
-      </Layout>
+      {isVideo && (
+        <Layout level="2" style={{ flexDirection: 'row', height: '100%', alignItems: 'flex-start' }}>
+          <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>
+            <MenuItem
+              key="1"
+              onPress={navigateFramesEditor}
+              title={<Text category="c1">Frames</Text>}
+              accessoryLeft={GridIcon}
+            />
+            <MenuItem
+              key="2"
+              onPress={navigateGifEditor}
+              title={<Text category="c1">GIF</Text>}
+              accessoryLeft={ImageIcon}
+            />
+            {/* <MenuItem key="3" title={<Text category="c1">Edit</Text>} accessoryLeft={EditIcon} /> */}
+          </OverflowMenu>
+        </Layout>
+      )}
     </Layout>
   );
 };

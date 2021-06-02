@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { SafeAreaView, StyleSheet, Keyboard, ActivityIndicator, Alert } from 'react-native';
+import { SafeAreaView, StyleSheet, Keyboard, ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
 import { Divider, Icon, Layout, Input, Button, Text } from '@ui-kitten/components';
 import { DetailHeader } from '../components/detailHeader';
 import { TagList } from '../components/tagList';
@@ -8,9 +8,10 @@ import { CommentList } from '../components/commentList';
 import { storeData, getData } from '../util/storage';
 import { getComments, addComment, editComment, deleteComment, flagComment } from '../api/comment';
 import Toast from 'react-native-simple-toast';
-
 import VideoPlayer from 'react-native-video-controls';
 import converProxyUrl from 'react-native-video-cache';
+import RNFetchBlob from 'rn-fetch-blob';
+import FastImage from 'react-native-fast-image';
 
 const SortIcon = () => (
   <Icon
@@ -23,6 +24,7 @@ const SortIcon = () => (
     fill="#808080"
   />
 );
+const ArrowDown = (props) => <Icon {...props} name="arrow-ios-downward-outline" fill="#D4D4D4" />;
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const SendIcon = (props) => <Icon {...props} name="corner-down-right-outline" />;
 
@@ -34,6 +36,8 @@ export const DetailsScreen = ({ navigation, route }) => {
   const item = route.params.item;
   const title = route.params.title;
   const tags = route.params.tags;
+  const isVideo =
+    item.file_ext !== 'gif' && item.file_ext !== 'jpg' && item.file_ext !== 'jpeg' && item.file_ext !== 'png';
 
   const [inputIsFocused, setInputIsFocused] = useState(false);
   const [text, setText] = useState();
@@ -44,6 +48,7 @@ export const DetailsScreen = ({ navigation, route }) => {
   const [editId, setEditId] = useState(false);
   const [user, setUser] = useState();
   const [paused, setPaused] = useState(false);
+  const [loadingImage, setLoadingImage] = useState(true);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
@@ -262,29 +267,105 @@ export const DetailsScreen = ({ navigation, route }) => {
     video.current.methods.toggleFullscreen();
   };
 
+  const download = async () => {
+    try {
+      setLoadingImage(true);
+      const {
+        dirs: { DownloadDir, DocumentDir },
+      } = RNFetchBlob.fs;
+      const directoryPath = Platform.select({
+        ios: DocumentDir,
+        android: DownloadDir,
+      });
+      const fileExt = item.file_ext;
+      const isIOS = Platform.OS === 'ios';
+      const filePath = `${directoryPath}/${item.title}_${item.id}.${fileExt}`;
+      const isVideo = fileExt !== 'gif' && fileExt !== 'jpg' && fileExt !== 'jpeg' && fileExt !== 'png';
+      const mimeType = isVideo ? 'video/*' : 'image/*';
+      const configOptions = Platform.select({
+        ios: {
+          fileCache: true,
+          path: filePath,
+          notification: true,
+        },
+        android: {
+          fileCache: true,
+          path: filePath,
+          addAndroidDownloads: {
+            useDownloadManager: true,
+            mime: mimeType,
+            title: item.title,
+            mediaScannable: true,
+            notification: true,
+          },
+        },
+      });
+      const response = await RNFetchBlob.config(configOptions).fetch('GET', item.file_url);
+      if (isIOS) RNFetchBlob.ios.openDocument(response.path());
+      setLoadingImage(false);
+    } catch (error) {
+      Toast.show('Error, please try again later :(');
+      console.log('download error: ', error);
+      setLoadingImage(false);
+    }
+  };
+
+  const onImagePress = () => {
+    download();
+  };
+
+  const navigateBack = () => {
+    navigation.goBack();
+  };
+
   return (
     <Layout level="2" style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
-        {/* <FastImage source={{ uri: item.preview_url }} style={styles.image} resizeMode="contain" /> */}
-        <Layout style={styles.image}>
-          <VideoPlayer
-            ref={video}
-            paused={paused}
-            source={{ uri: converProxyUrl(item.file_url) }}
-            navigator={navigation}
-            controlAnimationTiming={250}
-            controlTimeout={3000}
-            scrubbing={1}
-            repeat={true}
-            muted={true}
-            disableVolume={true}
-            toggleResizeModeOnFullscreen={false}
-            controls={false}
-            seekColor="#C3070B"
-            onEnterFullscreen={onEnterFullscreen}
-            onFullscreenPlayerWillDismiss={onFullscreenPlayerWillDismiss}
-          />
-        </Layout>
+        {!isVideo && (
+          <TouchableOpacity delayPressIn={0} delayPressOut={0} activeOpacity={0.7} onPress={onImagePress}>
+            <Button appearance="ghost" accessoryRight={ArrowDown} style={styles.closeButton} onPress={navigateBack} />
+            {loadingImage && (
+              <Layout
+                style={{
+                  ...styles.image,
+                  position: 'absolute',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  zIndex: 10,
+                  opacity: 0.7,
+                }}>
+                <ActivityIndicator />
+              </Layout>
+            )}
+            <FastImage
+              source={{ uri: item.file_url }}
+              style={styles.image}
+              resizeMode="contain"
+              onLoadEnd={() => setLoadingImage(false)}
+            />
+          </TouchableOpacity>
+        )}
+        {isVideo && (
+          <Layout style={styles.image}>
+            <VideoPlayer
+              ref={video}
+              paused={paused}
+              source={{ uri: converProxyUrl(item.file_url) }}
+              navigator={navigation}
+              controlAnimationTiming={250}
+              controlTimeout={3000}
+              scrubbing={1}
+              repeat={true}
+              muted={true}
+              disableVolume={true}
+              toggleResizeModeOnFullscreen={false}
+              controls={false}
+              seekColor="#C3070B"
+              onEnterFullscreen={onEnterFullscreen}
+              onFullscreenPlayerWillDismiss={onFullscreenPlayerWillDismiss}
+            />
+          </Layout>
+        )}
         <CommentList
           commentList={commentList}
           data={user === undefined ? [] : comments}
@@ -304,6 +385,7 @@ export const DetailsScreen = ({ navigation, route }) => {
                 file_ext={item.file_ext}
                 setPaused={setPaused}
                 id={item.id}
+                isVideo={isVideo}
               />
               <TagList tags={tags} style={styles.tagContainer} loadCount={true} />
               <DetailFooter item={item} style={styles.titleContainer} />
@@ -360,4 +442,17 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
   },
   image: { width: '100%', height: 210 },
+  closeButton: {
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+    left: 10,
+    top: 10,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+    borderRadius: 25,
+    backgroundColor: '#000',
+    opacity: 0.7,
+    zIndex: 10,
+  },
 });
