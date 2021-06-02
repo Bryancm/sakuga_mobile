@@ -1,5 +1,14 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { SafeAreaView, StyleSheet, Keyboard, ActivityIndicator, Alert, TouchableOpacity, Platform } from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Keyboard,
+  ActivityIndicator,
+  Alert,
+  TouchableOpacity,
+  Platform,
+  Dimensions,
+} from 'react-native';
 import { Divider, Icon, Layout, Input, Button, Text } from '@ui-kitten/components';
 import { DetailHeader } from '../components/detailHeader';
 import { TagList } from '../components/tagList';
@@ -27,12 +36,13 @@ const SortIcon = () => (
 const ArrowDown = (props) => <Icon {...props} name="arrow-ios-downward-outline" fill="#D4D4D4" />;
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const SendIcon = (props) => <Icon {...props} name="corner-down-right-outline" />;
+const screenHeight = Dimensions.get('window').height;
+const videoHeight = Math.round(screenHeight * 0.26 - 1);
 
 export const DetailsScreen = ({ navigation, route }) => {
   const video = useRef();
   const commentList = useRef();
   const input = useRef();
-
   const item = route.params.item;
   const title = route.params.title;
   const tags = route.params.tags;
@@ -446,7 +456,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingLeft: 8,
   },
-  image: { width: '100%', height: 210 },
+  image: { width: '100%', height: videoHeight },
   closeButton: {
     position: 'absolute',
     justifyContent: 'center',

@@ -1,5 +1,5 @@
-import React, { forwardRef, useImperativeHandle, useState, useEffect, useRef } from 'react';
-import { StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React, { forwardRef, useImperativeHandle, useState } from 'react';
+import { StyleSheet, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
 import { Divider, Layout, Text, Icon } from '@ui-kitten/components';
 import { getRelativeTime } from '../util/date';
 import FastImage from 'react-native-fast-image';
@@ -7,9 +7,10 @@ import { TagList } from './tagList';
 import { PostMenu } from './postMenu';
 import VideoPlayer from 'react-native-video';
 import converProxyUrl from 'react-native-video-cache';
-import { useNavigation } from '@react-navigation/native';
 
 const ImageIcon = (props) => <Icon {...props} name="image-outline" />;
+const screenHeight = Dimensions.get('window').height;
+const videoHeight = Math.round(screenHeight * 0.26 - 1);
 
 export const Card = forwardRef((props, ref) => {
   const { item, navigateDetail, autoPlay } = props;
@@ -101,7 +102,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     width: '100%',
-    height: 210,
+    height: videoHeight,
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',

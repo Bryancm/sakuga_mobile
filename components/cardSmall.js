@@ -27,7 +27,7 @@ export const CardSmall = ({ item, deleteAlert, navigateDetail }) => {
             {title}
           </Text>
           <Layout style={{ justifyContent: 'space-between', height: 90 }}>
-            <Text style={{ width: '95%' }} numberOfLines={5}>
+            <Text style={{ width: '95%' }} numberOfLines={4}>
               {tags.length > 0 &&
                 tags.map((t, i) =>
                   t.style ? (
