@@ -1,7 +1,9 @@
 import React from 'react';
-import { FlatList, RefreshControl, ActivityIndicator, StyleSheet } from 'react-native';
+import { FlatList, RefreshControl, ActivityIndicator, StyleSheet, Dimensions } from 'react-native';
 import { CommentItem } from './commentItem';
 import { Icon, Layout, Button, Text } from '@ui-kitten/components';
+
+const screenHeight = Dimensions.get('window').height;
 
 const PlusIcon = (props) => <Icon {...props} name="message-circle-outline" />;
 
@@ -48,7 +50,7 @@ export const CommentList = ({
       }
       ListEmptyComponent={
         !isFetching && (
-          <Layout level="2" style={styles.center}>
+          <Layout level="2" style={styles.empty}>
             <Button size="giant" status="basic" appearance="ghost" accessoryRight={PlusIcon} />
             <Text appearance="hint" category="s1">
               No comments yet
@@ -62,4 +64,5 @@ export const CommentList = ({
 
 const styles = StyleSheet.create({
   center: { alignItems: 'center', justifyContent: 'center', height: 200, width: '100%' },
+  empty: { alignItems: 'center', justifyContent: 'flex-start', height: screenHeight / 2.3, width: '100%' },
 });

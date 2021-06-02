@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { SafeAreaView, StyleSheet, Keyboard, ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
+import { SafeAreaView, StyleSheet, Keyboard, ActivityIndicator, Alert, TouchableOpacity, Platform } from 'react-native';
 import { Divider, Icon, Layout, Input, Button, Text } from '@ui-kitten/components';
 import { DetailHeader } from '../components/detailHeader';
 import { TagList } from '../components/tagList';
@@ -395,7 +395,12 @@ export const DetailsScreen = ({ navigation, route }) => {
                   ref={input}
                   keyboardAppearance="dark"
                   multiline={true}
-                  style={{ backgroundColor: 'transparent', minHeight: 40, maxHeight: 160, borderColor: 'transparent' }}
+                  style={{
+                    backgroundColor: 'transparent',
+                    minHeight: 40,
+                    maxHeight: 160,
+                    borderColor: 'transparent',
+                  }}
                   placeholder="Add a comment"
                   accessoryRight={CommentButtons}
                   onFocus={onInputFocus}
