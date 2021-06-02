@@ -23,21 +23,16 @@ export const CommentList = ({
     onEditCommentButtonPress(comment);
   };
   const renderItem = ({ item }) => (
-    <CommentItem
-      key={item.id.toString()}
-      item={item}
-      onEdit={onEdit}
-      onDelete={onDeleteComment}
-      onFlagComment={onFlagComment}
-      user={user}
-    />
+    <CommentItem item={item} onEdit={onEdit} onDelete={onDeleteComment} onFlagComment={onFlagComment} user={user} />
   );
+  const keyExtractor = (item) => item.id.toString();
   return (
     <FlatList
       keyboardShouldPersistTaps="always"
       ref={commentList}
       data={data}
       renderItem={renderItem}
+      keyExtractor={keyExtractor}
       windowSize={6}
       initialNumToRender={4}
       maxToRenderPerBatch={4}

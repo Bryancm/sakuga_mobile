@@ -145,7 +145,12 @@ export const PostVerticalList = ({
   useEffect(() => {
     setLoading(true);
     refetch();
-  }, [layoutType, autoPlay]);
+  }, [layoutType]);
+
+  useEffect(() => {
+    setLoading(true);
+    refetch();
+  }, [autoPlay]);
 
   useEffect(() => {
     if (from === 'Search') {
@@ -269,7 +274,7 @@ export const PostVerticalList = ({
       onViewableItemsChanged={onViewableItemsChanged}
       viewabilityConfig={{
         minimumViewTime: 200,
-        viewAreaCoveragePercentThreshold: 60,
+        viewAreaCoveragePercentThreshold: 70,
       }}
       contentContainerStyle={{
         paddingBottom: 10,

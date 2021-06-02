@@ -31,6 +31,13 @@ export const ProfileScreen = ({ navigation }) => {
   const renderArchiveIcon = () => <Button appearance="ghost" accessoryLeft={ArchiveIcon} />;
   const [user, setUser] = useState();
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', async () => {
+      loadUser();
+    });
+    return unsubscribe;
+  }, [navigation]);
+
   const loadUser = async () => {
     let newUser = false;
     const currentUser = await getData('user');
@@ -45,7 +52,7 @@ export const ProfileScreen = ({ navigation }) => {
     navigation.navigate('Search');
   };
   const navigateSettings = () => {
-    navigation.navigate('Settings', { loadUser });
+    navigation.navigate('Settings');
   };
   const navigatePostList = (from, isPosts, menuType, search, order, type) => {
     navigation.navigate('PostList', { from, isPosts, menuType, search, order, type, user });

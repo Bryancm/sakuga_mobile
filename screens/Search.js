@@ -47,18 +47,18 @@ export const SearchScreen = ({ navigation }) => {
   const [tagsortMenuVisible, setTagSortMenuVisible] = useState(false);
 
   const loadSettings = async () => {
-    let autoPlaySetting = autoPlay ? autoPlay : true;
-    let layoutSetting = layoutType ? layoutType : 'large';
     const settings = await getData('userSettings');
-    if (settings && settings.autoPlay !== autoPlay) {
-      autoPlaySetting = settings.autoPlay;
-      setAutoPlay();
+    if (settings) {
+      if (settings.autoPlay !== autoPlay || settings.sizeForSearch !== layoutType) {
+        setAutoPlay();
+        setLayoutType();
+        setAutoPlay(settings.autoPlay);
+        setLayoutType(settings.sizeForSearch);
+      }
+    } else {
+      setAutoPlay(true);
+      setLayoutType('large');
     }
-    if (settings && settings.sizeForNew !== layoutType) {
-      layoutSetting = settings.sizeForNew;
-    }
-    setAutoPlay(autoPlaySetting);
-    setLayoutType(layoutSetting);
   };
 
   const initData = async () => {

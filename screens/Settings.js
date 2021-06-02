@@ -19,14 +19,12 @@ const LayoutIcon = (props) => <Icon {...props} name="layout-outline" />;
 const PlayIcon = (props) => <Icon {...props} name="play-circle-outline" />;
 
 export const SettingScreen = ({ navigation, route }) => {
-  const loadUser = route.params.loadUser;
   const [settings, setSettings] = useState();
 
   const logOut = async () => {
     const removed = await removeData('user');
     if (removed) {
       navigateBack();
-      loadUser();
     }
   };
 
