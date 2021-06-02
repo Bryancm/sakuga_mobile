@@ -1,14 +1,23 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
-import { Divider, Layout, TopNavigation, TopNavigationAction, Icon } from '@ui-kitten/components';
+import { SafeAreaView, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { Divider, Layout, TopNavigation, TopNavigationAction, Icon, Text } from '@ui-kitten/components';
 import FastImage from 'react-native-fast-image';
 import { RNFFmpeg } from 'react-native-ffmpeg';
 import RNFS from 'react-native-fs';
 import RNFetchBlob from 'rn-fetch-blob';
+import Share from 'react-native-share';
+import Toast from 'react-native-simple-toast';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back-outline" />;
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
-const CheckmarkIcon = (props) => <Icon {...props} name="checkmark-outline" />;
+const CheckmarkIcon = (props) => (
+  <Icon
+    style={{ position: 'absolute', bottom: 2, right: 2, width: 25, height: 25, zIndex: 10 }}
+    name="checkmark-circle-2"
+    fill="#E3170A"
+  />
+);
+const SelectIcon = () => <Text category="s2">Select</Text>;
 const DownloadIcon = (props) => <Icon {...props} name="download-outline" />;
 
 const formatSeconds = (seconds) => {
@@ -61,6 +70,7 @@ export const FramesListScreen = ({ navigation, route }) => {
   }, []);
 
   const toggleSelectView = () => {
+    if (selectView) clearSelectedItems();
     setSelectView(!selectView);
   };
 
@@ -71,12 +81,58 @@ export const FramesListScreen = ({ navigation, route }) => {
 
   const renderRightActions = () => (
     <React.Fragment>
-      <TopNavigationAction icon={selectView ? CloseIcon : CheckmarkIcon} onPress={toggleSelectView} />
-      {selectView && <TopNavigationAction icon={DownloadIcon} onPress={toggleSelectView} />}
+      <TopNavigationAction icon={selectView ? CloseIcon : SelectIcon} onPress={toggleSelectView} />
+      {selectView && <TopNavigationAction icon={DownloadIcon} onPress={shareMultipleImages} />}
     </React.Fragment>
   );
-  const renderItem = ({ item }) => (
-    <FastImage style={{ width: '33%', height: 100, marginRight: 2, marginBottom: 2 }} source={item} />
+
+  const clearSelectedItems = () => {
+    const newFrames = frames.map((f) => ({ uri: f.uri, selected: false }));
+    setFrames(newFrames);
+  };
+
+  const shareMultipleImages = async () => {
+    try {
+      const urls = frames.filter((f) => f.selected).map((f) => f.uri);
+      if (!urls || urls.length === 0) return Toast.show('Please select a image');
+      const shareOptions = {
+        title: 'Share frames',
+        message: title ? title : 'frames',
+        failOnCancel: false,
+        urls,
+        type: 'image/jpeg',
+      };
+      await Share.open(shareOptions);
+    } catch (error) {
+      Toast.show('Error, Please try again later :(');
+      console.log('SHARE_MULTIPLE_ERROR: ', error);
+    }
+  };
+
+  const selectItem = (index) => {
+    const newFrames = [...frames];
+    newFrames[index] = { uri: newFrames[index].uri, selected: newFrames[index].selected ? false : true };
+    setFrames(newFrames);
+  };
+
+  const openImage = (path) => {
+    RNFetchBlob.ios.openDocument(path);
+  };
+
+  const onItemPress = ({ item, index }) => {
+    selectView ? selectItem(index) : openImage(item.uri);
+  };
+
+  const renderItem = ({ item, index }) => (
+    <TouchableOpacity
+      delayPressIn={0}
+      delayPressOut={0}
+      activeOpacity={0.7}
+      style={{ width: '33%', height: 100, marginRight: 2, marginBottom: 2 }}
+      onPress={() => onItemPress({ item, index })}>
+      <FastImage style={{ width: '100%', height: '100%' }} source={item} />
+      {item.selected && <CheckmarkIcon />}
+    </TouchableOpacity>
   );
 
   const keyExtractor = (item) => item.uri;

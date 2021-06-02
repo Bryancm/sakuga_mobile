@@ -27,7 +27,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   const [currentTimeTrimmer, setCurrentTimeTrimmer] = useState(0);
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState();
-  const [play, setPlay] = useState(false);
+  const [play, setPlay] = useState(true);
   const [replay, setReplay] = useState(false);
   const [totalFPS, setTotalFPS] = useState(0);
   const [currentFPS, setCurrentFPS] = useState(0);

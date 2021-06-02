@@ -204,7 +204,6 @@ export const GifEditorScreen = ({ navigation, route }) => {
               paddingHorizontal: 8,
             }}>
             <Button
-              size="small"
               appearance="ghost"
               style={styles.pauseButton}
               onPress={toggleVideo}
