@@ -15,6 +15,7 @@ import { DetailsScreen } from '../screens/Detail';
 import { GifEditorScreen } from '../screens/GifEditor';
 import { FramesEditorScreen } from '../screens/FramesEditor';
 import { FramesListScreen } from '../screens/FramesList';
+import { LoginScreen } from '../screens/Login';
 
 const { multiply } = Animated;
 
@@ -114,6 +115,7 @@ export const AppNavigator = () => (
         options={{ gestureDirection: 'vertical', cardStyleInterpolator: forVerticalModal }}
       />
       <Stack.Screen name="FramesList" component={FramesListScreen} />
+      <Stack.Screen name="Login" component={LoginScreen} />
     </Stack.Navigator>
   </NavigationContainer>
 );

@@ -8,7 +8,7 @@ import { storeData } from '../util/storage';
 const PersonIcon = (props) => <Icon {...props} name="person-outline" />;
 const LockIcon = (props) => <Icon {...props} name="lock-outline" />;
 
-export const LoginForm = ({ loadUser }) => {
+export const LoginForm = ({ loadUser, from, navigateBack, navigatePostList }) => {
   const [user, setUser] = useState();
   const [password, setPassword] = useState();
   const [loading, setLoading] = useState(false);
@@ -27,7 +27,11 @@ export const LoginForm = ({ loadUser }) => {
         return setError('username or password is incorrect');
       }
       await storeData('user', { name: user.trim(), password_hash: password_hash.toLowerCase() });
-      loadUser();
+      await loadUser();
+      if (from === 'favorites' && navigateBack && navigatePostList) {
+        navigateBack();
+        navigatePostList('Favorites', true, 'Favorites', `vote:3:${user.trim()} order:vote`);
+      }
     } catch (error) {
       console.log('LOGIN_ERROR: ', error);
       setLoading(false);
@@ -38,8 +42,10 @@ export const LoginForm = ({ loadUser }) => {
   const onChangePassword = (password) => setPassword(password);
   return (
     <Layout style={styles.container}>
-      <Text category="h4">Login</Text>
-      <Text appearance="hint">Access to favorites and uploads</Text>
+      {/* <Text category="h4">Login</Text> */}
+      <Text appearance="hint" category="c2">
+        Access to comments, scores and favorites
+      </Text>
       <Layout style={styles.inputContainer}>
         <Input
           label="User"

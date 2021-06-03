@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FlatList, ActivityIndicator, RefreshControl, StyleSheet, Alert } from 'react-native';
+import { FlatList, ActivityIndicator, RefreshControl, StyleSheet, Alert, Dimensions } from 'react-native';
 import { CardSmall } from './cardSmall';
 import { Card } from '../components/card';
 import { getPosts } from '../api/post';
-import { Layout, Text } from '@ui-kitten/components';
+import { Layout, Text, Button, Icon } from '@ui-kitten/components';
 import { tagStyles } from '../styles';
 import { useNavigation } from '@react-navigation/native';
 import { getData, storeData, removeData } from '../util/storage';
 import Toast from 'react-native-simple-toast';
+
+const UmbrellaIcon = (props) => <Icon {...props} name="umbrella-outline" />;
+const screenHeight = Dimensions.get('window').height;
 
 const capitalize = (s) => {
   return s && s[0].toUpperCase() + s.slice(1);
@@ -29,6 +32,7 @@ export const PostVerticalList = ({
   const [data, setData] = useState([]);
   const [isFetching, setFetching] = useState(false);
   const [isRefetching, setRefetching] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const [message, setMessage] = useState('Nobody here but us chickens!');
   const navigation = useNavigation();
 
@@ -99,6 +103,7 @@ export const PostVerticalList = ({
       const user = await getData('user');
       if (user) params = { ...params, user: user.name, password_hash: user.password_hash };
       const response = await getPosts(params);
+      if (response.posts.length === 0) setHasMore(false);
       const postsWithTitle = response.posts.map((p) => postWithDetails(response.tags, p, response.votes));
       const filteredPosts = postsWithTitle.filter((p) => !data.some((currentPost) => currentPost.id === p.id));
       let newData = [...data, ...filteredPosts];
@@ -124,6 +129,7 @@ export const PostVerticalList = ({
         const start = pageIndex <= currentHistory.length - 1 ? pageIndex : currentHistory.length - 1;
         const end = page * 18 <= currentHistory.length - 1 ? page * 18 : currentHistory.length - 1;
         const newData = currentHistory.slice(start, end);
+        if (newData.length === 0) setHasMore(false);
         newHistory = [...data, ...newData];
         if (page === 1) newHistory = newData;
       }
@@ -221,7 +227,7 @@ export const PostVerticalList = ({
   );
 
   const onEndReached = async () => {
-    if (!isLoading && !isFetching) {
+    if (!isLoading && !isFetching && !isRefetching && hasMore) {
       if (from === 'History' || from === 'Watch Later') {
         const key = from === 'History' ? 'postHistory' : 'watchList';
         getLocalPost(page + 1, false, key);
@@ -276,7 +282,7 @@ export const PostVerticalList = ({
       initialNumToRender={layoutType === 'small' ? 8 : 4}
       maxToRenderPerBatch={layoutType === 'small' ? 8 : 4}
       windowSize={layoutType === 'small' ? 16 : 8}
-      onEndReachedThreshold={1}
+      // onEndReachedThreshold={0.5}
       updateCellsBatchingPeriod={layoutType === 'small' ? 50 : 100}
       onViewableItemsChanged={onViewableItemsChanged}
       viewabilityConfig={{
@@ -299,8 +305,11 @@ export const PostVerticalList = ({
       }
       ListEmptyComponent={
         !isFetching && (
-          <Layout style={{ ...styles.center, height: '100%' }}>
-            <Text>{message}</Text>
+          <Layout style={{ ...styles.center, height: screenHeight * 0.8 }}>
+            <Button size="giant" status="basic" appearance="ghost" accessoryRight={UmbrellaIcon} />
+            <Text appearance="hint" category="s1">
+              {message}
+            </Text>
           </Layout>
         )
       }

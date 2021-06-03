@@ -11,6 +11,7 @@ export const TagVerticalList = ({ search = '', focus, order, type }) => {
   const [data, setData] = useState([]);
   const [isFetching, setFetching] = useState(false);
   const [isRefetching, setRefetching] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const [message, setMessage] = useState('Nobody here but us chickens!');
   const navigation = useNavigation();
 
@@ -18,6 +19,7 @@ export const TagVerticalList = ({ search = '', focus, order, type }) => {
     try {
       if (!isFirst) setFetching(true);
       const response = await getTags({ name: search, page, order, type });
+      if (response.length === 0) setHasMore(false);
       const filteredTags = response.filter((t) => !data.some((currentTag) => currentTag.id === t.id));
       let newData = [...data, ...filteredTags];
       if (page === 1) newData = filteredTags;
@@ -50,11 +52,11 @@ export const TagVerticalList = ({ search = '', focus, order, type }) => {
   const renderItem = ({ item }) => <Tag tag={item} navigatePostList={navigatePostList} />;
 
   const onEndReached = useCallback(async () => {
-    if (!isLoading && !isFetching) {
+    if (!isLoading && !isFetching && hasMore) {
       fetchTags(page + 1, false, search, order, type);
       setPage(page + 1);
     }
-  }, [isLoading, isFetching, page]);
+  }, [isLoading, isFetching, page, hasMore]);
 
   const keyExtractor = useCallback((item) => item.id.toString(), []);
 

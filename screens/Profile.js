@@ -58,6 +58,11 @@ export const ProfileScreen = ({ navigation }) => {
     navigation.navigate('PostList', { from, isPosts, menuType, search, order, type, user });
   };
 
+  const onFavoritesPress = () => {
+    if (user) return navigatePostList('Favorites', true, 'Favorites', `vote:3:${user} order:vote`);
+    navigation.navigate('Login');
+  };
+
   if (user === undefined)
     return (
       <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -70,68 +75,42 @@ export const ProfileScreen = ({ navigation }) => {
       <SafeAreaView style={{ flex: 1 }}>
         <TopNavigation title="Library" alignment="center" accessoryRight={renderSearchAction} />
         <Divider />
-        {user === false ? (
-          <ScrollView>
-            <LoginForm loadUser={loadUser} />
-          </ScrollView>
-        ) : (
-          <ScrollView>
-            <Layout style={{ flexDirection: 'row' }}>
-              <Button size="giant" appearance="ghost" style={{ paddingLeft: 0 }}>
-                <Text category="h4">{`Welcome ${user}`}</Text>
-              </Button>
-            </Layout>
-            <ListItem
-              title="Favorites"
-              description="Good, great and favorites posts"
-              accessoryLeft={renderFavIcon}
-              accessoryRight={ArrowIcon}
-              onPress={() => navigatePostList('Favorites', true, 'Favorites', `vote:3:${user} order:vote`)}
-            />
-            <ListItem
-              title="History"
-              description="Viewed posts"
-              accessoryLeft={renderClockIcon}
-              accessoryRight={ArrowIcon}
-              onPress={() => navigatePostList('History', true, 'History')}
-            />
-            <ListItem
-              title="Watch Later"
-              description="Do not lose it"
-              accessoryLeft={renderArchiveIcon}
-              accessoryRight={ArrowIcon}
-              onPress={() => navigatePostList('Watch Later', true, 'Watch Later')}
-            />
-            <ListItem
-              title="Settings"
-              description="Layout, previews and Log out"
-              accessoryLeft={renderSettingsAction}
-              accessoryRight={ArrowIcon}
-              onPress={navigateSettings}
-            />
-            <Layout
-              style={{
-                justifyContent: 'space-between',
-                flexDirection: 'row',
-                alignItems: 'flex-end',
-              }}>
-              <Button
-                size="giant"
-                appearance="ghost"
-                accessoryRight={PlusIcon}
-                style={{ paddingLeft: 0, paddingBottom: 8 }}>
-                <Text category="h4">Uploads</Text>
-              </Button>
-              <Button
-                style={{ width: 100, paddingRight: 0 }}
-                appearance="ghost"
-                onPress={() => navigatePostList('Uploads', true, 'Uploads')}>
-                <Text category="p2">See more</Text>
-              </Button>
-            </Layout>
-            <PostHorizontalList title="" search={`user:${user}`} from="Uploads" />
-          </ScrollView>
-        )}
+        <ScrollView>
+          <Layout style={{ flexDirection: 'row' }}>
+            <Button size="giant" appearance="ghost" style={{ paddingLeft: 0 }}>
+              <Text category="h4">{`Welcome ${user ? user : ''}`}</Text>
+            </Button>
+          </Layout>
+          <ListItem
+            title="Favorites"
+            description="Good, great and favorites posts"
+            accessoryLeft={renderFavIcon}
+            accessoryRight={ArrowIcon}
+            onPress={onFavoritesPress}
+          />
+          <ListItem
+            title="History"
+            description="Viewed posts"
+            accessoryLeft={renderClockIcon}
+            accessoryRight={ArrowIcon}
+            onPress={() => navigatePostList('History', true, 'History')}
+          />
+          <ListItem
+            title="Watch Later"
+            description="Do not lose it"
+            accessoryLeft={renderArchiveIcon}
+            accessoryRight={ArrowIcon}
+            onPress={() => navigatePostList('Watch Later', true, 'Watch Later')}
+          />
+          <ListItem
+            title="Settings"
+            description="Layout, previews and Log out"
+            accessoryLeft={renderSettingsAction}
+            accessoryRight={ArrowIcon}
+            onPress={navigateSettings}
+          />
+          <PostHorizontalList title="Recent" from="Recent" />
+        </ScrollView>
       </SafeAreaView>
     </Layout>
   );

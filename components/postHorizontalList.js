@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FlatList, ActivityIndicator, StyleSheet } from 'react-native';
+import { FlatList, ActivityIndicator, StyleSheet, Dimensions } from 'react-native';
 import { Layout, Text, Button, Icon } from '@ui-kitten/components';
 import { SmallCard } from './cardHorizontal';
 import { useNavigation } from '@react-navigation/native';
@@ -8,6 +8,8 @@ import { tagStyles } from '../styles';
 import { getData } from '../util/storage';
 
 const PlusIcon = (props) => <Icon {...props} name="plus-circle-outline" />;
+const UmbrellaIcon = (props) => <Icon {...props} name="umbrella-outline" />;
+const screenWidth = Dimensions.get('window').width;
 
 const capitalize = (s) => {
   return s && s[0].toUpperCase() + s.slice(1);
@@ -83,13 +85,42 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType, date, s
     }
   };
 
+  const getLocalPost = async (page, isFirst, key) => {
+    try {
+      if (!isFirst) setFetching(true);
+      var newHistory = [];
+      const currentHistory = await getData(key);
+      if (currentHistory) {
+        const pageIndex = 18 * (page - 1);
+        const start = pageIndex <= currentHistory.length - 1 ? pageIndex : currentHistory.length - 1;
+        const end = page * 18 <= currentHistory.length - 1 ? page * 18 : currentHistory.length - 1;
+        const newData = from === 'Recent' ? currentHistory.slice(0, 8) : currentHistory.slice(start, end);
+        newHistory = [...data, ...newData];
+        if (page === 1) newHistory = newData;
+      }
+      if (!message || message === 'Error, please try again later :(') setMessage('Nobody here but us chickens!');
+      setData(newHistory);
+      clearLoading();
+    } catch (error) {
+      console.log('GET_HISTORY_ERROR: ', error);
+      setData([]);
+      setMessage('Error, please try again later :(');
+      clearLoading();
+    }
+  };
+
   const clearLoading = () => {
     setLoading(false);
   };
 
   useEffect(() => {
-    setLoading(true);
-    fetchPost(1, true, search);
+    if (from === 'Recent') {
+      setLoading(true);
+      getLocalPost(1, true, 'postHistory');
+    } else {
+      setLoading(true);
+      fetchPost(1, true, search);
+    }
   }, [search]);
 
   const navigateDetail = (item, title, tags) => {
@@ -120,9 +151,11 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType, date, s
           <Text category="h4" style={{ paddingHorizontal: 5, paddingVertical: 15 }}>
             {title}
           </Text>
-          <Button style={{ width: 100, paddingRight: 0 }} appearance="ghost" onPress={navigatePostList}>
-            <Text category="p2">See more</Text>
-          </Button>
+          {from !== 'Recent' && (
+            <Button style={{ width: 100, paddingRight: 0 }} appearance="ghost" onPress={navigatePostList}>
+              <Text category="p2">See more</Text>
+            </Button>
+          )}
         </Layout>
       )}
 
@@ -141,9 +174,13 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType, date, s
           keyExtractor={keyExtractor}
           ListEmptyComponent={
             <Layout style={styles.center}>
-              {from === 'Uploads' && (
-                <Button size="giant" status="basic" appearance="ghost" accessoryRight={PlusIcon} />
-              )}
+              <Button
+                size="giant"
+                status="basic"
+                appearance="ghost"
+                accessoryRight={from === 'Uploads' ? PlusIcon : UmbrellaIcon}
+              />
+
               <Text appearance="hint" category="s1">
                 {from === 'Uploads' ? 'Add a post' : 'Nobody here but us chickens!'}
               </Text>
@@ -156,5 +193,5 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType, date, s
 };
 
 const styles = StyleSheet.create({
-  center: { alignItems: 'center', justifyContent: 'center', height: 244, width: '100%' },
+  center: { alignItems: 'center', justifyContent: 'center', height: 244, width: screenWidth },
 });
