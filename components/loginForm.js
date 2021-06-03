@@ -8,7 +8,7 @@ import { storeData } from '../util/storage';
 const PersonIcon = (props) => <Icon {...props} name="person-outline" />;
 const LockIcon = (props) => <Icon {...props} name="lock-outline" />;
 
-export const LoginForm = ({ loadUser, from, navigateBack, navigatePostList }) => {
+export const LoginForm = ({ loadUser, from, navigateBack, navigatePostList, navigateCreateAccount }) => {
   const [user, setUser] = useState();
   const [password, setPassword] = useState();
   const [loading, setLoading] = useState(false);
@@ -28,8 +28,8 @@ export const LoginForm = ({ loadUser, from, navigateBack, navigatePostList }) =>
       }
       await storeData('user', { name: user.trim(), password_hash: password_hash.toLowerCase() });
       if (loadUser) await loadUser();
+      navigateBack();
       if (from === 'favorites' && navigateBack && navigatePostList) {
-        navigateBack();
         navigatePostList('Favorites', true, 'Favorites', `vote:3:${user.trim()} order:vote`);
       }
     } catch (error) {
@@ -72,7 +72,7 @@ export const LoginForm = ({ loadUser, from, navigateBack, navigatePostList }) =>
         <Button style={{ width: '100%', marginTop: 24, marginBottom: 16 }} onPress={loginUser} disabled={loading}>
           {loading ? <ActivityIndicator /> : <Text category="h6">Login</Text>}
         </Button>
-        <Button appearance="outline" style={{ width: '100%' }} disabled={loading}>
+        <Button appearance="outline" style={{ width: '100%' }} disabled={loading} onPress={navigateCreateAccount}>
           <Text status={loading ? 'basic' : 'primary'} category="h6">
             Create account
           </Text>

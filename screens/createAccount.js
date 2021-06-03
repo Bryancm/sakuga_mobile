@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView, ScrollView, ActivityIndicator } from 'react-native';
 import { Layout, Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
-import { LoginForm } from '../components/loginForm';
+import { CreateAccountForm } from '../components/createAccountForm';
 import { getData } from '../util/storage';
 import { useNavigation } from '@react-navigation/native';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 
-export const LoginScreen = () => {
+export const CreateAccountScreen = () => {
   const [user, setUser] = useState();
   const navigation = useNavigation();
 
@@ -39,32 +39,23 @@ export const LoginScreen = () => {
       navigatePostList('Favorites', true, 'Favorites', `vote:3:${user} order:vote`);
     }, 500);
   };
+
   const navigatePostList = (from, isPosts, menuType, search, order, type) => {
     navigation.navigate('PostList', { from, isPosts, menuType, search, order, type, user });
   };
 
-  const navigateCreateAccount = () => navigation.navigate('CreateAccount');
-
   const renderBackAction = () => <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
-
-  if (user === undefined)
-    return (
-      <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator />
-      </Layout>
-    );
 
   return (
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
-        <TopNavigation title="Login" alignment="center" accessoryLeft={renderBackAction} />
+        <TopNavigation title="Create account" alignment="center" accessoryLeft={renderBackAction} />
         <ScrollView>
-          <LoginForm
+          <CreateAccountForm
             loadUser={loadUser}
-            from="favorites"
+            from="login"
             navigateBack={navigateBack}
             navigatePostList={navigatePostList}
-            navigateCreateAccount={navigateCreateAccount}
           />
         </ScrollView>
       </SafeAreaView>

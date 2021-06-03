@@ -16,6 +16,7 @@ import { GifEditorScreen } from '../screens/GifEditor';
 import { FramesEditorScreen } from '../screens/FramesEditor';
 import { FramesListScreen } from '../screens/FramesList';
 import { LoginScreen } from '../screens/Login';
+import { CreateAccountScreen } from '../screens/createAccount';
 
 const { multiply } = Animated;
 
@@ -116,6 +117,7 @@ export const AppNavigator = () => (
       />
       <Stack.Screen name="FramesList" component={FramesListScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="CreateAccount" component={CreateAccountScreen} />
     </Stack.Navigator>
   </NavigationContainer>
 );

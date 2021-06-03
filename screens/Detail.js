@@ -60,6 +60,12 @@ export const DetailsScreen = ({ navigation, route }) => {
   const [paused, setPaused] = useState(false);
   const [loadingImage, setLoadingImage] = useState(true);
 
+  const navigateLogin = () => {
+    setPaused(true);
+    clearLoading();
+    navigation.navigate('Login');
+  };
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
       setPaused(false);
@@ -115,7 +121,8 @@ export const DetailsScreen = ({ navigation, route }) => {
     try {
       setCommentLoading(true);
       const user = await getData('user');
-      if (!user) return console.log('NO USER, GO TO LOGIN'); // go to login
+      if (!user) return navigateLogin();
+
       // const body = text.replace(/\n/g, '%0D%0A');
       const response = await addComment({
         id: item.id,
@@ -129,7 +136,6 @@ export const DetailsScreen = ({ navigation, route }) => {
       Toast.show('Comment added');
     } catch (error) {
       console.log('ADD COMMENT ERROR', error);
-
       clearLoading();
       Toast.show('Error, please try again later :(');
     }
@@ -139,7 +145,7 @@ export const DetailsScreen = ({ navigation, route }) => {
     try {
       setCommentLoading(true);
       const user = await getData('user');
-      if (!user) return console.log('NO USER, GO TO LOGIN'); // go to login
+      if (!user) return navigateLogin();
       const body = text.replace(/\n/g, '%0D%0A');
       const response = await editComment({ id, body, user: user.name, password_hash: user.password_hash });
       console.log({ response });
@@ -180,7 +186,7 @@ export const DetailsScreen = ({ navigation, route }) => {
       setFetching(true);
       setComments([]);
       const user = await getData('user');
-      if (!user) return console.log('NO USER, GO TO LOGIN'); // go to login
+      if (!user) return navigateLogin();
       const response = await deleteComment({ id, user: user.name, password_hash: user.password_hash });
       console.log({ response });
       fetchComments();
@@ -207,7 +213,7 @@ export const DetailsScreen = ({ navigation, route }) => {
       setFetching(true);
       setComments([]);
       const user = await getData('user');
-      if (!user) return console.log('NO USER, GO TO LOGIN'); // go to login
+      if (!user) return navigateLogin();
       const response = await flagComment({ id, user: user.name, password_hash: user.password_hash });
       console.log({ response });
       fetchComments();

@@ -6,6 +6,8 @@ import { vote } from '../api/post';
 import Toast from 'react-native-simple-toast';
 import Clipboard from '@react-native-community/clipboard';
 import RNFetchBlob from 'rn-fetch-blob';
+import { useNavigation } from '@react-navigation/native';
+import { set } from 'react-native-reanimated';
 
 const MoreIcon = (props) => <Icon {...props} name="more-vertical-outline" />;
 const StarIcon = (props) => <Icon {...props} name="star-outline" />;
@@ -33,6 +35,7 @@ export const PostMenu = ({
   const [menuVisible2, setMenuVisible2] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [loadingDownload, setLoadingDownload] = React.useState(false);
+  const navigation = useNavigation();
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
@@ -107,7 +110,10 @@ export const PostMenu = ({
       toggleMenu();
       setLoading(item.id);
       const user = await getData('user');
-      if (!user) return console.log('NO USER, GO TO LOGIN');
+      if (!user) {
+        setLoading(false);
+        return navigation.navigate('Login');
+      }
       await vote({ id: item.id, score, user: user.name, password_hash: user.password_hash });
       var newItemScore = itemScore + score;
       if (score === 0) newItemScore = itemScore - userScore;
