@@ -20,7 +20,7 @@ export const TagList = ({ tags, style, level = '2', loadCount = false, setPaused
 
   const navigatePostList = (from, isPosts, menuType, search, order, type) => {
     if (setPaused) setPaused(true);
-    navigation.navigate('PostList', { from, isPosts, menuType, search, order, type });
+    navigation.push('PostList', { from, isPosts, menuType, search, order, type });
   };
 
   const getTagCount = async () => {

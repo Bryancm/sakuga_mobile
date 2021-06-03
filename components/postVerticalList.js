@@ -51,7 +51,7 @@ export const PostVerticalList = ({
   }, [navigation]);
 
   const navigateDetail = (item, title, tags) => {
-    navigation.navigate('Detail', { item, title, tags });
+    navigation.push('Detail', { item, title, tags });
   };
 
   const postWithDetails = (tagsWithType, post, votes) => {

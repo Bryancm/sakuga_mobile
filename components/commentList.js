@@ -41,6 +41,7 @@ export const CommentList = ({
       initialNumToRender={4}
       maxToRenderPerBatch={4}
       ListHeaderComponent={header}
+      contentContainerStyle={{ minHeight: screenHeight * 0.87 }}
       refreshControl={<RefreshControl onRefresh={refetch} refreshing={isRefetching} />}
       ListFooterComponent={
         isFetching &&
@@ -66,5 +67,5 @@ export const CommentList = ({
 
 const styles = StyleSheet.create({
   center: { alignItems: 'center', justifyContent: 'center', height: 200, width: '100%' },
-  empty: { alignItems: 'center', justifyContent: 'flex-start', height: screenHeight / 2.3, width: '100%' },
+  empty: { alignItems: 'center', justifyContent: 'flex-start', width: '100%' },
 });

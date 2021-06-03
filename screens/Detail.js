@@ -44,6 +44,7 @@ export const DetailsScreen = ({ navigation, route }) => {
   const commentList = useRef();
   const input = useRef();
   const item = route.params.item;
+  // const [item, setItem] = useState(route.params.item);
   const title = route.params.title;
   const tags = route.params.tags;
   const isVideo =
@@ -69,6 +70,13 @@ export const DetailsScreen = ({ navigation, route }) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
       setPaused(false);
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', async () => {
+      setPaused(true);
     });
     return unsubscribe;
   }, [navigation]);
