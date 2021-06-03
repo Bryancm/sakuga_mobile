@@ -20,9 +20,11 @@ export const CommentList = ({
   user,
 }) => {
   const onEdit = (comment) => {
-    if (comment.isQuote)
-      comment.body = '[quote]' + comment.creator + ' ' + 'said:' + '\n' + comment.body + '\n[/quote]\n\n';
-    onEditCommentButtonPress(comment);
+    const commentToEdit = { ...comment };
+    if (commentToEdit.isQuote)
+      commentToEdit.body =
+        '[quote]' + commentToEdit.creator + ' ' + 'said:' + '\n' + commentToEdit.body + '\n[/quote]\n\n';
+    onEditCommentButtonPress(commentToEdit);
   };
   const renderItem = ({ item }) => (
     <CommentItem item={item} onEdit={onEdit} onDelete={onDeleteComment} onFlagComment={onFlagComment} user={user} />
