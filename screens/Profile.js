@@ -10,12 +10,9 @@ import {
   Button,
   ListItem,
 } from '@ui-kitten/components';
-import data from '../test-data-v2.json';
 import { PostHorizontalList } from '../components/postHorizontalList';
-import { LoginForm } from '../components/loginForm';
 import { getData } from '../util/storage';
 
-const PlusIcon = (props) => <Icon {...props} name="plus-circle-outline" />;
 const ArchiveIcon = (props) => <Icon {...props} name="archive-outline" />;
 const ClockIcon = (props) => <Icon {...props} name="clock-outline" />;
 const ArrowIcon = (props) => <Icon {...props} name="arrow-ios-forward-outline" />;
@@ -30,10 +27,13 @@ export const ProfileScreen = ({ navigation }) => {
   const renderSettingsAction = () => <Button appearance="ghost" accessoryLeft={SettingsIcon} />;
   const renderArchiveIcon = () => <Button appearance="ghost" accessoryLeft={ArchiveIcon} />;
   const [user, setUser] = useState();
+  const [loadRecent, setLoadRecent] = useState(true);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
       loadUser();
+      setLoadRecent(false);
+      setTimeout(() => setLoadRecent(true), 200);
     });
     return unsubscribe;
   }, [navigation]);
@@ -109,7 +109,7 @@ export const ProfileScreen = ({ navigation }) => {
             accessoryRight={ArrowIcon}
             onPress={navigateSettings}
           />
-          <PostHorizontalList title="Recent" from="Recent" />
+          {loadRecent && <PostHorizontalList title="Recent" from="Recent" />}
         </ScrollView>
       </SafeAreaView>
     </Layout>

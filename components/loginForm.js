@@ -27,7 +27,7 @@ export const LoginForm = ({ loadUser, from, navigateBack, navigatePostList }) =>
         return setError('username or password is incorrect');
       }
       await storeData('user', { name: user.trim(), password_hash: password_hash.toLowerCase() });
-      await loadUser();
+      if (loadUser) await loadUser();
       if (from === 'favorites' && navigateBack && navigatePostList) {
         navigateBack();
         navigatePostList('Favorites', true, 'Favorites', `vote:3:${user.trim()} order:vote`);
