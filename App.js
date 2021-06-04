@@ -19,6 +19,7 @@ import { default as theme } from './custom-theme.json';
 import { default as mapping } from './mapping.json';
 import { AppNavigator } from './navigation/Navigator';
 import RNFS from 'react-native-fs';
+import SplashScreen from 'react-native-splash-screen';
 
 /**
  * Use any valid `name` property from eva icons (e.g `github`, or `heart-outline`)
@@ -74,6 +75,7 @@ export default () => {
 
   useEffect(() => {
     AppState.addEventListener('change', handleAppState);
+    SplashScreen.hide();
     return () => {
       AppState.removeEventListener('change', handleAppState);
     };

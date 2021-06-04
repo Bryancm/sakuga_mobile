@@ -86,7 +86,7 @@ const BottomTabBar = ({ navigation, state }) => (
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => (
-  <Tab.Navigator initialRouteName="Explore" tabBar={(props) => <BottomTabBar {...props} />}>
+  <Tab.Navigator initialRouteName="Home" tabBar={(props) => <BottomTabBar {...props} />}>
     <Tab.Screen name="Home" component={HomeStackNavigator} />
     <Tab.Screen name="Explore" component={ExploreStackNavigator} />
     <Tab.Screen name="Library" component={ProfileStackNavigator} />
