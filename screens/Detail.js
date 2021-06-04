@@ -347,6 +347,10 @@ export const DetailsScreen = ({ navigation, route }) => {
     navigation.goBack();
   };
 
+  const onVideoError = (e) => {
+    console.log('VIDEO_ERROR: ', e);
+  };
+
   return (
     <Layout level="2" style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -392,6 +396,7 @@ export const DetailsScreen = ({ navigation, route }) => {
               seekColor="#C3070B"
               onEnterFullscreen={onEnterFullscreen}
               onFullscreenPlayerWillDismiss={onFullscreenPlayerWillDismiss}
+              onError={onVideoError}
             />
           </Layout>
         )}

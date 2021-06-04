@@ -280,18 +280,28 @@ export const PostListScreen = ({ route }) => {
     </React.Fragment>
   );
 
+  const changeTagSort = (order) => {
+    toggleSecondMenu();
+    setOrder(order);
+  };
+
+  const changePostSort = (order) => {
+    toggleSecondMenu();
+    setSearch(`${search} ${order}`);
+  };
+
   const TagSortActions = () => (
     <OverflowMenu anchor={renderOptionsAction} visible={secondMenuVisible} onBackdropPress={toggleSecondMenu}>
-      <MenuItem title="Sort by date" />
-      <MenuItem title="Sort by count" />
-      <MenuItem title="Sort by name" />
+      <MenuItem title="Sort by date" onPress={() => changeTagSort('date')} />
+      <MenuItem title="Sort by count" onPress={() => changeTagSort('count')} />
+      <MenuItem title="Sort by name" onPress={() => changeTagSort('name')} />
     </OverflowMenu>
   );
 
   const PostSortActions = () => (
     <OverflowMenu anchor={renderOptionsAction} visible={secondMenuVisible} onBackdropPress={toggleSecondMenu}>
-      <MenuItem title="Sort by date" />
-      <MenuItem title="Sort by score" />
+      <MenuItem title="Sort by date" onPress={() => changePostSort('order:date')} />
+      <MenuItem title="Sort by score" onPress={() => changePostSort('order:score')} />
     </OverflowMenu>
   );
 
