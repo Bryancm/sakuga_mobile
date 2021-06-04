@@ -66,13 +66,13 @@ export const TagList = ({ tags, style, level = '2', loadCount = false, setPaused
               style={{ ...t.style, marginRight: 4, marginBottom: 8 }}
               onPress={() => navigatePostList(t.tag, true, 'post', t.tag)}>
               <Text category="c1" style={{ color: t.style.color }} numberOfLines={1}>
-                {`${t.tag ? t.tag : t}  ${t.count ? t.count : ''}`}
+                {`${t.tag ? t.tag : t}${t.count ? ' ' + t.count : ''}`}
               </Text>
             </TouchableOpacity>
           ) : (
             <Layout level={level} key={i} style={{ ...tagStyles.basic_outline, marginRight: 4, marginBottom: 8 }}>
               <Text category="c1" numberOfLines={1}>
-                {`${t.tag ? t.tag : t}  ${t.count ? t.count : ''}`}
+                {`${t.tag ? t.tag : t}${t.count ? ' ' + t.count : ''}`}
               </Text>
             </Layout>
           ),
