@@ -98,7 +98,8 @@ export const PostMenu = ({
         newWatchList = [item, ...filteredWatchList];
       }
       await storeData('watchList', newWatchList);
-      Toast.show('Added to watch later');
+      // Toast.show('Added to watch later');
+      Toast.showWithGravity(`Added to watch later`, Toast.SHORT, Toast.CENTER);
     } catch (error) {
       console.log('ADD_WATCH_LATER_ERROR: ', error);
       Toast.show('Error, please try again later :(');
@@ -120,7 +121,8 @@ export const PostMenu = ({
       setItemScore(newItemScore);
       setUserScore(score);
       setLoading(false);
-      Toast.show(score === 0 ? 'Score removed' : 'Score added');
+      // Toast.show(score === 0 ? 'Score removed' : 'Score added');
+      Toast.showWithGravity(score === 0 ? 'Score removed' : 'Score added', Toast.SHORT, Toast.CENTER);
     } catch (error) {
       console.log('ADD_SCORE_ERROR: ', error);
       setLoading(false);

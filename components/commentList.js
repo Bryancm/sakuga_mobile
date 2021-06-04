@@ -18,6 +18,7 @@ export const CommentList = ({
   onDeleteComment,
   onFlagComment,
   user,
+  seek,
 }) => {
   const onEdit = (comment) => {
     const commentToEdit = { ...comment };
@@ -27,7 +28,14 @@ export const CommentList = ({
     onEditCommentButtonPress(commentToEdit);
   };
   const renderItem = ({ item }) => (
-    <CommentItem item={item} onEdit={onEdit} onDelete={onDeleteComment} onFlagComment={onFlagComment} user={user} />
+    <CommentItem
+      item={item}
+      onEdit={onEdit}
+      onDelete={onDeleteComment}
+      onFlagComment={onFlagComment}
+      user={user}
+      seek={seek}
+    />
   );
   const keyExtractor = (item) => item.id.toString();
   return (

@@ -61,6 +61,7 @@ export const DetailsScreen = ({ navigation, route }) => {
   const [user, setUser] = useState();
   const [paused, setPaused] = useState(false);
   const [loadingImage, setLoadingImage] = useState(true);
+  const [videoLoaded, setVideoLoaded] = useState(false);
 
   const navigateLogin = () => {
     setPaused(true);
@@ -142,7 +143,8 @@ export const DetailsScreen = ({ navigation, route }) => {
       console.log({ response });
       fetchComments();
       cancelInput();
-      Toast.show('Comment added');
+      // Toast.show('Comment added');
+      Toast.showWithGravity(`Comment added`, Toast.SHORT, Toast.CENTER);
     } catch (error) {
       console.log('ADD COMMENT ERROR', error);
       clearLoading();
@@ -160,7 +162,8 @@ export const DetailsScreen = ({ navigation, route }) => {
       console.log({ response });
       fetchComments();
       cancelInput();
-      Toast.show('Comment edited');
+      // Toast.show('Comment edited');
+      Toast.showWithGravity(`Comment edited`, Toast.SHORT, Toast.CENTER);
     } catch (error) {
       console.log('EDIT COMMENT ERROR', error);
       clearLoading();
@@ -199,7 +202,8 @@ export const DetailsScreen = ({ navigation, route }) => {
       const response = await deleteComment({ id, user: user.name, password_hash: user.password_hash });
       console.log({ response });
       fetchComments();
-      Toast.show('Comment deleted');
+      // Toast.show('Comment deleted');
+      Toast.showWithGravity(`Comment deleted`, Toast.SHORT, Toast.CENTER);
     } catch (error) {
       console.log('DELETE COMMENT ERROR', error);
       clearLoading();
@@ -226,7 +230,8 @@ export const DetailsScreen = ({ navigation, route }) => {
       const response = await flagComment({ id, user: user.name, password_hash: user.password_hash });
       console.log({ response });
       fetchComments();
-      Toast.show('Comment flaged for delete');
+      // Toast.show('Comment flaged for delete');
+      Toast.showWithGravity(`Comment flaged for delete`, Toast.SHORT, Toast.CENTER);
     } catch (error) {
       console.log('DELETE COMMENT ERROR', error);
       clearLoading();
@@ -351,6 +356,14 @@ export const DetailsScreen = ({ navigation, route }) => {
     console.log('VIDEO_ERROR: ', e);
   };
 
+  const seek = (seconds) => {
+    if (videoLoaded) video.current.player.ref.seek(seconds);
+  };
+
+  const onLoad = () => {
+    setVideoLoaded(true);
+  };
+
   return (
     <Layout level="2" style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -397,6 +410,7 @@ export const DetailsScreen = ({ navigation, route }) => {
               onEnterFullscreen={onEnterFullscreen}
               onFullscreenPlayerWillDismiss={onFullscreenPlayerWillDismiss}
               onError={onVideoError}
+              onLoad={onLoad}
             />
           </Layout>
         )}
@@ -410,6 +424,7 @@ export const DetailsScreen = ({ navigation, route }) => {
           onDeleteComment={deleteCommentAlert}
           onFlagComment={flagCommentAlert}
           user={user}
+          seek={seek}
           header={
             <Layout level="2">
               <DetailHeader

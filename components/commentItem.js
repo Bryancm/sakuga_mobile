@@ -3,6 +3,7 @@ import { Linking } from 'react-native';
 import { Icon, Layout, Text, Button, OverflowMenu, MenuItem } from '@ui-kitten/components';
 import { getRelativeTime } from '../util/date';
 import ParsedText from 'react-native-parsed-text';
+import Toast from 'react-native-simple-toast';
 
 const DeleteIcon = (props) => <Icon {...props} name="trash-outline" fill="#E3170A" />;
 const EditIcon = (props) => <Icon {...props} name="edit-outline" />;
@@ -10,7 +11,7 @@ const QuoteIcon = (props) => <Icon {...props} name="message-square-outline" />;
 const FlagIcon = (props) => <Icon {...props} name="alert-circle-outline" />;
 const MoreIcon = (props) => <Icon {...props} name="more-vertical-outline" />;
 
-export const CommentItem = ({ item, user, onEdit, onDelete, onFlagComment }) => {
+export const CommentItem = ({ item, user, onEdit, onDelete, onFlagComment, seek }) => {
   const [menuVisible, setMenuVisible] = React.useState(false);
 
   const toggleMenu = () => {
@@ -46,7 +47,12 @@ export const CommentItem = ({ item, user, onEdit, onDelete, onFlagComment }) => 
   };
 
   const timePress = (time) => {
-    console.log(time);
+    const split = time.split(':');
+    const minutesSeconds = Number(split[0]) * 60;
+    const secondsMillis = Number(split[1]);
+    const newPosition = minutesSeconds + secondsMillis;
+    seek(newPosition);
+    Toast.showWithGravity(`Showing: ${time}`, Toast.SHORT, Toast.CENTER);
   };
 
   const textParse = [
