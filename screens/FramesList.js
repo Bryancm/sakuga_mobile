@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { SafeAreaView, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { Divider, Layout, TopNavigation, TopNavigationAction, Icon, Text } from '@ui-kitten/components';
 import FastImage from 'react-native-fast-image';
@@ -25,6 +25,7 @@ const formatSeconds = (seconds) => {
 };
 
 export const FramesListScreen = ({ navigation, route }) => {
+  const mounted = useRef(true);
   const startTime = route.params.startTime;
   const endTime = route.params.endTime;
   const id = route.params.id;
@@ -57,16 +58,20 @@ export const FramesListScreen = ({ navigation, route }) => {
         });
       }
       newFrames.sort((a, b) => ('' + a.uri).localeCompare(b.uri));
-      setFrames(newFrames);
-      setLoading(false);
+      if (mounted.current) setFrames(newFrames);
+      if (mounted.current) setLoading(false);
     } catch (error) {
       console.log('ERROR FRAMES', error);
-      setLoading(false);
+      if (mounted.current) setLoading(false);
     }
   }, [startTime, endTime, frames, url, id]);
 
   useEffect(() => {
+    mounted.current = true;
     getVideoFrames();
+    return () => {
+      mounted.current = false;
+    };
   }, []);
 
   const toggleSelectView = () => {

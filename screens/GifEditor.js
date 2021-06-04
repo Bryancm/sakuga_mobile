@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { SafeAreaView, StyleSheet, Dimensions, ActivityIndicator, Platform } from 'react-native';
 import { Divider, Icon, Layout, Button, Text, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { VideoPlayer, Trimmer } from 'react-native-video-processing';
@@ -21,6 +21,8 @@ const formatSeconds = (seconds) => {
 };
 
 export const GifEditorScreen = ({ navigation, route }) => {
+  var abortController = new AbortController();
+  const mounted = useRef(true);
   const videoPlayer = React.useRef();
   const id = route.params.id;
   const title = route.params.title;
@@ -41,17 +43,25 @@ export const GifEditorScreen = ({ navigation, route }) => {
     const dir = `${RNFS.CachesDirectoryPath}/gifCache`;
     const exist = await RNFS.exists(dir);
     if (exist) await RNFS.unlink(dir);
-    console.log({ exist });
+  };
+
+  const loadVideo = async () => {
+    try {
+      await fetch(url, { signal: abortController.signal });
+      if (mounted.current) setLoading(false);
+    } catch (error) {
+      console.log('DOWNLOAD_VIDEO_ERROR: ', error);
+      if (mounted.current) setLoading(false);
+    }
+    await fetch(url);
   };
 
   useEffect(() => {
-    fetch(url)
-      .then(() => setLoading(false))
-      .catch((e) => {
-        console.log('DOWNLOAD_VIDEO_ERROR: ', e);
-        setLoading(false);
-      });
+    mounted.current = true;
+    loadVideo();
     return () => {
+      abortController.abort();
+      mounted.current = false;
       deleteGIFCache();
     };
   }, []);
@@ -139,10 +149,10 @@ export const GifEditorScreen = ({ navigation, route }) => {
       const lastItem = d.pop();
       const path = Platform.OS === 'android' ? 'file://' + lastItem.path : lastItem.path;
       if (isIOS) RNFetchBlob.ios.openDocument(path);
-      setLoadingGIF(false);
+      if (mounted.current) setLoadingGIF(false);
     } catch (error) {
       console.log('SHARE GIF ERROR: ', error);
-      setLoadingGIF(false);
+      if (mounted.current) setLoadingGIF(false);
     }
   }, [startTime, endTime, title, id, file_ext, fps]);
 

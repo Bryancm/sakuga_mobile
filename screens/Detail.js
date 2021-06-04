@@ -40,6 +40,7 @@ const screenHeight = Dimensions.get('window').height;
 const videoHeight = Math.round(screenHeight * 0.26 - 1);
 
 export const DetailsScreen = ({ navigation, route }) => {
+  const mounted = useRef(true);
   const video = useRef();
   const commentList = useRef();
   const input = useRef();
@@ -234,9 +235,13 @@ export const DetailsScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
+    mounted.current = true;
     loadUser();
     updatePostHistory();
     fetchComments();
+    return () => {
+      mounted.current = false;
+    };
   }, []);
 
   const cancelInput = () => {

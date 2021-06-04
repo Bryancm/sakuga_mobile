@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { SafeAreaView, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
 import { Divider, Icon, Layout, Button, Text, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { VideoPlayer, Trimmer } from 'react-native-video-processing';
@@ -17,7 +17,9 @@ const formatSeconds = (seconds) => {
 };
 
 export const FramesEditorScreen = ({ navigation, route }) => {
-  const videoPlayer = React.useRef();
+  var abortController = new AbortController();
+  const mounted = useRef(true);
+  const videoPlayer = useRef();
   const id = route.params.id;
   const title = route.params.title;
   const file_ext = route.params.file_ext;
@@ -41,14 +43,23 @@ export const FramesEditorScreen = ({ navigation, route }) => {
     if (exist) await RNFS.unlink(dir);
   };
 
+  const loadVideo = async () => {
+    try {
+      await fetch(url, { signal: abortController.signal });
+      if (mounted.current) setLoading(false);
+    } catch (error) {
+      console.log('DOWNLOAD_VIDEO_ERROR: ', error);
+      if (mounted.current) setLoading(false);
+    }
+    await fetch(url);
+  };
+
   useEffect(() => {
-    fetch(url)
-      .then(() => setLoading(false))
-      .catch((e) => {
-        console.log('DOWNLOAD_VIDEO_ERROR: ', e);
-        setLoading(false);
-      });
+    mounted.current = true;
+    loadVideo();
     return () => {
+      abortController.abort();
+      mounted.current = false;
       deleteFramesCache();
     };
   }, []);
