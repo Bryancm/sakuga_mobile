@@ -16,15 +16,13 @@
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		2D38469BEB71E5119AF29A84 /* libPods-SakugaMobile-SakugaMobileTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1356C7B93B96F82405F9493D /* libPods-SakugaMobile-SakugaMobileTests.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* SakugaMobileTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* SakugaMobileTests.m */; };
 		35DFAAFD656C41EEA1DD67C0 /* OpenSans-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 52FD91AE32954758A0DCCECF /* OpenSans-LightItalic.ttf */; };
 		3759225DA12745EB8EAC22A5 /* OpenSans-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3945313FB7794245BFE5CC62 /* OpenSans-SemiBold.ttf */; };
-		508332FF2BFF295439EACD1A /* libPods-SakugaMobile-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07EDFFF5FD0F352E730D9DDB /* libPods-SakugaMobile-tvOSTests.a */; };
 		5A30BD2734FE419F970B2251 /* OpenSans-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 34311A7E16BC45768F99C087 /* OpenSans-Italic.ttf */; };
-		6112ABDB3C95E5EAF78090E3 /* libPods-SakugaMobile-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C8C0B1395C291390358771E9 /* libPods-SakugaMobile-tvOS.a */; };
 		6287DDAB348442E2BF8E8B2E /* OpenSans-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 337023C636524D2DA4EBB24F /* OpenSans-Light.ttf */; };
 		6F2029AC4E6F4F309DA8179B /* OpenSans-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9FD7ACED10245F7804F2E8C /* OpenSans-ExtraBold.ttf */; };
+		7E40B7CF9912EC0706C8DEA2 /* libPods-SakugaMobile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30D2A82AA47948CBEA515938 /* libPods-SakugaMobile.a */; };
 		8710BCC32651B7050083186C /* VideoProcessingGPUFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8710BCC02651B7040083186C /* VideoProcessingGPUFilters.swift */; };
 		8710BCC42651B7050083186C /* RNVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8710BCC12651B7040083186C /* RNVideoPlayer.swift */; };
 		8710BCC52651B7050083186C /* RNVideoProcessingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8710BCC22651B7050083186C /* RNVideoProcessingManager.swift */; };
@@ -52,7 +50,7 @@
 		A66D7444DD2A4CB6A641572B /* OpenSans-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 565D4D7E077C479BAF688CFE /* OpenSans-ExtraBoldItalic.ttf */; };
 		AAAF95545EFF46CBAED42D5B /* OpenSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A6070C320B0E49DDB9F05C76 /* OpenSans-Bold.ttf */; };
 		B4E3D42937F54797AFA91FA7 /* OpenSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 698FCF8ACF3B4521BA0E48C4 /* OpenSans-BoldItalic.ttf */; };
-		CC083A9515ABC9EF788C1F2C /* libPods-SakugaMobile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F6EA3A817310F25D5912935 /* libPods-SakugaMobile.a */; };
+		C9C3EC87DC874473B334242F /* libPods-SakugaMobile-SakugaMobileTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 140E6273EBB1E1B417AD594C /* libPods-SakugaMobile-SakugaMobileTests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -119,9 +117,7 @@
 		00E356EE1AD99517003FC87E /* SakugaMobileTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SakugaMobileTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* SakugaMobileTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SakugaMobileTests.m; sourceTree = "<group>"; };
-		07EDFFF5FD0F352E730D9DDB /* libPods-SakugaMobile-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SakugaMobile-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		08DAF18D9CB97002904D8718 /* Pods-SakugaMobile-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SakugaMobile-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-SakugaMobile-tvOS/Pods-SakugaMobile-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
-		1356C7B93B96F82405F9493D /* libPods-SakugaMobile-SakugaMobileTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SakugaMobile-SakugaMobileTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		12F7270103206366F2585E4D /* Pods-SakugaMobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SakugaMobile.release.xcconfig"; path = "Target Support Files/Pods-SakugaMobile/Pods-SakugaMobile.release.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* SakugaMobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SakugaMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = SakugaMobile/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = SakugaMobile/AppDelegate.m; sourceTree = "<group>"; };
@@ -129,20 +125,18 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = SakugaMobile/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = SakugaMobile/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = SakugaMobile/main.m; sourceTree = "<group>"; };
-		1F6EA3A817310F25D5912935 /* libPods-SakugaMobile.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SakugaMobile.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		22E5BD3E21EC024899AD18A7 /* Pods-SakugaMobile-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SakugaMobile-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-SakugaMobile-tvOSTests/Pods-SakugaMobile-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
+		140E6273EBB1E1B417AD594C /* libPods-SakugaMobile-SakugaMobileTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SakugaMobile-SakugaMobileTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E47B1E0B4A5D006451C7 /* SakugaMobile-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SakugaMobile-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* SakugaMobile-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "SakugaMobile-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		30D2A82AA47948CBEA515938 /* libPods-SakugaMobile.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SakugaMobile.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		337023C636524D2DA4EBB24F /* OpenSans-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Light.ttf"; path = "../assets/fonts/OpenSans-Light.ttf"; sourceTree = "<group>"; };
 		34311A7E16BC45768F99C087 /* OpenSans-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Italic.ttf"; path = "../assets/fonts/OpenSans-Italic.ttf"; sourceTree = "<group>"; };
 		380C2A99DE154840A621CE11 /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Regular.ttf"; path = "../assets/fonts/OpenSans-Regular.ttf"; sourceTree = "<group>"; };
 		3945313FB7794245BFE5CC62 /* OpenSans-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-SemiBold.ttf"; path = "../assets/fonts/OpenSans-SemiBold.ttf"; sourceTree = "<group>"; };
-		525803F2D206925CCDB522C8 /* Pods-SakugaMobile-SakugaMobileTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SakugaMobile-SakugaMobileTests.release.xcconfig"; path = "Target Support Files/Pods-SakugaMobile-SakugaMobileTests/Pods-SakugaMobile-SakugaMobileTests.release.xcconfig"; sourceTree = "<group>"; };
+		497EBB07D77870A02B3E9B10 /* Pods-SakugaMobile-SakugaMobileTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SakugaMobile-SakugaMobileTests.debug.xcconfig"; path = "Target Support Files/Pods-SakugaMobile-SakugaMobileTests/Pods-SakugaMobile-SakugaMobileTests.debug.xcconfig"; sourceTree = "<group>"; };
 		52FD91AE32954758A0DCCECF /* OpenSans-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-LightItalic.ttf"; path = "../assets/fonts/OpenSans-LightItalic.ttf"; sourceTree = "<group>"; };
 		565D4D7E077C479BAF688CFE /* OpenSans-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-ExtraBoldItalic.ttf"; path = "../assets/fonts/OpenSans-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		698FCF8ACF3B4521BA0E48C4 /* OpenSans-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-BoldItalic.ttf"; path = "../assets/fonts/OpenSans-BoldItalic.ttf"; sourceTree = "<group>"; };
-		6F21A5354424978E436D288B /* Pods-SakugaMobile-SakugaMobileTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SakugaMobile-SakugaMobileTests.debug.xcconfig"; path = "Target Support Files/Pods-SakugaMobile-SakugaMobileTests/Pods-SakugaMobile-SakugaMobileTests.debug.xcconfig"; sourceTree = "<group>"; };
-		774F659D6858DCC0C3447A5E /* Pods-SakugaMobile-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SakugaMobile-tvOS.release.xcconfig"; path = "Target Support Files/Pods-SakugaMobile-tvOS/Pods-SakugaMobile-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		8710BCBF2651B7030083186C /* SakugaMobile-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SakugaMobile-Bridging-Header.h"; sourceTree = "<group>"; };
 		8710BCC02651B7040083186C /* VideoProcessingGPUFilters.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VideoProcessingGPUFilters.swift; path = "../../node_modules/react-native-video-processing/ios/RNVideoProcessing/VideoProcessingGPUFilters.swift"; sourceTree = "<group>"; };
 		8710BCC12651B7040083186C /* RNVideoPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RNVideoPlayer.swift; path = "../../node_modules/react-native-video-processing/ios/RNVideoProcessing/RNVideoPlayer.swift"; sourceTree = "<group>"; };
@@ -176,19 +170,17 @@
 		8710BD1A2651BA3A0083186C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		8710BD1C2651BA450083186C /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		8710BD1E2651BA4F0083186C /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
-		8738D972587C8DE34A7A298D /* Pods-SakugaMobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SakugaMobile.debug.xcconfig"; path = "Target Support Files/Pods-SakugaMobile/Pods-SakugaMobile.debug.xcconfig"; sourceTree = "<group>"; };
 		877D9534262A227E00C760F7 /* RNSVG.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNSVG.xcodeproj; path = "../node_modules/react-native-svg/apple/RNSVG.xcodeproj"; sourceTree = "<group>"; };
 		87B476F8262A1D4600A23472 /* RNSVG.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RNSVG.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		87BA91FF2669C5C800D440E6 /* libRNSVG.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNSVG.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		87FFF69B262A251400D9FB78 /* libRNSVG.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNSVG.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6070C320B0E49DDB9F05C76 /* OpenSans-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Bold.ttf"; path = "../assets/fonts/OpenSans-Bold.ttf"; sourceTree = "<group>"; };
 		A9FD7ACED10245F7804F2E8C /* OpenSans-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-ExtraBold.ttf"; path = "../assets/fonts/OpenSans-ExtraBold.ttf"; sourceTree = "<group>"; };
-		B2526E5F48E2FCCAB0F775B8 /* Pods-SakugaMobile-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SakugaMobile-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-SakugaMobile-tvOSTests/Pods-SakugaMobile-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		C6893BC651B44D8490656479 /* OpenSans-SemiBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-SemiBoldItalic.ttf"; path = "../assets/fonts/OpenSans-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
-		C8C0B1395C291390358771E9 /* libPods-SakugaMobile-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SakugaMobile-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CAF006093EAFF943D1E3CB7A /* Pods-SakugaMobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SakugaMobile.release.xcconfig"; path = "Target Support Files/Pods-SakugaMobile/Pods-SakugaMobile.release.xcconfig"; sourceTree = "<group>"; };
+		E37EE334FD763447B52F9712 /* Pods-SakugaMobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SakugaMobile.debug.xcconfig"; path = "Target Support Files/Pods-SakugaMobile/Pods-SakugaMobile.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
+		FD215D331DFC4335C8D42894 /* Pods-SakugaMobile-SakugaMobileTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SakugaMobile-SakugaMobileTests.release.xcconfig"; path = "Target Support Files/Pods-SakugaMobile-SakugaMobileTests/Pods-SakugaMobile-SakugaMobileTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -196,7 +188,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D38469BEB71E5119AF29A84 /* libPods-SakugaMobile-SakugaMobileTests.a in Frameworks */,
+				C9C3EC87DC874473B334242F /* libPods-SakugaMobile-SakugaMobileTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -212,7 +204,7 @@
 				8710BD172651BA260083186C /* CoreVideo.framework in Frameworks */,
 				8710BD212651BAD20083186C /* GPUImage.framework in Frameworks */,
 				8710BD152651BA1E0083186C /* CoreMedia.framework in Frameworks */,
-				CC083A9515ABC9EF788C1F2C /* libPods-SakugaMobile.a in Frameworks */,
+				7E40B7CF9912EC0706C8DEA2 /* libPods-SakugaMobile.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -220,7 +212,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6112ABDB3C95E5EAF78090E3 /* libPods-SakugaMobile-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -228,7 +219,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				508332FF2BFF295439EACD1A /* libPods-SakugaMobile-tvOSTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,10 +270,8 @@
 				87B476F8262A1D4600A23472 /* RNSVG.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
-				1F6EA3A817310F25D5912935 /* libPods-SakugaMobile.a */,
-				1356C7B93B96F82405F9493D /* libPods-SakugaMobile-SakugaMobileTests.a */,
-				C8C0B1395C291390358771E9 /* libPods-SakugaMobile-tvOS.a */,
-				07EDFFF5FD0F352E730D9DDB /* libPods-SakugaMobile-tvOSTests.a */,
+				30D2A82AA47948CBEA515938 /* libPods-SakugaMobile.a */,
+				140E6273EBB1E1B417AD594C /* libPods-SakugaMobile-SakugaMobileTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -291,14 +279,10 @@
 		32C8980C11B0B455E2C2516A /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				8738D972587C8DE34A7A298D /* Pods-SakugaMobile.debug.xcconfig */,
-				CAF006093EAFF943D1E3CB7A /* Pods-SakugaMobile.release.xcconfig */,
-				6F21A5354424978E436D288B /* Pods-SakugaMobile-SakugaMobileTests.debug.xcconfig */,
-				525803F2D206925CCDB522C8 /* Pods-SakugaMobile-SakugaMobileTests.release.xcconfig */,
-				08DAF18D9CB97002904D8718 /* Pods-SakugaMobile-tvOS.debug.xcconfig */,
-				774F659D6858DCC0C3447A5E /* Pods-SakugaMobile-tvOS.release.xcconfig */,
-				22E5BD3E21EC024899AD18A7 /* Pods-SakugaMobile-tvOSTests.debug.xcconfig */,
-				B2526E5F48E2FCCAB0F775B8 /* Pods-SakugaMobile-tvOSTests.release.xcconfig */,
+				E37EE334FD763447B52F9712 /* Pods-SakugaMobile.debug.xcconfig */,
+				12F7270103206366F2585E4D /* Pods-SakugaMobile.release.xcconfig */,
+				497EBB07D77870A02B3E9B10 /* Pods-SakugaMobile-SakugaMobileTests.debug.xcconfig */,
+				FD215D331DFC4335C8D42894 /* Pods-SakugaMobile-SakugaMobileTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -439,10 +423,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "SakugaMobileTests" */;
 			buildPhases = (
-				3F1FCD46F2D449120EDF95E8 /* [CP] Check Pods Manifest.lock */,
+				1C5FC0D1E9199C7F78492109 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
+				84084521AA82CEC1BE9EFB6B /* [CP] Embed Pods Frameworks */,
+				B25BC1D881C956B034806BF4 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -458,13 +444,15 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "SakugaMobile" */;
 			buildPhases = (
-				F1105B2460496280862CCBB2 /* [CP] Check Pods Manifest.lock */,
+				1EE11E09AE4459298BDF27A0 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				8710BD232651BAD20083186C /* Embed Frameworks */,
+				700D124FBB4475E3BB124750 /* [CP] Embed Pods Frameworks */,
+				014EFC9A3D8E2A9ADCC723DE /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -479,7 +467,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "SakugaMobile-tvOS" */;
 			buildPhases = (
-				894A9B9BAD45C2F27BDCF4C3 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F122414F3F0027D42C /* Start Packager */,
 				2D02E4771E0B4A5D006451C7 /* Sources */,
 				2D02E4781E0B4A5D006451C7 /* Frameworks */,
@@ -499,7 +486,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "SakugaMobile-tvOSTests" */;
 			buildPhases = (
-				9BDF41768CB128F7D7839439 /* [CP] Check Pods Manifest.lock */,
 				2D02E48C1E0B4A5D006451C7 /* Sources */,
 				2D02E48D1E0B4A5D006451C7 /* Frameworks */,
 				2D02E48E1E0B4A5D006451C7 /* Resources */,
@@ -662,21 +648,25 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
-		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
+		014EFC9A3D8E2A9ADCC723DE /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SakugaMobile/Pods-SakugaMobile-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
 			);
-			name = "Bundle React Native Code And Images";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SakugaMobile/Pods-SakugaMobile-resources.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
-		3F1FCD46F2D449120EDF95E8 /* [CP] Check Pods Manifest.lock */ = {
+		1C5FC0D1E9199C7F78492109 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -698,51 +688,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		894A9B9BAD45C2F27BDCF4C3 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SakugaMobile-tvOS-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		9BDF41768CB128F7D7839439 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SakugaMobile-tvOSTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		F1105B2460496280862CCBB2 /* [CP] Check Pods Manifest.lock */ = {
+		1EE11E09AE4459298BDF27A0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -762,6 +708,74 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle React Native Code And Images";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+		};
+		700D124FBB4475E3BB124750 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SakugaMobile/Pods-SakugaMobile-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL/OpenSSL.framework/OpenSSL",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenSSL.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SakugaMobile/Pods-SakugaMobile-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		84084521AA82CEC1BE9EFB6B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SakugaMobile-SakugaMobileTests/Pods-SakugaMobile-SakugaMobileTests-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL/OpenSSL.framework/OpenSSL",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenSSL.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SakugaMobile-SakugaMobileTests/Pods-SakugaMobile-SakugaMobileTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B25BC1D881C956B034806BF4 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SakugaMobile-SakugaMobileTests/Pods-SakugaMobile-SakugaMobileTests-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SakugaMobile-SakugaMobileTests/Pods-SakugaMobile-SakugaMobileTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -883,7 +897,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6F21A5354424978E436D288B /* Pods-SakugaMobile-SakugaMobileTests.debug.xcconfig */;
+			baseConfigurationReference = 497EBB07D77870A02B3E9B10 /* Pods-SakugaMobile-SakugaMobileTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -907,7 +921,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 525803F2D206925CCDB522C8 /* Pods-SakugaMobile-SakugaMobileTests.release.xcconfig */;
+			baseConfigurationReference = FD215D331DFC4335C8D42894 /* Pods-SakugaMobile-SakugaMobileTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -928,7 +942,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8738D972587C8DE34A7A298D /* Pods-SakugaMobile.debug.xcconfig */;
+			baseConfigurationReference = E37EE334FD763447B52F9712 /* Pods-SakugaMobile.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -940,6 +954,7 @@
 					"FB_SONARKIT_ENABLED=1",
 				);
 				INFOPLIST_FILE = SakugaMobile/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -957,13 +972,14 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CAF006093EAFF943D1E3CB7A /* Pods-SakugaMobile.release.xcconfig */;
+			baseConfigurationReference = 12F7270103206366F2585E4D /* Pods-SakugaMobile.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4FURRD6GXL;
 				INFOPLIST_FILE = SakugaMobile/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -980,7 +996,6 @@
 		};
 		2D02E4971E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 08DAF18D9CB97002904D8718 /* Pods-SakugaMobile-tvOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -1008,7 +1023,6 @@
 		};
 		2D02E4981E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 774F659D6858DCC0C3447A5E /* Pods-SakugaMobile-tvOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -1036,7 +1050,6 @@
 		};
 		2D02E4991E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 22E5BD3E21EC024899AD18A7 /* Pods-SakugaMobile-tvOSTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1063,7 +1076,6 @@
 		};
 		2D02E49A1E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B2526E5F48E2FCCAB0F775B8 /* Pods-SakugaMobile-tvOSTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1120,6 +1132,7 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 ";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1180,6 +1193,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 ";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
