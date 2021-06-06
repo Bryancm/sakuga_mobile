@@ -124,10 +124,11 @@ export const PostVerticalList = ({
       if (!isFirst) setFetching(true);
       var newHistory = [];
       const currentHistory = await getData(key);
+
       if (currentHistory) {
         const pageIndex = 18 * (page - 1);
-        const start = pageIndex <= currentHistory.length - 1 ? pageIndex : currentHistory.length - 1;
-        const end = page * 18 <= currentHistory.length - 1 ? page * 18 : currentHistory.length - 1;
+        const start = pageIndex;
+        const end = page * 18;
         const newData = currentHistory.slice(start, end);
         if (newData.length === 0) setHasMore(false);
         newHistory = [...data, ...newData];
@@ -196,7 +197,7 @@ export const PostVerticalList = ({
     const newItems = items.filter((i) => i.id !== item.id);
     await storeData(key, newItems);
     getLocalPost(1, true, key);
-    Toast.showWithGravity(`Post removed`, Toast.SHORT, Toast.CENTER);
+    Toast.showWithGravity(`Removed`, Toast.SHORT, Toast.CENTER);
   };
 
   const deleteAlert = (item) =>

@@ -84,7 +84,7 @@ export const PostListScreen = ({ route }) => {
         { text: 'Confirm', onPress: clearItems, style: 'destructive' },
       ]);
     } else {
-      Alert.alert(`The ${from} is alerady empty`);
+      Alert.alert(`The ${from} list is alerady empty`);
     }
   };
 

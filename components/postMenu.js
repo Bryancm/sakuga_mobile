@@ -97,6 +97,7 @@ export const PostMenu = ({
         const filteredWatchList = currentWatchList.filter((p) => p.id !== item.id);
         newWatchList = [item, ...filteredWatchList];
       }
+      console.log(newWatchList);
       await storeData('watchList', newWatchList);
       // Toast.show('Added to watch later');
       Toast.showWithGravity(`Added to watch later`, Toast.SHORT, Toast.CENTER);
@@ -231,7 +232,7 @@ export const PostMenu = ({
           <MenuItem
             key="7"
             accessoryLeft={ArchiveIcon}
-            title={<Text category="c1">Add to watch list</Text>}
+            title={<Text category="c1">Watch later</Text>}
             onPress={addToWatchList}
           />
           {deleteAlert && (
