@@ -41,7 +41,7 @@ export const DetailHeader = ({ title, style, url, setPaused, file_ext, id, isVid
       <Text category="h6" style={{ lineHeight: 22, paddingVertical: 14, width: '90%' }}>
         {title}
       </Text>
-      {isVideo && (
+      {isVideo && file_ext !== 'webm' && (
         <Layout level="2" style={{ flexDirection: 'row', height: '100%', alignItems: 'flex-start' }}>
           <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>
             <MenuItem

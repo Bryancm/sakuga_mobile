@@ -56,7 +56,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     mounted.current = true;
-    loadVideo();
+    setTimeout(loadVideo, 500);
     return () => {
       abortController.abort();
       mounted.current = false;
@@ -131,7 +131,9 @@ export const FramesEditorScreen = ({ navigation, route }) => {
     navigation.goBack();
   };
 
-  const renderLeftAction = () => <TopNavigationAction icon={CloseIcon} onPress={navigateBack} />;
+  const renderLeftAction = () => (
+    <TopNavigationAction delayPressIn={0} delayPressOut={0} icon={CloseIcon} onPress={navigateBack} />
+  );
 
   const navigateFramesList = () => {
     navigation.navigate('FramesList', { startTime, endTime, title, id, file_ext, url });
@@ -139,7 +141,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
 
   const renderRightActions = () => (
     <React.Fragment>
-      <TopNavigationAction icon={GridIcon} onPress={navigateFramesList} />
+      <TopNavigationAction delayPressIn={0} delayPressOut={0} icon={GridIcon} onPress={navigateFramesList} />
     </React.Fragment>
   );
 

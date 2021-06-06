@@ -58,7 +58,7 @@ export const GifEditorScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     mounted.current = true;
-    loadVideo();
+    setTimeout(loadVideo, 500);
     return () => {
       abortController.abort();
       mounted.current = false;
@@ -139,7 +139,7 @@ export const GifEditorScreen = ({ navigation, route }) => {
       const isIOS = Platform.OS === 'ios';
       await RNFS.mkdir(dir);
       const date = new Date().valueOf();
-      const t = title ? title.replace(/\s/g, '_') : id;
+      const t = title ? title.replace(/\s/g, '_').replace(/:/g, '_') : id;
       const dir_with_filename = `${dir}/${t}_${date}_${id}.gif`;
       const file_url = url;
       const command = `-nostats -loglevel 0 -ss ${startTime} -to ${endTime}  -i ${file_url} -vf "fps=${fps},scale=480:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 ${dir_with_filename}`;
