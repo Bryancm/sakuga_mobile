@@ -97,7 +97,7 @@ export const PostMenu = ({
         const filteredWatchList = currentWatchList.filter((p) => p.id !== item.id);
         newWatchList = [item, ...filteredWatchList];
       }
-      console.log(newWatchList);
+      // console.log(newWatchList);
       await storeData('watchList', newWatchList);
       // Toast.show('Added to watch later');
       Toast.showWithGravity(`Added to watch later`, Toast.SHORT, Toast.CENTER);

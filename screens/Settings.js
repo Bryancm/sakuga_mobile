@@ -76,7 +76,6 @@ export const SettingScreen = ({ navigation, route }) => {
     Alert.alert('Log out', 'Do you want to log out ?', [
       {
         text: 'Cancel',
-        onPress: () => console.log('Cancel Pressed'),
         style: 'cancel',
       },
       { text: 'OK', onPress: logOut, style: 'destructive' },

@@ -78,7 +78,6 @@ export const PostListScreen = ({ route }) => {
       Alert.alert('Remove all', `Do you want to clear your ${from} list ?`, [
         {
           text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
           style: 'cancel',
         },
         { text: 'Confirm', onPress: clearItems, style: 'destructive' },
