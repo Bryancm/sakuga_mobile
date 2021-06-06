@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
-import { SafeAreaView, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { SafeAreaView, FlatList, ActivityIndicator, TouchableOpacity, Image } from 'react-native';
 import { Divider, Layout, TopNavigation, TopNavigationAction, Icon, Text } from '@ui-kitten/components';
 import FastImage from 'react-native-fast-image';
 import { RNFFmpeg } from 'react-native-ffmpeg';
@@ -49,7 +49,8 @@ export const FramesListScreen = ({ navigation, route }) => {
       const seek = dif <= 0 ? '00:00.0' : formatSeconds(dif);
       const from = dif <= 0 ? '00:00.0' : formatSeconds(startTime - dif);
       const duration = formatSeconds(endTime - startTime);
-      const command = `-nostats -loglevel 0 -ss 00:${seek} -i ${url} -ss 00:${from} -t 00:${duration} -vsync 0 -q:v 1 "${directory}/${title}_${id}_${date}_%03d.jpg"`;
+      const fileName = title.replace(/\s/g, '_').replace(/:/g, '_');
+      const command = `-nostats -loglevel 0 -ss 00:${seek} -i ${url} -ss 00:${from} -t 00:${duration} -vsync 0 -q:v 1 "${directory}/${fileName}_${id}_${date}_%03d.jpg"`;
       await RNFFmpeg.execute(command);
       const dir = await RNFS.readDir(directory);
       for (const d of dir) {
