@@ -259,8 +259,8 @@ export const GifEditorScreen = ({ navigation, route }) => {
             trackerHandleColor="#C3070B"
             onChange={onTrimmerChange}
             minLength={1}
-            thumbWidth={10}
-            showTrackerHandle={true}
+            thumbWidth={15}
+            // showTrackerHandle={true}
           />
         </Layout>
       </SafeAreaView>
