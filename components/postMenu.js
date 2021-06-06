@@ -133,7 +133,7 @@ export const PostMenu = ({
   const copyToClipboard = () => {
     toggleMenu2();
     Clipboard.setString(`https://www.sakugabooru.com/post/show/${item.id}`);
-    Toast.show('Link copied');
+    Toast.showWithGravity(`Link copied`, Toast.SHORT, Toast.CENTER);
   };
 
   const download = async () => {

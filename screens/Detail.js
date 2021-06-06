@@ -409,7 +409,7 @@ export const DetailsScreen = ({ navigation, route }) => {
               seekColor="#C3070B"
               onEnterFullscreen={onEnterFullscreen}
               onFullscreenPlayerWillDismiss={onFullscreenPlayerWillDismiss}
-              onError={onVideoError}
+              // onError={onVideoError}
               onLoad={onLoad}
             />
           </Layout>

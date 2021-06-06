@@ -20,6 +20,7 @@ export const Card = forwardRef((props, ref) => {
     item.file_ext !== 'gif' && item.file_ext !== 'jpg' && item.file_ext !== 'jpeg' && item.file_ext !== 'png';
   const [paused, setPaused] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   useImperativeHandle(ref, () => ({
     playVideo() {
@@ -37,6 +38,10 @@ export const Card = forwardRef((props, ref) => {
 
   const onLoad = () => setLoading(false);
   const onLoadStart = () => setLoading(true);
+  const onError = (e) => {
+    console.log('VIDEO_ERROR: ', e);
+    setError(true);
+  };
   return (
     <TouchableOpacity
       delayPressIn={0}
@@ -48,7 +53,7 @@ export const Card = forwardRef((props, ref) => {
         {title}
       </Text>
       <Layout style={styles.imageContainer}>
-        {loading && autoPlay && (
+        {loading && autoPlay && !error && (
           <Layout style={styles.loaderContainer}>
             <ActivityIndicator />
           </Layout>
@@ -70,6 +75,7 @@ export const Card = forwardRef((props, ref) => {
             onLoad={onLoad}
             onLoadStart={onLoadStart}
             resizeMode="contain"
+            onError={onError}
           />
         )}
       </Layout>

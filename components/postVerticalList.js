@@ -186,7 +186,7 @@ export const PostVerticalList = ({
     const key = from === 'History' ? 'postHistory' : 'watchList';
     await removeData(key);
     getLocalPost(1, true, key);
-    Toast.show(`${from} list cleared`);
+    Toast.showWithGravity(`${from} list cleared`, Toast.SHORT, Toast.CENTER);
   };
 
   const removeItem = async (item) => {
@@ -196,7 +196,7 @@ export const PostVerticalList = ({
     const newItems = items.filter((i) => i.id !== item.id);
     await storeData(key, newItems);
     getLocalPost(1, true, key);
-    Toast.show(`Post removed`);
+    Toast.showWithGravity(`Post removed`, Toast.SHORT, Toast.CENTER);
   };
 
   const deleteAlert = (item) =>
