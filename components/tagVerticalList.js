@@ -72,7 +72,7 @@ export const TagVerticalList = ({ search = '', focus, order, type }) => {
   if (isLoading)
     return (
       <Layout style={{ ...styles.center, height: '100%' }}>
-        <ActivityIndicator />
+        <ActivityIndicator color="#D4D4D4" />
       </Layout>
     );
 
@@ -88,7 +88,7 @@ export const TagVerticalList = ({ search = '', focus, order, type }) => {
       keyExtractor={keyExtractor}
       refreshControl={<RefreshControl onRefresh={refetch} refreshing={isRefetching} />}
       ListFooterComponent={
-        <Layout style={styles.center}>{isFetching && !isRefetching && <ActivityIndicator />}</Layout>
+        <Layout style={styles.center}>{isFetching && !isRefetching && <ActivityIndicator color="#D4D4D4" />}</Layout>
       }
       ListEmptyComponent={
         !isFetching && (

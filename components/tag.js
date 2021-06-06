@@ -28,5 +28,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginRight: 15,
+    borderRadius: 20,
   },
 });

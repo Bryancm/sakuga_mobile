@@ -271,7 +271,7 @@ export const PostVerticalList = ({
   if (isLoading)
     return (
       <Layout style={{ ...styles.center, height: '100%' }}>
-        <ActivityIndicator />
+        <ActivityIndicator color="#D4D4D4" />
       </Layout>
     );
 
@@ -282,12 +282,12 @@ export const PostVerticalList = ({
       initialNumToRender={layoutType === 'small' ? 8 : 4}
       maxToRenderPerBatch={layoutType === 'small' ? 8 : 4}
       windowSize={layoutType === 'small' ? 16 : 8}
-      // onEndReachedThreshold={0.5}
+      onEndReachedThreshold={0.5}
       updateCellsBatchingPeriod={layoutType === 'small' ? 50 : 100}
       onViewableItemsChanged={onViewableItemsChanged}
       viewabilityConfig={{
         minimumViewTime: 200,
-        viewAreaCoveragePercentThreshold: 70,
+        viewAreaCoveragePercentThreshold: 80,
       }}
       contentContainerStyle={{
         paddingBottom: 10,
@@ -299,7 +299,7 @@ export const PostVerticalList = ({
         isFetching &&
         !isRefetching && (
           <Layout style={styles.center}>
-            <ActivityIndicator />
+            <ActivityIndicator color="#D4D4D4" />
           </Layout>
         )
       }

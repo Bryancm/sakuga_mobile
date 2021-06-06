@@ -48,7 +48,7 @@ export const NewScreen = ({ navigation }) => {
           <PostVerticalList layoutType={layoutType} autoPlay={autoPlay} />
         ) : (
           <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <ActivityIndicator />
+            <ActivityIndicator color="#D4D4D4" />
           </Layout>
         )}
       </SafeAreaView>

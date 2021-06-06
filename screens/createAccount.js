@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, ScrollView, ActivityIndicator } from 'react-native';
+import { SafeAreaView, ScrollView } from 'react-native';
 import { Layout, Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { CreateAccountForm } from '../components/createAccountForm';
 import { getData } from '../util/storage';

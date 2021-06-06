@@ -36,8 +36,9 @@ const SortIcon = () => (
 const ArrowDown = (props) => <Icon {...props} name="arrow-ios-downward-outline" fill="#D4D4D4" />;
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const SendIcon = (props) => <Icon {...props} name="corner-down-right-outline" />;
-const screenHeight = Dimensions.get('window').height;
-const videoHeight = Math.round(screenHeight * 0.26 - 1);
+const screenHeight = Dimensions.get('window').width;
+// const videoHeight = Math.round(screenHeight * 0.26 - 1);
+const videoHeight = Math.round(screenHeight * 0.565);
 
 export const DetailsScreen = ({ navigation, route }) => {
   const mounted = useRef(true);
@@ -278,7 +279,7 @@ export const DetailsScreen = ({ navigation, route }) => {
         />
       )}
 
-      {commentLoading && <ActivityIndicator />}
+      {commentLoading && <ActivityIndicator color="#D4D4D4" />}
     </Layout>
   );
 
@@ -380,7 +381,7 @@ export const DetailsScreen = ({ navigation, route }) => {
                   zIndex: 10,
                   opacity: 0.7,
                 }}>
-                <ActivityIndicator />
+                <ActivityIndicator color="#D4D4D4" />
               </Layout>
             )}
             <FastImage

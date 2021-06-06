@@ -85,7 +85,7 @@ export const SettingScreen = ({ navigation, route }) => {
   if (!settings)
     return (
       <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator />
+        <ActivityIndicator color="#D4D4D4" />
       </Layout>
     );
 

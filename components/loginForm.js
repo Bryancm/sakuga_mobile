@@ -70,7 +70,7 @@ export const LoginForm = ({ loadUser, from, navigateBack, navigatePostList, navi
         />
         {error && <Text category="c2">{error}</Text>}
         <Button style={{ width: '100%', marginTop: 24, marginBottom: 16 }} onPress={loginUser} disabled={loading}>
-          {loading ? <ActivityIndicator /> : <Text category="h6">Login</Text>}
+          {loading ? <ActivityIndicator color="#D4D4D4" /> : <Text category="h6">Login</Text>}
         </Button>
         <Button appearance="outline" style={{ width: '100%' }} disabled={loading} onPress={navigateCreateAccount}>
           <Text status={loading ? 'basic' : 'primary'} category="h6">

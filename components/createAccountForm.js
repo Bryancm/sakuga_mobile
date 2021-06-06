@@ -115,7 +115,7 @@ export const CreateAccountForm = ({ loadUser, from, navigateBack, navigatePostLi
           <Text category="c2">{e}</Text>
         ))}
         <Button style={{ width: '100%', marginTop: 24, marginBottom: 16 }} onPress={createAccount} disabled={loading}>
-          {loading ? <ActivityIndicator /> : <Text category="h6">Create account</Text>}
+          {loading ? <ActivityIndicator color="#D4D4D4" /> : <Text category="h6">Create account</Text>}
         </Button>
       </Layout>
     </Layout>

@@ -183,7 +183,7 @@ export const PostMenu = ({
   return (
     <Layout level={level} style={{ flexDirection: 'row' }}>
       {loading === item.id ? (
-        <ActivityIndicator />
+        <ActivityIndicator color="#D4D4D4" />
       ) : (
         <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>
           <MenuItem
@@ -213,7 +213,7 @@ export const PostMenu = ({
         </OverflowMenu>
       )}
       {loadingDownload === item.id ? (
-        <ActivityIndicator />
+        <ActivityIndicator color="#D4D4D4" />
       ) : (
         <OverflowMenu anchor={menuAnchor2} visible={menuVisible2} onBackdropPress={toggleMenu2}>
           <MenuItem

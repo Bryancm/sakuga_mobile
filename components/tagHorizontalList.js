@@ -60,7 +60,7 @@ export const TagHorizontalList = ({ title, menuType, search = '', order, type })
       </Layout>
       {isLoading ? (
         <Layout style={styles.center}>
-          <ActivityIndicator />
+          <ActivityIndicator color="#D4D4D4" />
         </Layout>
       ) : (
         <ScrollView horizontal>

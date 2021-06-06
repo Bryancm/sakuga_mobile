@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Animated } from 'react-native';
+import { StyleSheet, Animated, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -125,6 +125,6 @@ export const AppNavigator = () => (
 const styles = StyleSheet.create({
   bottomNavigation: {
     paddingTop: 8,
-    paddingBottom: 30,
+    paddingBottom: Platform.OS === 'ios' ? 30 : 0,
   },
 });

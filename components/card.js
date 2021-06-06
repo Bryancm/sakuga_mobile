@@ -9,8 +9,9 @@ import VideoPlayer from 'react-native-video';
 import converProxyUrl from 'react-native-video-cache';
 
 const ImageIcon = (props) => <Icon {...props} name="image-outline" />;
-const screenHeight = Dimensions.get('window').height;
-const videoHeight = Math.round(screenHeight * 0.26 - 1);
+const screenHeight = Dimensions.get('window').width;
+// const videoHeight = Math.round(screenHeight * 0.26 - 1);
+const videoHeight = Math.round(screenHeight * 0.57);
 
 export const Card = forwardRef((props, ref) => {
   const { item, navigateDetail, autoPlay } = props;
@@ -50,7 +51,7 @@ export const Card = forwardRef((props, ref) => {
       <Layout style={styles.imageContainer}>
         {loading && autoPlay && (
           <Layout style={styles.loaderContainer}>
-            <ActivityIndicator />
+            <ActivityIndicator color="#D4D4D4" />
           </Layout>
         )}
         {!isVideo && (
@@ -65,7 +66,7 @@ export const Card = forwardRef((props, ref) => {
             repeat={true}
             muted={true}
             source={{ uri: converProxyUrl(item.file_url) }}
-            poster={item.preview_url}
+            // poster={item.preview_url}
             style={styles.image}
             onLoad={onLoad}
             onLoadStart={onLoadStart}
@@ -96,8 +97,8 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     opacity: 0.8,
     position: 'absolute',
-    right: 2,
-    bottom: 2,
+    right: 4,
+    bottom: 4,
     zIndex: 6,
   },
   imageContainer: {

@@ -102,15 +102,15 @@ export const GifEditorScreen = ({ navigation, route }) => {
         setPlay(false);
         setReplay(false);
       }
-
+      // console.log(e);
       if (e.startTime !== startTime) {
-        setCurrentTime(e.startTime);
+        setCurrentTime(e.startTime * 1000);
       }
       if (e.endTime !== endTime) {
-        setCurrentTime(e.endTime);
+        setCurrentTime(e.endTime * 1000);
       }
-      setStartTime(e.startTime);
-      setEndTime(e.endTime);
+      setStartTime(e.startTime * 1000);
+      setEndTime(e.endTime * 1000);
     },
     [startTime, endTime, play],
   );
@@ -158,7 +158,11 @@ export const GifEditorScreen = ({ navigation, route }) => {
 
   const renderRightActions = () => (
     <React.Fragment>
-      {loadingGIF ? <ActivityIndicator /> : <TopNavigationAction icon={GifIcon} onPress={onNextPressed} />}
+      {loadingGIF ? (
+        <ActivityIndicator color="#D4D4D4" />
+      ) : (
+        <TopNavigationAction icon={GifIcon} onPress={onNextPressed} />
+      )}
     </React.Fragment>
   );
 
@@ -174,7 +178,7 @@ export const GifEditorScreen = ({ navigation, route }) => {
           />
           <Divider />
           <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <ActivityIndicator />
+            <ActivityIndicator color="#D4D4D4" />
           </Layout>
         </SafeAreaView>
       </Layout>
@@ -200,7 +204,7 @@ export const GifEditorScreen = ({ navigation, route }) => {
           replay={replay} // should player play video again if it's ended
           currentTime={currentTime}
           source={url}
-          style={{ backgroundColor: 'black' }}
+          style={{ width: '100%', height: 300 }}
           resizeMode={VideoPlayer.Constants.resizeMode.CONTAIN}
           onChange={onVideoChange} // get Current time on every second
         />
@@ -252,8 +256,8 @@ export const GifEditorScreen = ({ navigation, route }) => {
             source={url}
             height={60}
             width={screenWidth - 8}
-            onTrackerMove={onTrackerMove} // iOS only
-            currentTime={currentTimeTrimmer} // use this prop to set tracker position iOS only
+            // onTrackerMove={onTrackerMove} // iOS only
+            // currentTime={currentTimeTrimmer} // use this prop to set tracker position iOS only
             themeColor="#C3070B" // iOS only
             trackerColor="#C3070B" // iOS only
             trackerHandleColor="#C3070B"
