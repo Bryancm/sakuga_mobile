@@ -10,7 +10,7 @@ import converProxyUrl from 'react-native-video-cache';
 
 const ImageIcon = (props) => <Icon {...props} name="image-outline" />;
 const screenHeight = Dimensions.get('window').height;
-const videoHeight = Math.round(screenHeight * 0.26 - 1);
+const videoHeight = Math.round(screenHeight * 0.26);
 
 export const Card = forwardRef((props, ref) => {
   const { item, navigateDetail, autoPlay } = props;
