@@ -21,7 +21,9 @@ const SettingsIcon = (props) => <Icon {...props} name="settings-outline" />;
 const SearchIcon = (props) => <Icon {...props} name="search-outline" />;
 
 export const ProfileScreen = ({ navigation }) => {
-  const renderSearchAction = () => <TopNavigationAction icon={SearchIcon} onPress={navigateSearch} />;
+  const renderSearchAction = () => (
+    <TopNavigationAction delayPressIn={0} delayPressOut={0} icon={SearchIcon} onPress={navigateSearch} />
+  );
   const renderFavIcon = () => <Button appearance="ghost" accessoryLeft={HeartIcon} />;
   const renderClockIcon = () => <Button appearance="ghost" accessoryLeft={ClockIcon} />;
   const renderSettingsAction = () => <Button appearance="ghost" accessoryLeft={SettingsIcon} />;

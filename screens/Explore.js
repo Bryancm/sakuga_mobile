@@ -14,7 +14,9 @@ export const ExploreScreen = ({ navigation }) => {
   const navigateSearch = () => {
     navigation.navigate('Search');
   };
-  const renderSearchAction = () => <TopNavigationAction icon={SearchIcon} onPress={navigateSearch} />;
+  const renderSearchAction = () => (
+    <TopNavigationAction delayPressIn={0} delayPressOut={0} icon={SearchIcon} onPress={navigateSearch} />
+  );
 
   const currentDate = new Date();
   const today = formatDateForSearch(currentDate);

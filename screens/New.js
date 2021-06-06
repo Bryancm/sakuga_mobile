@@ -3,7 +3,6 @@ import { SafeAreaView, ActivityIndicator } from 'react-native';
 import { Divider, Layout, TopNavigation, TopNavigationAction, Icon } from '@ui-kitten/components';
 import { PostVerticalList } from '../components/postVerticalList';
 import { getData } from '../util/storage';
-import { set } from 'react-native-reanimated';
 
 const SearchIcon = (props) => <Icon {...props} name="search-outline" />;
 
@@ -33,7 +32,10 @@ export const NewScreen = ({ navigation }) => {
     return unsubscribe;
   }, [navigation, autoPlay, layoutType]);
 
-  const renderSearchIcon = useCallback(() => <TopNavigationAction icon={SearchIcon} onPress={navigateSearch} />, []);
+  const renderSearchIcon = useCallback(
+    () => <TopNavigationAction delayPressIn={0} delayPressOut={0} icon={SearchIcon} onPress={navigateSearch} />,
+    [],
+  );
 
   const navigateSearch = useCallback(() => {
     navigation.navigate('Search');
