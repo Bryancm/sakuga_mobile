@@ -1,11 +1,12 @@
 import React from 'react';
-import { StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, FlatList, TouchableOpacity, Alert, Dimensions } from 'react-native';
 import { Layout, Text, Icon, Button } from '@ui-kitten/components';
 import { getTagStyle } from '../util/api';
 
 const ClockIcon = (props) => <Icon {...props} name="clock-outline" />;
 const TagIcon = (props) => <Icon {...props} name="pricetags-outline" />;
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
+const screenHeight = Dimensions.get('window').height;
 
 export const AutoComplete = ({ data, onPress, deleteItemFromHistory }) => {
   const renderItem = ({ item }) => {
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '58%',
     position: 'absolute',
-    top: 90,
+    top: screenHeight > 736 ? 90 : 70,
     left: 0,
     zIndex: 10,
   },

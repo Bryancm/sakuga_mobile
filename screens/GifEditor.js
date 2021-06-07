@@ -34,7 +34,7 @@ export const GifEditorScreen = ({ navigation, route }) => {
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState();
   const [play, setPlay] = useState(true);
-  const [replay, setReplay] = useState(false);
+  const [replay, setReplay] = useState(true);
   const [fps, setFPS] = useState(8);
   const [loading, setLoading] = useState(true);
   const [loadingGIF, setLoadingGIF] = useState(false);
@@ -53,7 +53,6 @@ export const GifEditorScreen = ({ navigation, route }) => {
       console.log('DOWNLOAD_VIDEO_ERROR: ', error);
       if (mounted.current) setLoading(false);
     }
-    await fetch(url);
   };
 
   useEffect(() => {

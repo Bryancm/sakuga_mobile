@@ -30,7 +30,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState();
   const [play, setPlay] = useState(true);
-  const [replay, setReplay] = useState(false);
+  const [replay, setReplay] = useState(true);
   const [totalFPS, setTotalFPS] = useState(0);
   const [currentFPS, setCurrentFPS] = useState(0);
   const [stepCount, setStepCount] = useState(1);
@@ -51,7 +51,6 @@ export const FramesEditorScreen = ({ navigation, route }) => {
       console.log('DOWNLOAD_VIDEO_ERROR: ', error);
       if (mounted.current) setLoading(false);
     }
-    await fetch(url);
   };
 
   useEffect(() => {
@@ -136,6 +135,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   );
 
   const navigateFramesList = () => {
+    if (play) toggleVideo();
     navigation.navigate('FramesList', { startTime, endTime, title, id, file_ext, url });
   };
 
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
   },
   controlContainer: {
     position: 'absolute',
-    bottom: '20%',
+    bottom: '15%',
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',

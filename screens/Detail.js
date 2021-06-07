@@ -21,6 +21,8 @@ import VideoPlayer from 'react-native-video-controls';
 import converProxyUrl from 'react-native-video-cache';
 import RNFetchBlob from 'rn-fetch-blob';
 import FastImage from 'react-native-fast-image';
+import { RNFFmpeg } from 'react-native-ffmpeg';
+import RNFS from 'react-native-fs';
 
 const SortIcon = () => (
   <Icon
@@ -37,7 +39,7 @@ const ArrowDown = (props) => <Icon {...props} name="arrow-ios-downward-outline" 
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const SendIcon = (props) => <Icon {...props} name="corner-down-right-outline" />;
 const screenHeight = Dimensions.get('window').height;
-const videoHeight = Math.round(screenHeight * 0.26);
+const videoHeight = 235;
 
 export const DetailsScreen = ({ navigation, route }) => {
   const mounted = useRef(true);
@@ -62,6 +64,8 @@ export const DetailsScreen = ({ navigation, route }) => {
   const [paused, setPaused] = useState(false);
   const [loadingImage, setLoadingImage] = useState(true);
   const [videoLoaded, setVideoLoaded] = useState(false);
+  const [commentSort, setCommentSort] = useState('Newest');
+  const [url, setUrl] = useState(converProxyUrl(item.file_url));
 
   const navigateLogin = () => {
     setPaused(true);
@@ -354,6 +358,27 @@ export const DetailsScreen = ({ navigation, route }) => {
 
   const onVideoError = (e) => {
     console.log('VIDEO_ERROR: ', e);
+    if (e.error.code === -11828) {
+      convertToMP4();
+    }
+  };
+
+  const convertToMP4 = async () => {
+    try {
+      const directory = `${RNFS.CachesDirectoryPath}/webmCache`;
+      const exist = await RNFS.exists(directory);
+      if (exist) await RNFS.unlink(directory);
+      await RNFS.mkdir(directory);
+      const fileName = `${directory}/${item.id}.mp4`;
+      // const command = `-fflags +genpts -i ${url} -r 24 ${fileName}`;
+      const command = `-i ${url} -strict experimental ${fileName}`;
+      // const command = `-i ${url} -strict experimental -c copy ${fileName}`;
+      await RNFFmpeg.execute(command);
+      setUrl(fileName);
+    } catch (error) {
+      console.log('CONVERT_TO_MP4_ERROR: ', error);
+      // setUrl('format incompatible');
+    }
   };
 
   const seek = (seconds) => {
@@ -363,6 +388,18 @@ export const DetailsScreen = ({ navigation, route }) => {
   const onLoad = () => {
     setVideoLoaded(true);
   };
+
+  const changeCommentSort = () => {
+    if (commentSort === 'Newest') return setCommentSort('Oldest');
+    setCommentSort('Newest');
+  };
+
+  const sortComments = () => {
+    if (commentSort === 'Newest') return comments.sort((a, b) => new Date(a.created_at) < new Date(b.created_at));
+    return comments.reverse();
+  };
+
+  const sortedComments = sortComments(comments);
 
   return (
     <Layout level="2" style={{ flex: 1 }}>
@@ -396,7 +433,7 @@ export const DetailsScreen = ({ navigation, route }) => {
             <VideoPlayer
               ref={video}
               paused={paused}
-              source={{ uri: converProxyUrl(item.file_url) }}
+              source={{ uri: url }}
               navigator={navigation}
               controlAnimationTiming={250}
               controlTimeout={3000}
@@ -416,7 +453,7 @@ export const DetailsScreen = ({ navigation, route }) => {
         )}
         <CommentList
           commentList={commentList}
-          data={user === undefined ? [] : comments}
+          data={user === undefined ? [] : sortedComments}
           isFetching={isFetching}
           isRefetching={isRefetching}
           refetch={refetchComments}
@@ -430,7 +467,7 @@ export const DetailsScreen = ({ navigation, route }) => {
               <DetailHeader
                 title={title}
                 style={styles.titleContainer}
-                url={converProxyUrl(item.file_url)}
+                url={url}
                 file_ext={item.file_ext}
                 setPaused={setPaused}
                 id={item.id}
@@ -458,9 +495,12 @@ export const DetailsScreen = ({ navigation, route }) => {
                 />
               </Layout>
               <Button
+                delayPressIn={0}
+                delayPressOut={0}
                 status="basic"
                 appearance="ghost"
                 accessoryRight={SortIcon}
+                onPress={changeCommentSort}
                 style={{
                   width: 76,
                   paddingHorizontal: 0,
@@ -469,7 +509,7 @@ export const DetailsScreen = ({ navigation, route }) => {
                   justifyContent: 'center',
                 }}>
                 <Text appearance="hint" category="c1" style={{ marginBottom: 8 }}>
-                  Newest
+                  {commentSort}
                 </Text>
               </Button>
             </Layout>
