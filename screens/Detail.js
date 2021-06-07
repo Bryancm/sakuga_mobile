@@ -39,7 +39,7 @@ const ArrowDown = (props) => <Icon {...props} name="arrow-ios-downward-outline" 
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const SendIcon = (props) => <Icon {...props} name="corner-down-right-outline" />;
 const screenHeight = Dimensions.get('window').height;
-const videoHeight = 235;
+const videoHeight = 233;
 
 export const DetailsScreen = ({ navigation, route }) => {
   const mounted = useRef(true);
