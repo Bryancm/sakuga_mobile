@@ -5,7 +5,7 @@ import { getRelativeTime } from '../util/date';
 import FastImage from 'react-native-fast-image';
 import { PostMenu } from './postMenu';
 
-export const CardSmall = ({ item, deleteAlert, navigateDetail }) => {
+export const CardSmall = React.memo(({ item, deleteAlert, navigateDetail }) => {
   const tags = item.tags;
   const title = item.title;
 
@@ -55,7 +55,7 @@ export const CardSmall = ({ item, deleteAlert, navigateDetail }) => {
       <Divider />
     </TouchableOpacity>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {

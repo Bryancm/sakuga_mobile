@@ -75,9 +75,9 @@ export const AutoComplete = ({ data, onPress, deleteItemFromHistory }) => {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: '58%',
+    height: '90%',
     position: 'absolute',
-    top: 90,
+    top: 45,
     left: 0,
     zIndex: 10,
   },

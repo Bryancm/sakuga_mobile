@@ -281,9 +281,9 @@ export const PostVerticalList = ({
       renderItem={renderItem}
       initialNumToRender={layoutType === 'small' ? 8 : 4}
       maxToRenderPerBatch={layoutType === 'small' ? 8 : 4}
-      windowSize={layoutType === 'small' ? 16 : 8}
-      onEndReachedThreshold={0.5}
-      updateCellsBatchingPeriod={layoutType === 'small' ? 50 : 100}
+      windowSize={layoutType === 'small' ? 8 : 6}
+      onEndReachedThreshold={8}
+      updateCellsBatchingPeriod={100}
       onViewableItemsChanged={onViewableItemsChanged}
       viewabilityConfig={{
         minimumViewTime: 200,
@@ -294,7 +294,15 @@ export const PostVerticalList = ({
       }}
       onEndReached={onEndReached}
       keyExtractor={keyExtractor}
-      refreshControl={<RefreshControl onRefresh={refetch} refreshing={isRefetching} />}
+      refreshControl={
+        <RefreshControl
+          onRefresh={refetch}
+          refreshing={isRefetching}
+          colors={['#D4D4D4']}
+          tintColor="#D4D4D4"
+          progressBackgroundColor="#141414"
+        />
+      }
       ListFooterComponent={
         isFetching &&
         !isRefetching && (

@@ -86,7 +86,15 @@ export const TagVerticalList = ({ search = '', focus, order, type }) => {
       onEndReachedThreshold={1}
       onEndReached={onEndReached}
       keyExtractor={keyExtractor}
-      refreshControl={<RefreshControl onRefresh={refetch} refreshing={isRefetching} />}
+      refreshControl={
+        <RefreshControl
+          onRefresh={refetch}
+          refreshing={isRefetching}
+          colors={['#D4D4D4']}
+          tintColor="#D4D4D4"
+          progressBackgroundColor="#141414"
+        />
+      }
       ListFooterComponent={
         <Layout style={styles.center}>{isFetching && !isRefetching && <ActivityIndicator color="#D4D4D4" />}</Layout>
       }

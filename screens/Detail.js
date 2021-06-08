@@ -38,7 +38,7 @@ const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const SendIcon = (props) => <Icon {...props} name="corner-down-right-outline" />;
 const screenHeight = Dimensions.get('window').width;
 // const videoHeight = Math.round(screenHeight * 0.26 - 1);
-const videoHeight = Math.round(screenHeight * 0.565);
+const videoHeight = 233;
 
 export const DetailsScreen = ({ navigation, route }) => {
   const mounted = useRef(true);
@@ -63,6 +63,7 @@ export const DetailsScreen = ({ navigation, route }) => {
   const [paused, setPaused] = useState(false);
   const [loadingImage, setLoadingImage] = useState(true);
   const [videoLoaded, setVideoLoaded] = useState(false);
+  const [fullScreen, setFullScreen] = useState(false);
 
   const navigateLogin = () => {
     setPaused(true);
@@ -294,12 +295,20 @@ export const DetailsScreen = ({ navigation, route }) => {
   };
 
   const onEnterFullscreen = () => {
+    setFullScreen(true);
     video.current.player.ref.presentFullscreenPlayer();
   };
 
+  const onExitFullScreen = () => {
+    setFullScreen(false);
+    video.current.player.ref.dismissFullscreenPlayer();
+  };
+
   const onFullscreenPlayerWillDismiss = () => {
-    video.current.methods.togglePlayPause();
-    video.current.methods.toggleFullscreen();
+    if (Platform.OS === 'ios') {
+      video.current.methods.togglePlayPause();
+      video.current.methods.toggleFullscreen();
+    }
   };
 
   const download = async () => {
@@ -393,7 +402,7 @@ export const DetailsScreen = ({ navigation, route }) => {
           </TouchableOpacity>
         )}
         {isVideo && (
-          <Layout style={styles.image}>
+          <Layout style={fullScreen ? styles.fullScreen : styles.image}>
             <VideoPlayer
               ref={video}
               paused={paused}
@@ -409,9 +418,11 @@ export const DetailsScreen = ({ navigation, route }) => {
               controls={false}
               seekColor="#C3070B"
               onEnterFullscreen={onEnterFullscreen}
+              onExitFullscreen={onExitFullScreen}
               onFullscreenPlayerWillDismiss={onFullscreenPlayerWillDismiss}
               onError={onVideoError}
               onLoad={onLoad}
+              fullscreen={fullScreen}
             />
           </Layout>
         )}
@@ -497,6 +508,10 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
   },
   image: { width: '100%', height: videoHeight },
+  fullScreen: {
+    width: '100%',
+    height: '100%',
+  },
   closeButton: {
     position: 'absolute',
     justifyContent: 'center',
