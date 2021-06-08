@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { SafeAreaView, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
 import { Divider, Icon, Layout, Button, Text, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
-import { VideoPlayer, Trimmer } from 'react-native-video-processing';
+import { ProcessingManager } from 'react-native-video-processing';
+import VideoPlayer from 'react-native-video';
+import { Slider } from '../components/slider';
 import RNFS from 'react-native-fs';
 
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
@@ -19,23 +21,26 @@ const formatSeconds = (seconds) => {
 export const FramesEditorScreen = ({ navigation, route }) => {
   var abortController = new AbortController();
   const mounted = useRef(true);
-  const videoPlayer = useRef();
+  // const videoPlayer = useRef();
+  const video = useRef();
   const id = route.params.id;
   const title = route.params.title;
   const file_ext = route.params.file_ext;
   const url = route.params.url;
+  const item = route.params.item;
 
   const [currentTime, setCurrentTime] = useState(0);
   const [currentTimeTrimmer, setCurrentTimeTrimmer] = useState(0);
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState();
   const [play, setPlay] = useState(true);
-  const [replay, setReplay] = useState(false);
+  const [replay, setReplay] = useState(true);
   const [totalFPS, setTotalFPS] = useState(0);
   const [currentFPS, setCurrentFPS] = useState(0);
   const [stepCount, setStepCount] = useState(1);
   const [stepSize, setStepSize] = useState(0.042);
   const [loading, setLoading] = useState(true);
+  const [paused, setPaused] = useState(false);
 
   const deleteFramesCache = async () => {
     const dir = `${RNFS.CachesDirectoryPath}/framesCache`;
@@ -46,12 +51,35 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   const loadVideo = async () => {
     try {
       await fetch(url, { signal: abortController.signal });
+      const info = await ProcessingManager.getVideoInfo(url);
+      console.log({ info });
+      setVideoInfo(info);
       if (mounted.current) setLoading(false);
     } catch (error) {
       console.log('DOWNLOAD_VIDEO_ERROR: ', error);
       if (mounted.current) setLoading(false);
     }
-    await fetch(url);
+  };
+
+  const setVideoInfo = (info) => {
+    const step = 1 / info.frameRate;
+    const stepSize = Number(step.toFixed(4));
+    const totalFps = Math.round(info.duration / stepSize);
+    setStepSize(stepSize);
+    setTotalFPS(totalFps);
+    setEndTime(info.duration);
+  };
+
+  const getVideoInfo = async () => {
+    ProcessingManager.getVideoInfo(url)
+      .then((info) => {
+        console.log({ info });
+        if (mounted.current) setLoading(false);
+      })
+      .catch((e) => {
+        console.log('E: ', e);
+        if (mounted.current) setLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -64,66 +92,27 @@ export const FramesEditorScreen = ({ navigation, route }) => {
     };
   }, []);
 
-  useEffect(() => {
-    if (videoPlayer.current) {
-      videoPlayer.current
-        .getVideoInfo()
-        .then((r) => {
-          const step = 1 / r.frameRate;
-          const stepSize = Number(step.toFixed(4));
-          const totalFps = Math.round(r.duration / stepSize);
-          setStepSize(stepSize);
-          setTotalFPS(totalFps);
-          setEndTime(r.duration);
-        })
-        .catch((e) => console.log(e));
-    }
-  }, [loading]);
-
-  const onVideoChange = useCallback(
-    ({ nativeEvent }) => {
-      if (play) setCurrentTimeTrimmer(nativeEvent.currentTime);
-      setCurrentFPS(Math.round(nativeEvent.currentTime / stepSize));
-    },
-    [play, stepSize],
-  );
-
-  const onTrackerMove = useCallback(
-    ({ currentTime }) => {
-      if (play) {
-        setPlay(false);
-        setReplay(false);
-      }
-
-      setCurrentTime(currentTime);
-      // setCurrentTimeTrimmer(currentTime);
-    },
-    [play],
-  );
-
-  const onTrimmerChange = useCallback(
-    (e) => {
-      if (play) {
-        setPlay(false);
-        setReplay(false);
-      }
-
-      if (e.startTime !== startTime) {
-        setCurrentTime(e.startTime);
-      }
-      if (e.endTime !== endTime) {
-        setCurrentTime(e.endTime);
-      }
-      setStartTime(e.startTime);
-      setEndTime(e.endTime);
-    },
-    [startTime, endTime, play],
-  );
+  // useEffect(() => {
+  //   if (videoPlayer.current) {
+  //     videoPlayer.current
+  //       .getVideoInfo()
+  //       .then((r) => {
+  //         // console.log(r);
+  //         const step = 1 / 24;
+  //         const stepSize = Number(step.toFixed(4));
+  //         const totalFps = Math.round(r.duration / stepSize);
+  //         setStepSize(stepSize);
+  //         setTotalFPS(totalFps);
+  //         setEndTime(r.duration);
+  //         // console.log({ stepSize, totalFps, duration: r.duration });
+  //       })
+  //       .catch((e) => console.log(e));
+  //   }
+  // }, [loading]);
 
   const toggleVideo = useCallback(() => {
-    setPlay(!play);
-    setReplay(!replay);
-  }, [play, replay]);
+    setPaused(!paused);
+  }, [paused]);
 
   const navigateBack = () => {
     const setPaused = route.params.setPaused;
@@ -146,6 +135,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   const stepFoward = useCallback(() => {
     const stepTime = stepSize * stepCount;
     const current = play ? currentTimeTrimmer : currentTime;
+    console.log(current + stepTime);
     setCurrentTime(current + stepTime);
     setCurrentTimeTrimmer(current + stepTime);
     if (play) {
@@ -170,6 +160,10 @@ export const FramesEditorScreen = ({ navigation, route }) => {
     if (stepCount === 2) setStepCount(3);
     if (stepCount === 3) setStepCount(1);
   }, [stepCount]);
+
+  const setPositionAsync = (millis) => {
+    video.current.seek(millis / 1000);
+  };
 
   if (loading)
     return (
@@ -200,78 +194,63 @@ export const FramesEditorScreen = ({ navigation, route }) => {
           accessoryRight={renderRightActions}
         />
         <Divider />
+        <Layout style={{ flex: 1, paddingTop: '30%' }}>
+          <VideoPlayer
+            ref={video}
+            paused={paused}
+            repeat={true}
+            muted={true}
+            source={{ uri: url }}
+            style={styles.image}
+            resizeMode="contain"
+          />
 
-        <VideoPlayer
-          ref={videoPlayer}
-          startTime={startTime} // seconds
-          endTime={endTime} // seconds
-          play={play} // default false
-          replay={replay} // should player play video again if it's ended
-          currentTime={currentTime}
-          source={url}
-          style={{ backgroundColor: 'black' }}
-          resizeMode={VideoPlayer.Constants.resizeMode.CONTAIN}
-          onChange={onVideoChange} // get Current time on every second
-        />
-
-        <Layout style={styles.controlContainer}>
-          <Layout
-            style={{
-              ...styles.buttonContainer,
-              justifyContent: 'space-between',
-              paddingHorizontal: 8,
-            }}>
+          <Layout style={styles.controlContainer}>
             <Layout
               style={{
                 ...styles.buttonContainer,
-                marginBottom: 0,
                 justifyContent: 'space-between',
-                width: '55%',
+                paddingHorizontal: 8,
               }}>
-              <Button
-                appearance="ghost"
-                style={styles.pauseButton}
-                onPress={toggleVideo}
-                accessoryRight={play ? PauseIcon : PlayIcon}
-              />
-              <Button
-                appearance="ghost"
-                style={styles.pauseButton}
-                onPress={stepBackward}
-                accessoryRight={ArrowLeftIcon}
-              />
-              <Button
-                appearance="ghost"
-                style={styles.pauseButton}
-                onPress={stepFoward}
-                accessoryRight={ArrowRightIcon}
-              />
-              <Button
-                appearance="ghost"
-                style={styles.pauseButton}
-                onPress={changeStepCount}
-                accessoryRight={() => <Text category="s2">{`x${stepCount}`}</Text>}
-              />
+              <Layout
+                style={{
+                  ...styles.buttonContainer,
+                  marginBottom: 0,
+                  justifyContent: 'space-between',
+                  width: '55%',
+                }}>
+                <Button
+                  appearance="ghost"
+                  style={styles.pauseButton}
+                  onPress={toggleVideo}
+                  accessoryRight={play ? PauseIcon : PlayIcon}
+                />
+                <Button
+                  appearance="ghost"
+                  style={styles.pauseButton}
+                  onPress={stepBackward}
+                  accessoryRight={ArrowLeftIcon}
+                />
+                <Button
+                  appearance="ghost"
+                  style={styles.pauseButton}
+                  onPress={stepFoward}
+                  accessoryRight={ArrowRightIcon}
+                />
+                <Button
+                  appearance="ghost"
+                  style={styles.pauseButton}
+                  onPress={changeStepCount}
+                  accessoryRight={() => <Text category="s2">{`x${stepCount}`}</Text>}
+                />
+              </Layout>
+              <Text status="primary" category="s2">
+                {`${currentFPS} / ${totalFPS}`}
+              </Text>
             </Layout>
-            <Text status="primary" category="s2">
-              {`${currentFPS} / ${totalFPS}`}
-            </Text>
-          </Layout>
 
-          <Trimmer
-            source={url}
-            height={60}
-            width={screenWidth - 8}
-            onTrackerMove={onTrackerMove} // iOS only
-            currentTime={currentTimeTrimmer} // use this prop to set tracker position iOS only
-            themeColor="#C3070B" // iOS only
-            trackerColor="#C3070B" // iOS only
-            trackerHandleColor="#C3070B"
-            onChange={onTrimmerChange}
-            minLength={1}
-            thumbWidth={10}
-            showTrackerHandle={true}
-          />
+            <Slider durationMillis={10000} positionMillis={0} setPositionAsync={setPositionAsync} />
+          </Layout>
         </Layout>
       </SafeAreaView>
     </Layout>
@@ -279,20 +258,23 @@ export const FramesEditorScreen = ({ navigation, route }) => {
 };
 
 const styles = StyleSheet.create({
-  tagContainer: {
-    paddingLeft: 8,
-    paddingTop: 0,
-    paddingBottom: 8,
-    flexDirection: 'row',
+  videoContainer: {
+    width: '100%',
+    height: 300,
+    overflow: 'hidden',
+    justifyContent: 'center',
     alignItems: 'center',
-    flexWrap: 'wrap',
+    backgroundColor: 'tomato',
+  },
+  image: {
+    width: '100%',
+    height: 320,
   },
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  image: { width: '100%', height: 210, backgroundColor: '#000' },
   pauseButton: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -310,7 +292,7 @@ const styles = StyleSheet.create({
   },
   controlContainer: {
     position: 'absolute',
-    bottom: '20%',
+    bottom: '15%',
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',

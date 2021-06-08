@@ -447,6 +447,7 @@ export const DetailsScreen = ({ navigation, route }) => {
                 setPaused={setPaused}
                 id={item.id}
                 isVideo={isVideo}
+                item={item}
               />
               <TagList tags={tags} style={styles.tagContainer} loadCount={true} />
               <DetailFooter item={item} style={styles.titleContainer} />

@@ -7,7 +7,7 @@ const GridIcon = (props) => <Icon {...props} name="grid-outline" />;
 const EditIcon = (props) => <Icon {...props} name="edit-outline" />;
 const ImageIcon = (props) => <Icon {...props} name="image-outline" />;
 
-export const DetailHeader = ({ title, style, url, setPaused, file_ext, id, isVideo }) => {
+export const DetailHeader = ({ title, style, url, setPaused, file_ext, id, isVideo, item }) => {
   const [menuVisible, setMenuVisible] = React.useState(false);
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
@@ -17,13 +17,13 @@ export const DetailHeader = ({ title, style, url, setPaused, file_ext, id, isVid
   const navigateGifEditor = () => {
     setPaused(true);
     toggleMenu();
-    navigation.navigate('GifEditor', { url, title, file_ext, id });
+    navigation.navigate('GifEditor', { url, title, file_ext, id, item });
   };
 
   const navigateFramesEditor = () => {
     setPaused(true);
     toggleMenu();
-    navigation.navigate('FramesEditor', { url, title, file_ext, id });
+    navigation.navigate('FramesEditor', { url, title, file_ext, id, item });
   };
 
   const menuAnchor = () => (
