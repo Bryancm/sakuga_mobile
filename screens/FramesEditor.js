@@ -32,7 +32,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [currentTimeTrimmer, setCurrentTimeTrimmer] = useState(0);
   const [startTime, setStartTime] = useState(0);
-  const [endTime, setEndTime] = useState();
+  const [endTime, setEndTime] = useState(0);
   const [play, setPlay] = useState(true);
   const [replay, setReplay] = useState(true);
   const [totalFPS, setTotalFPS] = useState(0);
@@ -165,6 +165,18 @@ export const FramesEditorScreen = ({ navigation, route }) => {
     video.current.seek(millis / 1000);
   };
 
+  const onProgress = ({ currentTime }) => {
+    setCurrentTime(currentTime * 1000);
+    // const step = 1 / info.frameRate;
+    // const stepSize = Number(step.toFixed(4));
+    // const totalFps = Math.round(info.duration / stepSize);
+    // setStepSize(stepSize);
+    // setTotalFPS(totalFps);
+    // setEndTime(info.duration);
+  };
+
+  // console.log({ currentTime });
+
   if (loading)
     return (
       <Layout style={{ flex: 1 }}>
@@ -203,6 +215,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
             source={{ uri: url }}
             style={styles.image}
             resizeMode="contain"
+            onProgress={onProgress}
           />
 
           <Layout style={styles.controlContainer}>
@@ -223,7 +236,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
                   appearance="ghost"
                   style={styles.pauseButton}
                   onPress={toggleVideo}
-                  accessoryRight={play ? PauseIcon : PlayIcon}
+                  accessoryRight={paused ? PlayIcon : PauseIcon}
                 />
                 <Button
                   appearance="ghost"
@@ -249,7 +262,9 @@ export const FramesEditorScreen = ({ navigation, route }) => {
               </Text>
             </Layout>
 
-            <Slider durationMillis={10000} positionMillis={0} setPositionAsync={setPositionAsync} />
+            {endTime && (
+              <Slider durationMillis={endTime} positionMillis={currentTime} setPositionAsync={setPositionAsync} />
+            )}
           </Layout>
         </Layout>
       </SafeAreaView>
