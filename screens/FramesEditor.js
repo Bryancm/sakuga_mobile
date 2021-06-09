@@ -41,6 +41,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   const [stepSize, setStepSize] = useState(0.042);
   const [loading, setLoading] = useState(true);
   const [paused, setPaused] = useState(false);
+  const [usingSlider, setUsingSlider] = useState(false);
 
   const deleteFramesCache = async () => {
     const dir = `${RNFS.CachesDirectoryPath}/framesCache`;
@@ -111,6 +112,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   // }, [loading]);
 
   const toggleVideo = useCallback(() => {
+    setUsingSlider(false);
     setPaused(!paused);
   }, [paused]);
 
@@ -135,7 +137,6 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   const stepFoward = useCallback(() => {
     const stepTime = stepSize * stepCount;
     const current = play ? currentTimeTrimmer : currentTime;
-    console.log(current + stepTime);
     setCurrentTime(current + stepTime);
     setCurrentTimeTrimmer(current + stepTime);
     if (play) {
@@ -161,21 +162,19 @@ export const FramesEditorScreen = ({ navigation, route }) => {
     if (stepCount === 3) setStepCount(1);
   }, [stepCount]);
 
-  const setPositionAsync = (millis) => {
-    video.current.seek(millis / 1000);
+  const setPositionAsync = (time, play) => {
+    video.current.seek(time);
+    setCurrentTime(time);
+    setPaused(!play);
+    console.log({ time });
   };
 
   const onProgress = ({ currentTime }) => {
-    setCurrentTime(currentTime * 1000);
-    // const step = 1 / info.frameRate;
-    // const stepSize = Number(step.toFixed(4));
-    // const totalFps = Math.round(info.duration / stepSize);
-    // setStepSize(stepSize);
-    // setTotalFPS(totalFps);
-    // setEndTime(info.duration);
+    setCurrentTime(currentTime);
   };
-
-  // console.log({ currentTime });
+  useEffect(() => {
+    setCurrentFPS(Math.round(currentTime / stepSize));
+  }, [currentTime]);
 
   if (loading)
     return (
@@ -183,7 +182,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
         <SafeAreaView style={{ flex: 1 }}>
           <TopNavigation
             title="Frames Trim"
-            subtitle={`${formatSeconds(startTime)} ~ ${formatSeconds(endTime)}`}
+            subtitle={`${formatSeconds(currentTime)} ~ ${formatSeconds(endTime)}`}
             alignment="center"
             accessoryLeft={renderLeftAction}
           />
@@ -200,7 +199,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
       <SafeAreaView style={{ flex: 1 }}>
         <TopNavigation
           title="Frames Trim"
-          subtitle={`${formatSeconds(startTime)} ~ ${formatSeconds(endTime)}`}
+          subtitle={`${formatSeconds(currentTime)} ~ ${formatSeconds(endTime)}`}
           alignment="center"
           accessoryLeft={renderLeftAction}
           accessoryRight={renderRightActions}
@@ -216,6 +215,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
             style={styles.image}
             resizeMode="contain"
             onProgress={onProgress}
+            progressUpdateInterval={500}
           />
 
           <Layout style={styles.controlContainer}>
@@ -263,7 +263,13 @@ export const FramesEditorScreen = ({ navigation, route }) => {
             </Layout>
 
             {endTime && (
-              <Slider durationMillis={endTime} positionMillis={currentTime} setPositionAsync={setPositionAsync} />
+              <Slider
+                durationMillis={endTime}
+                positionMillis={currentTime}
+                setPositionAsync={setPositionAsync}
+                usingSlider={usingSlider}
+                setUsingSlider={setUsingSlider}
+              />
             )}
           </Layout>
         </Layout>
