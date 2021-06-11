@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { SafeAreaView, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
 import { Divider, Icon, Layout, Button, Text, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
-import { ProcessingManager } from 'react-native-video-processing';
+import { RNFFprobe, RNFFmpegConfig } from 'react-native-ffmpeg';
 import VideoPlayer from 'react-native-video-controls';
 import { Slider } from '../components/slider';
 import RNFS from 'react-native-fs';
@@ -52,10 +52,17 @@ export const FramesEditorScreen = ({ navigation, route }) => {
 
   const loadVideo = async () => {
     try {
+      RNFFmpegConfig.disableLogs();
       await fetch(url, { signal: abortController.signal });
-      const info = await ProcessingManager.getVideoInfo(url);
-      console.log({ info });
-      setVideoInfo(info);
+      await RNFFprobe.getMediaInformation(url)
+        .then((info) => {
+          const allProperties = info.getAllProperties();
+          const duration = Number(allProperties.format.duration);
+          const splitFrameRate = allProperties.streams[0].avg_frame_rate.split('/');
+          const frameRate = splitFrameRate[0] / splitFrameRate[1];
+          setVideoInfo({ duration, frameRate });
+        })
+        .catch((e) => console.log('MEDIA_INFO_ERROR: ', e));
       if (mounted.current) setLoading(false);
     } catch (error) {
       console.log('DOWNLOAD_VIDEO_ERROR: ', error);
@@ -71,18 +78,6 @@ export const FramesEditorScreen = ({ navigation, route }) => {
     setTotalFPS(totalFps);
     setEndTime(info.duration);
     setDuration(info.duration);
-  };
-
-  const getVideoInfo = async () => {
-    ProcessingManager.getVideoInfo(url)
-      .then((info) => {
-        console.log({ info });
-        if (mounted.current) setLoading(false);
-      })
-      .catch((e) => {
-        console.log('E: ', e);
-        if (mounted.current) setLoading(false);
-      });
   };
 
   useEffect(() => {

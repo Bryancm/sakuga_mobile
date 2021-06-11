@@ -40,7 +40,7 @@ export const FramesListScreen = ({ navigation, route }) => {
   const getVideoFrames = useCallback(async () => {
     try {
       const newFrames = [];
-      const directory = `${RNFS.CachesDirectoryPath}/framesCache`;
+      const directory = `${RNFS.CachesDirectoryPath}/framesCache/${id}`;
       const exist = await RNFS.exists(directory);
       if (exist) await RNFS.unlink(directory);
       await RNFS.mkdir(directory);
@@ -49,8 +49,9 @@ export const FramesListScreen = ({ navigation, route }) => {
       const seek = dif <= 0 ? '00:00.0' : formatSeconds(dif);
       const from = dif <= 0 ? '00:00.0' : formatSeconds(startTime - dif);
       const duration = formatSeconds(endTime - startTime);
-      // const t =
-      const command = `-nostats -loglevel 0 -ss 00:${seek} -i ${url} -ss 00:${from} -t 00:${duration} -vsync 0 -q:v 1 "${directory}/${title}_${id}_${date}_%03d.jpg"`;
+      const fileName = title.replace(/\s/g, '_').replace(/:/g, '_');
+      const command = `-nostats -loglevel 0 -ss 00:${seek} -i ${url} -ss 00:${from} -t 00:${duration} -vsync 0 -q:v 1 "${directory}/${id}_${date}_%03d.jpg"`;
+      console.log({ command });
       await RNFFmpeg.execute(command);
       const dir = await RNFS.readDir(directory);
       for (const d of dir) {
@@ -60,6 +61,7 @@ export const FramesListScreen = ({ navigation, route }) => {
       }
 
       newFrames.sort((a, b) => ('' + a.uri).localeCompare(b.uri));
+
       if (mounted.current) setFrames(newFrames);
       if (mounted.current) setLoading(false);
     } catch (error) {

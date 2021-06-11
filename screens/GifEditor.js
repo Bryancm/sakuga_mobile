@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { SafeAreaView, StyleSheet, Dimensions, ActivityIndicator, Platform } from 'react-native';
 import { Divider, Icon, Layout, Button, Text, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
-import { VideoPlayer, Trimmer } from 'react-native-video-processing';
+// import { VideoPlayer, Trimmer } from 'react-native-video-processing';
 import { RNFFmpeg } from 'react-native-ffmpeg';
 import RNFS from 'react-native-fs';
 import RNFetchBlob from 'rn-fetch-blob';
@@ -196,7 +196,7 @@ export const GifEditorScreen = ({ navigation, route }) => {
         />
         <Divider />
 
-        <VideoPlayer
+        {/* <VideoPlayer
           ref={videoPlayer}
           startTime={startTime} // seconds
           endTime={endTime} // seconds
@@ -207,7 +207,7 @@ export const GifEditorScreen = ({ navigation, route }) => {
           style={{ width: '100%', height: 300 }}
           resizeMode={VideoPlayer.Constants.resizeMode.CONTAIN}
           onChange={onVideoChange} // get Current time on every second
-        />
+        /> */}
 
         <Layout style={styles.controlContainer}>
           <Layout
@@ -252,7 +252,7 @@ export const GifEditorScreen = ({ navigation, route }) => {
               </Text>
             </Button>
           </Layout>
-          <Trimmer
+          {/* <Trimmer
             source={url}
             height={60}
             width={screenWidth - 8}
@@ -265,7 +265,7 @@ export const GifEditorScreen = ({ navigation, route }) => {
             minLength={1}
             thumbWidth={10}
             showTrackerHandle={true}
-          />
+          /> */}
         </Layout>
       </SafeAreaView>
     </Layout>
