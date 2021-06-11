@@ -21,20 +21,15 @@ const formatSeconds = (seconds) => {
 export const FramesEditorScreen = ({ navigation, route }) => {
   var abortController = new AbortController();
   const mounted = useRef(true);
-  // const videoPlayer = useRef();
   const video = useRef();
   const id = route.params.id;
   const title = route.params.title;
   const file_ext = route.params.file_ext;
   const url = route.params.url;
-  const item = route.params.item;
 
   const [currentTime, setCurrentTime] = useState(0);
-  const [currentTimeTrimmer, setCurrentTimeTrimmer] = useState(0);
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
-  const [play, setPlay] = useState(true);
-  const [replay, setReplay] = useState(true);
   const [totalFPS, setTotalFPS] = useState(0);
   const [currentFPS, setCurrentFPS] = useState(0);
   const [stepCount, setStepCount] = useState(1);
@@ -90,24 +85,6 @@ export const FramesEditorScreen = ({ navigation, route }) => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   if (videoPlayer.current) {
-  //     videoPlayer.current
-  //       .getVideoInfo()
-  //       .then((r) => {
-  //         // console.log(r);
-  //         const step = 1 / 24;
-  //         const stepSize = Number(step.toFixed(4));
-  //         const totalFps = Math.round(r.duration / stepSize);
-  //         setStepSize(stepSize);
-  //         setTotalFPS(totalFps);
-  //         setEndTime(r.duration);
-  //         // console.log({ stepSize, totalFps, duration: r.duration });
-  //       })
-  //       .catch((e) => console.log(e));
-  //   }
-  // }, [loading]);
-
   const toggleVideo = useCallback(() => {
     setUsingSlider(false);
     setPaused(!paused);
@@ -122,7 +99,6 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   const renderLeftAction = () => <TopNavigationAction icon={CloseIcon} onPress={navigateBack} />;
 
   const navigateFramesList = () => {
-    // console.log({ startTime, endTime, title, id, file_ext, url });
     navigation.navigate('FramesList', { startTime, endTime, title, id, file_ext, url });
   };
 
@@ -134,25 +110,21 @@ export const FramesEditorScreen = ({ navigation, route }) => {
 
   const stepFoward = useCallback(() => {
     const stepTime = stepSize * stepCount;
-    const current = play ? currentTimeTrimmer : currentTime;
-    setCurrentTime(current + stepTime);
-    setCurrentTimeTrimmer(current + stepTime);
-    if (play) {
-      setPlay(false);
-      setReplay(false);
-    }
-  }, [currentTime, play, stepCount, currentTimeTrimmer, stepSize]);
+    const time = currentTime + stepTime;
+    console.log({ time });
+    setCurrentTime(time);
+    video.current.methods.seekTo(time);
+    if (!paused) setPaused(true);
+  }, [currentTime, paused, stepCount, stepSize]);
 
   const stepBackward = useCallback(() => {
     const stepTime = stepSize * stepCount;
-    const current = play ? currentTimeTrimmer : currentTime;
-    setCurrentTime(current - stepTime);
-    setCurrentTimeTrimmer(current - stepTime);
-    if (play) {
-      setPlay(false);
-      setReplay(false);
-    }
-  }, [currentTime, play, stepCount, currentTimeTrimmer, stepSize]);
+    const time = currentTime - stepTime;
+    console.log({ time });
+    setCurrentTime(time);
+    video.current.methods.seekTo(time);
+    if (!paused) setPaused(true);
+  }, [currentTime, paused, stepCount, stepSize]);
 
   const changeStepCount = useCallback(() => {
     if (stepCount === 1) setStepCount(2);
@@ -162,24 +134,14 @@ export const FramesEditorScreen = ({ navigation, route }) => {
 
   const setPositionAsync = (time, play) => {
     setCurrentTime(time);
-    video.current.player.ref.seek(time);
-
-    // video.current.seek(time, 0);
+    video.current.methods.seekTo(time);
     play ? setPaused(false) : setPaused(true);
   };
 
   const onProgress = (progress) => {
-    // console.log({ progress });
-    if (progress.currentTime >= currentTime) {
-      setCurrentTime(progress.currentTime);
-    }
+    setCurrentTime(progress.currentTime);
   };
 
-  const onSeek = ({ currentTime, seekTime }) => {
-    setCurrentTime(seekTime);
-  };
-  const onPlay = () => setPaused(false);
-  const onPause = () => setPaused(true);
   useEffect(() => {
     setCurrentFPS(Math.round(currentTime / stepSize));
   }, [currentTime]);
@@ -223,9 +185,6 @@ export const FramesEditorScreen = ({ navigation, route }) => {
               source={{ uri: url }}
               resizeMode="contain"
               onProgress={onProgress}
-              onSeek={onSeek}
-              onPlay={onPlay}
-              onPause={onPause}
               progressUpdateInterval={1000}
               disableFullscreen
               disablePlayPause
@@ -233,9 +192,10 @@ export const FramesEditorScreen = ({ navigation, route }) => {
               disableTimer
               disableBack
               disableSeekbar
-              // scrubbing={1}
-              // tapAnywhereToPause={true}
-              // controlTimeout={5000}
+              scrubbing={1}
+              controlAnimationTiming={1}
+              controlTimeout={1}
+              showOnStart={false}
             />
           </Layout>
 
@@ -245,6 +205,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
                 ...styles.buttonContainer,
                 justifyContent: 'space-between',
                 paddingHorizontal: 8,
+                marginBottom: 40,
               }}>
               <Layout
                 style={{
@@ -254,24 +215,32 @@ export const FramesEditorScreen = ({ navigation, route }) => {
                   width: '55%',
                 }}>
                 <Button
+                  delayPressIn={0}
+                  delayPressOut={0}
                   appearance="ghost"
                   style={styles.pauseButton}
                   onPress={toggleVideo}
                   accessoryRight={paused ? PlayIcon : PauseIcon}
                 />
                 <Button
+                  delayPressIn={0}
+                  delayPressOut={0}
                   appearance="ghost"
                   style={styles.pauseButton}
                   onPress={stepBackward}
                   accessoryRight={ArrowLeftIcon}
                 />
                 <Button
+                  delayPressIn={0}
+                  delayPressOut={0}
                   appearance="ghost"
                   style={styles.pauseButton}
                   onPress={stepFoward}
                   accessoryRight={ArrowRightIcon}
                 />
                 <Button
+                  delayPressIn={0}
+                  delayPressOut={0}
                   appearance="ghost"
                   style={styles.pauseButton}
                   onPress={changeStepCount}

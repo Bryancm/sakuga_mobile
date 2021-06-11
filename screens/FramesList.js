@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState, useRef, useMemo } from 'react';
 import { SafeAreaView, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { Divider, Layout, TopNavigation, TopNavigationAction, Icon, Text } from '@ui-kitten/components';
 import FastImage from 'react-native-fast-image';
@@ -181,6 +181,11 @@ export const FramesListScreen = ({ navigation, route }) => {
           }}>
           <FlatList
             data={frames}
+            initialNumToRender={30}
+            maxToRenderPerBatch={15}
+            windowSize={18}
+            onEndReachedThreshold={8}
+            updateCellsBatchingPeriod={100}
             renderItem={renderItem}
             keyExtractor={keyExtractor}
             numColumns={3}
