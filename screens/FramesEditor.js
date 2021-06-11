@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { SafeAreaView, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
 import { Divider, Icon, Layout, Button, Text, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { ProcessingManager } from 'react-native-video-processing';
-import VideoPlayer from 'react-native-video';
+import VideoPlayer from 'react-native-video-controls';
 import { Slider } from '../components/slider';
 import RNFS from 'react-native-fs';
 
@@ -42,6 +42,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   const [loading, setLoading] = useState(true);
   const [paused, setPaused] = useState(false);
   const [usingSlider, setUsingSlider] = useState(false);
+  const [duration, setDuration] = useState(false);
 
   const deleteFramesCache = async () => {
     const dir = `${RNFS.CachesDirectoryPath}/framesCache`;
@@ -69,6 +70,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
     setStepSize(stepSize);
     setTotalFPS(totalFps);
     setEndTime(info.duration);
+    setDuration(info.duration);
   };
 
   const getVideoInfo = async () => {
@@ -125,6 +127,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   const renderLeftAction = () => <TopNavigationAction icon={CloseIcon} onPress={navigateBack} />;
 
   const navigateFramesList = () => {
+    // console.log({ startTime, endTime, title, id, file_ext, url });
     navigation.navigate('FramesList', { startTime, endTime, title, id, file_ext, url });
   };
 
@@ -163,15 +166,25 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   }, [stepCount]);
 
   const setPositionAsync = (time, play) => {
-    video.current.seek(time);
     setCurrentTime(time);
-    setPaused(!play);
-    console.log({ time });
+    video.current.player.ref.seek(time);
+
+    // video.current.seek(time, 0);
+    play ? setPaused(false) : setPaused(true);
   };
 
-  const onProgress = ({ currentTime }) => {
-    setCurrentTime(currentTime);
+  const onProgress = (progress) => {
+    // console.log({ progress });
+    if (progress.currentTime >= currentTime) {
+      setCurrentTime(progress.currentTime);
+    }
   };
+
+  const onSeek = ({ currentTime, seekTime }) => {
+    setCurrentTime(seekTime);
+  };
+  const onPlay = () => setPaused(false);
+  const onPause = () => setPaused(true);
   useEffect(() => {
     setCurrentFPS(Math.round(currentTime / stepSize));
   }, [currentTime]);
@@ -199,24 +212,37 @@ export const FramesEditorScreen = ({ navigation, route }) => {
       <SafeAreaView style={{ flex: 1 }}>
         <TopNavigation
           title="Frames Trim"
-          subtitle={`${formatSeconds(currentTime)} ~ ${formatSeconds(endTime)}`}
+          subtitle={`${formatSeconds(startTime)} ~ ${formatSeconds(endTime)}`}
           alignment="center"
           accessoryLeft={renderLeftAction}
           accessoryRight={renderRightActions}
         />
         <Divider />
         <Layout style={{ flex: 1, paddingTop: '30%' }}>
-          <VideoPlayer
-            ref={video}
-            paused={paused}
-            repeat={true}
-            muted={true}
-            source={{ uri: url }}
-            style={styles.image}
-            resizeMode="contain"
-            onProgress={onProgress}
-            progressUpdateInterval={500}
-          />
+          <Layout style={styles.image}>
+            <VideoPlayer
+              ref={video}
+              paused={paused}
+              repeat={true}
+              muted={true}
+              source={{ uri: url }}
+              resizeMode="contain"
+              onProgress={onProgress}
+              onSeek={onSeek}
+              onPlay={onPlay}
+              onPause={onPause}
+              progressUpdateInterval={1000}
+              disableFullscreen
+              disablePlayPause
+              disableVolume
+              disableTimer
+              disableBack
+              disableSeekbar
+              // scrubbing={1}
+              // tapAnywhereToPause={true}
+              // controlTimeout={5000}
+            />
+          </Layout>
 
           <Layout style={styles.controlContainer}>
             <Layout
@@ -262,13 +288,16 @@ export const FramesEditorScreen = ({ navigation, route }) => {
               </Text>
             </Layout>
 
-            {endTime && (
+            {duration && (
               <Slider
-                durationMillis={endTime}
-                positionMillis={currentTime}
+                duration={duration}
+                currentTime={currentTime}
                 setPositionAsync={setPositionAsync}
                 usingSlider={usingSlider}
                 setUsingSlider={setUsingSlider}
+                setEndTime={setEndTime}
+                setStartTime={setStartTime}
+                setPaused={setPaused}
               />
             )}
           </Layout>

@@ -7,10 +7,19 @@ import RailSelected from './railSelected';
 import Label from './label';
 import Notch from './notch';
 
-export const Slider = ({ durationMillis, positionMillis, setPositionAsync, usingSlider, setUsingSlider }) => {
+export const Slider = ({
+  duration,
+  currentTime,
+  setPositionAsync,
+  usingSlider,
+  setUsingSlider,
+  setEndTime,
+  setStartTime,
+  setPaused,
+}) => {
   const mounted = useRef(true);
   const [low, setLow] = useState(0);
-  const [high, setHigh] = useState(durationMillis);
+  const [high, setHigh] = useState(duration);
   const [rangeChanged, setRangeChanged] = useState(null);
   const renderThumb = useCallback(() => <Thumb />, []);
   const renderRail = useCallback(() => <Rail />, []);
@@ -25,42 +34,51 @@ export const Slider = ({ durationMillis, positionMillis, setPositionAsync, using
   }, []);
 
   useEffect(() => {
-    if (!usingSlider) setLow(positionMillis);
-  }, [positionMillis, usingSlider]);
+    if (!usingSlider) setLow(currentTime);
+  }, [currentTime, usingSlider]);
 
   useEffect(() => {
     if (!usingSlider) {
-      if (rangeChanged) setRangeChanged(null);
       if (rangeChanged === 'high') {
         setPositionAsync(low, true);
-      } else {
-        setLow(positionMillis);
       }
+      if (rangeChanged) setRangeChanged(null);
     }
-  }, [positionMillis, usingSlider, rangeChanged, low]);
+  }, [usingSlider, rangeChanged, low]);
 
-  const handleValueChange = useCallback((l, h) => {
-    if (l !== low) {
-      setRangeChanged('low');
-    }
-    if (h !== high) {
-      setRangeChanged('high');
-    }
-    setLow(l);
-    setHigh(h);
-  }, []);
+  const handleValueChange = useCallback(
+    (l, h, fromUser) => {
+      if (fromUser) {
+        setLow(l);
+      }
+      if (fromUser) {
+        setHigh(h);
+      }
+      if (l !== low && fromUser) {
+        setRangeChanged('low');
+      }
+      if (h !== high && fromUser) {
+        setRangeChanged('high');
+      }
+    },
+    [low, high],
+  );
 
   const onTouchStart = useCallback(() => {
     setUsingSlider(true);
-    if (!usingSlider) setPositionAsync(positionMillis);
-  }, [usingSlider, positionMillis]);
+    setPaused(true);
+  }, []);
 
   const onTouchEnd = useCallback(() => {
-    if (usingSlider) {
-      if (rangeChanged === 'low') setPositionAsync(low);
-      if (rangeChanged === 'high') setPositionAsync(high);
+    if (rangeChanged === 'low') {
+      setPositionAsync(low);
+      setStartTime(low);
     }
-  }, [usingSlider, rangeChanged, low, high]);
+    if (rangeChanged === 'high') {
+      setPositionAsync(high);
+      setEndTime(high);
+    }
+  }, [rangeChanged, low, high]);
 
   const millisToMinutesAndSeconds = useCallback((millis) => {
     var minutes = Math.floor(millis / 60000);
@@ -76,8 +94,8 @@ export const Slider = ({ durationMillis, positionMillis, setPositionAsync, using
         <View style={{ width: '80%' }}>
           <RangeSlider
             min={0}
-            max={durationMillis}
-            step={0.1}
+            max={duration}
+            step={1}
             low={low}
             high={high}
             floatingLabel={true}
@@ -91,7 +109,7 @@ export const Slider = ({ durationMillis, positionMillis, setPositionAsync, using
             onTouchEnd={onTouchEnd}
           />
         </View>
-        <Text style={styles.title}>{`${millisToMinutesAndSeconds(durationMillis * 1000)}`}</Text>
+        <Text style={styles.title}>{`${millisToMinutesAndSeconds(duration * 1000)}`}</Text>
       </View>
     </View>
   );
