@@ -49,6 +49,7 @@ export const FramesListScreen = ({ navigation, route }) => {
       const seek = dif <= 0 ? '00:00.0' : formatSeconds(dif);
       const from = dif <= 0 ? '00:00.0' : formatSeconds(startTime - dif);
       const duration = formatSeconds(endTime - startTime);
+      const t = 
       const command = `-nostats -loglevel 0 -ss 00:${seek} -i ${url} -ss 00:${from} -t 00:${duration} -vsync 0 -q:v 1 "${directory}/${title}_${id}_${date}_%03d.jpg"`;
       await RNFFmpeg.execute(command);
       const dir = await RNFS.readDir(directory);
@@ -57,6 +58,7 @@ export const FramesListScreen = ({ navigation, route }) => {
           uri: Platform.OS === 'android' ? 'file://' + d.path : d.path,
         });
       }
+
       newFrames.sort((a, b) => ('' + a.uri).localeCompare(b.uri));
       if (mounted.current) setFrames(newFrames);
       if (mounted.current) setLoading(false);
