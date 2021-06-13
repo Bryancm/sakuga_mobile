@@ -57,7 +57,7 @@ export const SearchScreen = ({ navigation }) => {
       }
     } else {
       setAutoPlay(true);
-      setLayoutType('large');
+      setLayoutType('small');
     }
   };
 
