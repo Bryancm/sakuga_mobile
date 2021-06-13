@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useState, useRef, useMemo } from 'react';
-import { SafeAreaView, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
+import { SafeAreaView, FlatList, ActivityIndicator, TouchableOpacity, PermissionsAndroid } from 'react-native';
 import { Divider, Layout, TopNavigation, TopNavigationAction, Icon, Text } from '@ui-kitten/components';
 import FastImage from 'react-native-fast-image';
 import { RNFFmpeg } from 'react-native-ffmpeg';
 import RNFS from 'react-native-fs';
-import RNFetchBlob from 'rn-fetch-blob';
 import Share from 'react-native-share';
 import Toast from 'react-native-simple-toast';
+import ImageView from 'react-native-image-viewing';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back-outline" />;
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
@@ -19,6 +19,7 @@ const CheckmarkIcon = (props) => (
 );
 const SelectIcon = () => <Text category="s2">Select</Text>;
 const DownloadIcon = (props) => <Icon {...props} name="download-outline" />;
+const ShareIcon = (props) => <Icon {...props} name="share-outline" />;
 
 const formatSeconds = (seconds) => {
   return new Date(seconds ? seconds * 1000 : 0).toISOString().substr(14, 8);
@@ -36,11 +37,14 @@ export const FramesListScreen = ({ navigation, route }) => {
   const [selectView, setSelectView] = useState(false);
   const [loading, setLoading] = useState(true);
   const [frames, setFrames] = useState([]);
+  const [visible, setIsVisible] = useState(false);
+  const [imageIndex, setImageIndex] = useState(0);
+  const [loadingImages, setLoadingImages] = useState(false);
 
   const getVideoFrames = useCallback(async () => {
     try {
       const newFrames = [];
-      const directory = `${RNFS.CachesDirectoryPath}/framesCache/${id}`;
+      const directory = `${RNFS.CachesDirectoryPath}/framesCache`;
       const exist = await RNFS.exists(directory);
       if (exist) await RNFS.unlink(directory);
       await RNFS.mkdir(directory);
@@ -50,8 +54,7 @@ export const FramesListScreen = ({ navigation, route }) => {
       const from = dif <= 0 ? '00:00.0' : formatSeconds(startTime - dif);
       const duration = formatSeconds(endTime - startTime);
       const fileName = title.replace(/\s/g, '_').replace(/:/g, '_');
-      const command = `-nostats -loglevel 0 -ss 00:${seek} -i ${url} -ss 00:${from} -t 00:${duration} -vsync 0 -q:v 1 "${directory}/${id}_${date}_%03d.jpg"`;
-      console.log({ command });
+      const command = `-nostats -loglevel 0 -ss 00:${seek} -i ${url} -ss 00:${from} -t 00:${duration} -vsync 0 -q:v 1 "${directory}/${fileName}_${id}_${date}_%03d.jpg"`;
       await RNFFmpeg.execute(command);
       const dir = await RNFS.readDir(directory);
       for (const d of dir) {
@@ -88,12 +91,18 @@ export const FramesListScreen = ({ navigation, route }) => {
   };
   const renderBackAction = () => <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
 
-  const renderRightActions = () => (
-    <React.Fragment>
-      <TopNavigationAction icon={selectView ? CloseIcon : SelectIcon} onPress={toggleSelectView} />
-      {selectView && <TopNavigationAction icon={DownloadIcon} onPress={shareMultipleImages} />}
-    </React.Fragment>
-  );
+  const renderRightActions = () =>
+    loadingImages ? (
+      <React.Fragment>
+        <ActivityIndicator color="#D4D4D4" />
+      </React.Fragment>
+    ) : (
+      <React.Fragment>
+        <TopNavigationAction icon={selectView ? CloseIcon : SelectIcon} onPress={toggleSelectView} />
+        {selectView && <TopNavigationAction icon={ShareIcon} onPress={shareMultipleImages} />}
+        {selectView && <TopNavigationAction icon={DownloadIcon} onPress={downloadMultipleImages} />}
+      </React.Fragment>
+    );
 
   const clearSelectedItems = () => {
     const newFrames = frames.map((f) => ({ uri: f.uri, selected: false }));
@@ -102,6 +111,7 @@ export const FramesListScreen = ({ navigation, route }) => {
 
   const shareMultipleImages = async () => {
     try {
+      setLoadingImages(true);
       const urls = frames.filter((f) => f.selected).map((f) => f.uri);
       if (!urls || urls.length === 0) return Toast.show('Please select a image');
       const shareOptions = {
@@ -112,9 +122,44 @@ export const FramesListScreen = ({ navigation, route }) => {
         type: 'image/jpeg',
       };
       await Share.open(shareOptions);
+      setLoadingImages(false);
     } catch (error) {
       Toast.show('Error, Please try again later :(');
       console.log('SHARE_MULTIPLE_ERROR: ', error);
+      setLoadingImages(false);
+    }
+  };
+
+  const requestPermission = async () => {
+    const result = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
+    if (result === PermissionsAndroid.RESULTS.GRANTED) return true;
+    return false;
+  };
+
+  const downloadMultipleImages = async () => {
+    try {
+      setLoadingImages(true);
+      const checkPermission = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
+      if (!checkPermission) {
+        const granted = await requestPermission();
+        if (!granted) {
+          Toast.showWithGravity('Permission needed to download images or videos', Toast.SHORT, Toast.CENTER);
+          return setLoadingImages(false);
+        }
+      }
+
+      const fileName = title.replace(/\s/g, '_').replace(/:/g, '_');
+      const urls = frames.filter((f) => f.selected).map((f, i) => ({ uri: f.uri, name: `${fileName}_${id}_${i}` }));
+      for (const url of urls) {
+        const destPath = `${RNFS.DownloadDirectoryPath}/${url.name}.jpg`;
+        await RNFS.copyFile(url.uri, destPath);
+      }
+      Toast.showWithGravity('Success! Files downloaded', Toast.SHORT, Toast.CENTER);
+      setLoadingImages(false);
+    } catch (error) {
+      Toast.show('Error, Please try again later :(');
+      console.log('DOWNLOAD_MULTIPLE_ERROR: ', error);
+      setLoadingImages(false);
     }
   };
 
@@ -124,12 +169,14 @@ export const FramesListScreen = ({ navigation, route }) => {
     setFrames(newFrames);
   };
 
-  const openImage = (path) => {
-    RNFetchBlob.ios.openDocument(path);
+  const openImage = (index) => {
+    // RNFetchBlob.ios.openDocument(path);
+    setImageIndex(index);
+    setIsVisible(true);
   };
 
   const onItemPress = ({ item, index }) => {
-    selectView ? selectItem(index) : openImage(item.uri);
+    selectView ? selectItem(index) : openImage(index);
   };
 
   const renderItem = ({ item, index }) => (
@@ -145,6 +192,8 @@ export const FramesListScreen = ({ navigation, route }) => {
   );
 
   const keyExtractor = (item) => item.uri;
+
+  const closeImageView = () => setIsVisible(false);
 
   if (loading)
     return (
@@ -167,6 +216,13 @@ export const FramesListScreen = ({ navigation, route }) => {
   return (
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
+        <ImageView
+          images={frames}
+          imageIndex={imageIndex}
+          visible={visible}
+          onRequestClose={closeImageView}
+          swipeToCloseEnabled={false}
+        />
         <TopNavigation
           title="Frames"
           subtitle={`${formatSeconds(startTime)} ~ ${formatSeconds(endTime)}`}
