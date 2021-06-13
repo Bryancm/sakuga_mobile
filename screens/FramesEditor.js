@@ -12,7 +12,6 @@ const ArrowRightIcon = () => <Icon name="arrowhead-right-outline" style={{ width
 const ArrowLeftIcon = () => <Icon name="arrowhead-left-outline" style={{ width: 25, height: 25 }} fill="#D4D4D4" />;
 const PlayIcon = () => <Icon name="play-circle-outline" style={{ width: 25, height: 25 }} fill="#D4D4D4" />;
 const PauseIcon = () => <Icon name="pause-circle-outline" style={{ width: 25, height: 25 }} fill="#D4D4D4" />;
-const screenWidth = Dimensions.get('window').width;
 
 const formatSeconds = (seconds) => {
   return new Date(seconds ? seconds * 1000 : 0).toISOString().substr(14, 8);
@@ -91,14 +90,13 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   }, [paused]);
 
   const navigateBack = () => {
-    const setPaused = route.params.setPaused;
-    if (setPaused) setPaused(false);
     navigation.goBack();
   };
 
   const renderLeftAction = () => <TopNavigationAction icon={CloseIcon} onPress={navigateBack} />;
 
   const navigateFramesList = () => {
+    setPaused(true);
     navigation.navigate('FramesList', { startTime, endTime, title, id, file_ext, url });
   };
 

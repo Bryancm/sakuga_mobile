@@ -287,7 +287,7 @@ export const PostVerticalList = ({
       onViewableItemsChanged={onViewableItemsChanged}
       viewabilityConfig={{
         minimumViewTime: 200,
-        viewAreaCoveragePercentThreshold: 80,
+        viewAreaCoveragePercentThreshold: 90,
       }}
       contentContainerStyle={{
         paddingBottom: 10,
