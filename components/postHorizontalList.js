@@ -92,9 +92,10 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType, date, s
       const currentHistory = await getData(key);
       if (currentHistory) {
         const pageIndex = 18 * (page - 1);
-        const start = pageIndex <= currentHistory.length - 1 ? pageIndex : currentHistory.length - 1;
-        const end = page * 18 <= currentHistory.length - 1 ? page * 18 : currentHistory.length - 1;
-        const newData = from === 'Recent' ? currentHistory.slice(0, 8) : currentHistory.slice(start, end);
+        const start = pageIndex;
+        const end = page * 18;
+        const newData = currentHistory.slice(start, end);
+        if (newData.length === 0) setHasMore(false);
         newHistory = [...data, ...newData];
         if (page === 1) newHistory = newData;
       }
