@@ -21,6 +21,7 @@ import VideoPlayer from 'react-native-video-controls';
 import converProxyUrl from 'react-native-video-cache';
 import RNFetchBlob from 'rn-fetch-blob';
 import FastImage from 'react-native-fast-image';
+import ImageView from 'react-native-image-viewing';
 
 const SortIcon = () => (
   <Icon
@@ -64,6 +65,7 @@ export const DetailsScreen = ({ navigation, route }) => {
   const [loadingImage, setLoadingImage] = useState(true);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [fullScreen, setFullScreen] = useState(false);
+  const [visible, setIsVisible] = useState(false);
 
   const navigateLogin = () => {
     setPaused(true);
@@ -354,9 +356,9 @@ export const DetailsScreen = ({ navigation, route }) => {
     }
   };
 
-  const onImagePress = () => {
-    download();
-  };
+  const onImagePress = () => setIsVisible(true);
+
+  const closeImageView = () => setIsVisible(false);
 
   const navigateBack = () => {
     navigation.goBack();
@@ -377,6 +379,15 @@ export const DetailsScreen = ({ navigation, route }) => {
   return (
     <Layout level="2" style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
+        {!isVideo && (
+          <ImageView
+            images={[{ uri: item.file_url }]}
+            imageIndex={0}
+            visible={visible}
+            onRequestClose={closeImageView}
+            swipeToCloseEnabled={false}
+          />
+        )}
         {!isVideo && (
           <TouchableOpacity delayPressIn={0} delayPressOut={0} activeOpacity={0.7} onPress={onImagePress}>
             <Button appearance="ghost" accessoryRight={ArrowDown} style={styles.closeButton} onPress={navigateBack} />
