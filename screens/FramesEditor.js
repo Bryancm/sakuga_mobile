@@ -109,7 +109,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   const stepFoward = useCallback(() => {
     const stepTime = stepSize * stepCount;
     const time = currentTime + stepTime;
-    console.log({ time });
+    // console.log({ time });
     setCurrentTime(time);
     video.current.methods.seekTo(time);
     if (!paused) setPaused(true);
@@ -118,7 +118,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   const stepBackward = useCallback(() => {
     const stepTime = stepSize * stepCount;
     const time = currentTime - stepTime;
-    console.log({ time });
+    // console.log({ time });
     setCurrentTime(time);
     video.current.methods.seekTo(time);
     if (!paused) setPaused(true);

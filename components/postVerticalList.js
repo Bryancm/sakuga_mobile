@@ -103,7 +103,7 @@ export const PostVerticalList = ({
       const user = await getData('user');
       if (user) params = { ...params, user: user.name, password_hash: user.password_hash };
       const response = await getPosts(params);
-      if (response.posts.length === 0) setHasMore(false);
+      setHasMore(response.posts.length > 0);
       const postsWithTitle = response.posts.map((p) => postWithDetails(response.tags, p, response.votes));
       const filteredPosts = postsWithTitle.filter((p) => !data.some((currentPost) => currentPost.id === p.id));
       let newData = [...data, ...filteredPosts];
@@ -129,7 +129,7 @@ export const PostVerticalList = ({
         const start = pageIndex;
         const end = page * 18;
         const newData = currentHistory.slice(start, end);
-        if (newData.length === 0) setHasMore(false);
+        setHasMore(newData.length > 0);
         newHistory = [...data, ...newData];
         if (page === 1) newHistory = newData;
       }
@@ -279,15 +279,15 @@ export const PostVerticalList = ({
     <FlatList
       data={data}
       renderItem={renderItem}
-      initialNumToRender={layoutType === 'small' ? 8 : 4}
-      maxToRenderPerBatch={layoutType === 'small' ? 8 : 4}
-      windowSize={layoutType === 'small' ? 8 : 6}
-      onEndReachedThreshold={8}
+      initialNumToRender={layoutType === 'small' ? 12 : 8}
+      maxToRenderPerBatch={layoutType === 'small' ? 12 : 8}
+      windowSize={layoutType === 'small' ? 20 : 16}
+      onEndReachedThreshold={12}
       updateCellsBatchingPeriod={100}
       onViewableItemsChanged={onViewableItemsChanged}
       viewabilityConfig={{
         minimumViewTime: 200,
-        viewAreaCoveragePercentThreshold: 90,
+        viewAreaCoveragePercentThreshold: 100,
       }}
       contentContainerStyle={{
         paddingBottom: 10,

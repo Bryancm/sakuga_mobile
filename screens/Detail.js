@@ -37,7 +37,6 @@ const SortIcon = () => (
 const ArrowDown = (props) => <Icon {...props} name="arrow-ios-downward-outline" fill="#D4D4D4" />;
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const SendIcon = (props) => <Icon {...props} name="corner-down-right-outline" />;
-const screenHeight = Dimensions.get('window').width;
 // const videoHeight = Math.round(screenHeight * 0.26 - 1);
 const videoHeight = 233;
 
@@ -144,7 +143,7 @@ export const DetailsScreen = ({ navigation, route }) => {
         user: user.name,
         password_hash: user.password_hash,
       });
-      console.log({ response });
+      // console.log({ response });yarn
       fetchComments();
       cancelInput();
       // Toast.show('Comment added');
@@ -163,7 +162,7 @@ export const DetailsScreen = ({ navigation, route }) => {
       if (!user) return navigateLogin();
       const body = text.replace(/\n/g, '%0D%0A');
       const response = await editComment({ id, body, user: user.name, password_hash: user.password_hash });
-      console.log({ response });
+      // console.log({ response });
       fetchComments();
       cancelInput();
       // Toast.show('Comment edited');
@@ -204,7 +203,7 @@ export const DetailsScreen = ({ navigation, route }) => {
       const user = await getData('user');
       if (!user) return navigateLogin();
       const response = await deleteComment({ id, user: user.name, password_hash: user.password_hash });
-      console.log({ response });
+      // console.log({ response });
       fetchComments();
       // Toast.show('Comment deleted');
       Toast.showWithGravity(`Comment deleted`, Toast.SHORT, Toast.CENTER);
@@ -232,7 +231,7 @@ export const DetailsScreen = ({ navigation, route }) => {
       const user = await getData('user');
       if (!user) return navigateLogin();
       const response = await flagComment({ id, user: user.name, password_hash: user.password_hash });
-      console.log({ response });
+      // console.log({ response });
       fetchComments();
       // Toast.show('Comment flaged for delete');
       Toast.showWithGravity(`Comment flaged for delete`, Toast.SHORT, Toast.CENTER);

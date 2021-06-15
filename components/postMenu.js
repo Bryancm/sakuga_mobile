@@ -166,7 +166,7 @@ export const PostMenu = ({
       const filePath = `${directoryPath}/${fileName}_${item.id}.${fileExt}`;
       const isVideo = fileExt !== 'gif' && fileExt !== 'jpg' && fileExt !== 'jpeg' && fileExt !== 'png';
       const mimeType = isVideo ? `video/${fileExt}` : `image/${fileExt}`;
-      console.log(filePath);
+      // console.log(filePath);
       const configOptions = Platform.select({
         ios: {
           fileCache: true,
@@ -248,7 +248,7 @@ export const PostMenu = ({
           <MenuItem
             key="7"
             accessoryLeft={ArchiveIcon}
-            title={<Text category="c1">Add to watch list</Text>}
+            title={<Text category="c1">Watch later</Text>}
             onPress={addToWatchList}
           />
           {deleteAlert && (

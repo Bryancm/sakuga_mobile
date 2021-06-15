@@ -51,6 +51,7 @@
 		AAAF95545EFF46CBAED42D5B /* OpenSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A6070C320B0E49DDB9F05C76 /* OpenSans-Bold.ttf */; };
 		B4E3D42937F54797AFA91FA7 /* OpenSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 698FCF8ACF3B4521BA0E48C4 /* OpenSans-BoldItalic.ttf */; };
 		C9C3EC87DC874473B334242F /* libPods-SakugaMobile-SakugaMobileTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 140E6273EBB1E1B417AD594C /* libPods-SakugaMobile-SakugaMobileTests.a */; };
+		0928792E6503461B80B5808F /* sakuga.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9DB435DB9CEF4E3DBCCB4BD5 /* sakuga.jpg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -181,6 +182,7 @@
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 		FD215D331DFC4335C8D42894 /* Pods-SakugaMobile-SakugaMobileTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SakugaMobile-SakugaMobileTests.release.xcconfig"; path = "Target Support Files/Pods-SakugaMobile-SakugaMobileTests/Pods-SakugaMobile-SakugaMobileTests.release.xcconfig"; sourceTree = "<group>"; };
+		9DB435DB9CEF4E3DBCCB4BD5 /* sakuga.jpg */ = {isa = PBXFileReference; name = "sakuga.jpg"; path = "../assets/images/sakuga.jpg"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -412,6 +414,7 @@
 				380C2A99DE154840A621CE11 /* OpenSans-Regular.ttf */,
 				3945313FB7794245BFE5CC62 /* OpenSans-SemiBold.ttf */,
 				C6893BC651B44D8490656479 /* OpenSans-SemiBoldItalic.ttf */,
+				9DB435DB9CEF4E3DBCCB4BD5 /* sakuga.jpg */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -613,6 +616,7 @@
 				27337B2821E34C589431C405 /* OpenSans-Regular.ttf in Resources */,
 				3759225DA12745EB8EAC22A5 /* OpenSans-SemiBold.ttf in Resources */,
 				87740158417746D6B80B342F /* OpenSans-SemiBoldItalic.ttf in Resources */,
+				0928792E6503461B80B5808F /* sakuga.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

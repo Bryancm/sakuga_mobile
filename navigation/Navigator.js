@@ -59,6 +59,7 @@ const HomeStackNavigator = () => (
     <Stack.Screen name="Home" component={NewScreen} />
   </Stack.Navigator>
 );
+
 const ExploreStackNavigator = () => (
   <Stack.Navigator headerMode="none">
     <Stack.Screen name="Explore" component={ExploreScreen} />

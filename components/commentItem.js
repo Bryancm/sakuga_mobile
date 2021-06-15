@@ -70,7 +70,7 @@ export const CommentItem = ({ item, user, onEdit, onDelete, onFlagComment, seek 
   var quotes = item.body.match(/\[quote\](?:.|\n|\r)+?\[\/quote\][\n\r]*/gm);
   const body = item.body.split(/\[quote\](?:.|\n|\r)+?\[\/quote\][\n\r]*/gm).filter((b) => b);
   const hasQuotes = quotes && quotes.length > 0;
-
+  var array = body ? body : [];
   if (hasQuotes) {
     quotes = quotes.map((q) => {
       return q
@@ -78,6 +78,7 @@ export const CommentItem = ({ item, user, onEdit, onDelete, onFlagComment, seek 
         .replace('[/quote]', '')
         .replace(/(\n\s*?\n)\s*\n/, '');
     });
+    array = body && body.length > quotes.length ? body : quotes;
   }
 
   const menuAnchor = () => (
@@ -129,30 +130,26 @@ export const CommentItem = ({ item, user, onEdit, onDelete, onFlagComment, seek 
         )}
       </Layout>
 
-      {hasQuotes ? (
-        quotes.map((q, i) => (
-          <Layout level="2" key={i} style={{ paddingHorizontal: 8 }}>
+      {array.map((q, i) => (
+        <Layout level="2" key={i} style={{ paddingHorizontal: 8 }}>
+          {quotes && quotes[i] && (
             <Layout level="3" style={{ borderRadius: 2, marginLeft: 8 }}>
               <Text category="c1" style={{ lineHeight: 17, padding: 8 }}>
                 <ParsedText parse={textParse} selectable={true}>
-                  {q}
+                  {quotes[i]}
                 </ParsedText>
               </Text>
             </Layout>
+          )}
+          {body && body[i] && (
             <Text category="c1" style={{ lineHeight: 17, paddingTop: 8 }}>
               <ParsedText parse={textParse} selectable={true}>
                 {body[i]}
               </ParsedText>
             </Text>
-          </Layout>
-        ))
-      ) : (
-        <Text category="c1" style={{ lineHeight: 17, paddingHorizontal: 8 }}>
-          <ParsedText parse={textParse} selectable={true}>
-            {body[0]}
-          </ParsedText>
-        </Text>
-      )}
+          )}
+        </Layout>
+      ))}
     </Layout>
   );
 };

@@ -27,7 +27,7 @@ export const CardSmall = React.memo(({ item, deleteAlert, navigateDetail }) => {
             {title}
           </Text>
           <Layout style={{ justifyContent: 'space-between', height: 90 }}>
-            <Text style={{ width: '95%' }} numberOfLines={4}>
+            <Text style={{ width: '95%' }} numberOfLines={3}>
               {tags.length > 0 &&
                 tags.map((t, i) =>
                   t.style ? (
@@ -43,7 +43,7 @@ export const CardSmall = React.memo(({ item, deleteAlert, navigateDetail }) => {
             </Text>
 
             <Layout style={styles.buttonContainer}>
-              <Text appearance="hint" category="c1">
+              <Text appearance="hint" category="c1" numberOfLines={3}>
                 {getRelativeTime(item.created_at * 1000)}
               </Text>
               <PostMenu item={item} deleteAlert={deleteAlert} />

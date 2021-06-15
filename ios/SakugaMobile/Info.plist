@@ -36,7 +36,7 @@
 		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Sakuga Mobile needs permission to write photos</string>
 	<key>NSPhotoLibraryUsageDescription</key>

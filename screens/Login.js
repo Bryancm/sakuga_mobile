@@ -35,7 +35,7 @@ export const LoginScreen = () => {
   const navigateBackFavorites = () => {
     navigateBack();
     setTimeout(() => {
-      console.log({ user });
+      // console.log({ user });
       navigatePostList('Favorites', true, 'Favorites', `vote:3:${user} order:vote`);
     }, 500);
   };
