@@ -65,6 +65,7 @@ export const DetailsScreen = ({ navigation, route }) => {
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [fullScreen, setFullScreen] = useState(false);
   const [visible, setIsVisible] = useState(false);
+  const [commentSort, setCommentSort] = useState('Newest');
 
   const navigateLogin = () => {
     setPaused(true);
