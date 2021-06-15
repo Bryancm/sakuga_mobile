@@ -375,6 +375,13 @@ export const DetailsScreen = ({ navigation, route }) => {
     setVideoLoaded(true);
   };
 
+  const sortComments = () => {
+    if (commentSort === 'Newest') return comments.sort((a, b) => new Date(a.created_at) < new Date(b.created_at));
+    return comments.reverse();
+  };
+
+  const sortedComments = sortComments(comments);
+
   return (
     <Layout level="2" style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -438,7 +445,7 @@ export const DetailsScreen = ({ navigation, route }) => {
         )}
         <CommentList
           commentList={commentList}
-          data={user === undefined ? [] : comments}
+          data={user === undefined ? [] : sortedComments}
           isFetching={isFetching}
           isRefetching={isRefetching}
           refetch={refetchComments}
