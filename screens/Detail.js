@@ -376,6 +376,11 @@ export const DetailsScreen = ({ navigation, route }) => {
     setVideoLoaded(true);
   };
 
+  const changeCommentSort = () => {
+    if (commentSort === 'Newest') return setCommentSort('Oldest');
+    setCommentSort('Newest');
+  };
+
   const sortComments = () => {
     if (commentSort === 'Newest') return comments.sort((a, b) => new Date(a.created_at) < new Date(b.created_at));
     return comments.reverse();
@@ -498,9 +503,10 @@ export const DetailsScreen = ({ navigation, route }) => {
                   paddingVertical: 0,
                   alignItems: 'center',
                   justifyContent: 'center',
-                }}>
+                }}
+                onPress={changeCommentSort}>
                 <Text appearance="hint" category="c1" style={{ marginBottom: 8 }}>
-                  Newest
+                  {commentSort}
                 </Text>
               </Button>
             </Layout>
