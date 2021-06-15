@@ -22,6 +22,7 @@ import converProxyUrl from 'react-native-video-cache';
 import RNFetchBlob from 'rn-fetch-blob';
 import FastImage from 'react-native-fast-image';
 import ImageView from 'react-native-image-viewing';
+import RNFS from 'react-native-fs';
 
 const SortIcon = () => (
   <Icon
@@ -66,6 +67,18 @@ export const DetailsScreen = ({ navigation, route }) => {
   const [fullScreen, setFullScreen] = useState(false);
   const [visible, setIsVisible] = useState(false);
   const [commentSort, setCommentSort] = useState('Newest');
+
+  const deleteFramesCache = async () => {
+    const dir = `${RNFS.CachesDirectoryPath}/framesCache`;
+    const exist = await RNFS.exists(dir);
+    if (exist) await RNFS.unlink(dir);
+  };
+
+  const deleteGIFCache = async () => {
+    const dir = `${RNFS.CachesDirectoryPath}/gifCache`;
+    const exist = await RNFS.exists(dir);
+    if (exist) await RNFS.unlink(dir);
+  };
 
   const navigateLogin = () => {
     setPaused(true);
@@ -245,6 +258,8 @@ export const DetailsScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     mounted.current = true;
+    deleteFramesCache();
+    deleteGIFCache();
     loadUser();
     updatePostHistory();
     fetchComments();

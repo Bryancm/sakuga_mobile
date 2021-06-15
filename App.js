@@ -52,7 +52,7 @@ export default () => {
   const cleanCache = async () => {
     try {
       if (Platform.OS === 'android') {
-        const dir = `/storage/emulated/0/Android/data/com.sakugamobile/cache/video-cache`;
+        const dir = `/storage/emulated/0/Android/data/com.sakugabo/cache/video-cache`;
         removeFiles(dir);
       } else {
         const video_dir = `${RNFS.DocumentDirectoryPath}/KTVHTTPCache`;
