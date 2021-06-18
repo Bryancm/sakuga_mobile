@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { SafeAreaView, FlatList } from 'react-native';
 import { Divider, Layout, TopNavigation, TopNavigationAction, Icon } from '@ui-kitten/components';
 import { PostHorizontalList } from '../components/postHorizontalList';
@@ -8,6 +8,7 @@ import { exploreData } from '../util/exploreData';
 const SearchIcon = (props) => <Icon {...props} name="search-outline" />;
 
 export const ExploreScreen = ({ navigation }) => {
+  const [data, setData] = useState(exploreData);
   const navigateSearch = () => {
     navigation.navigate('Search');
   };
@@ -50,11 +51,12 @@ export const ExploreScreen = ({ navigation }) => {
           }}>
           <FlatList
             showsVerticalScrollIndicator={false}
-            data={exploreData}
+            data={data}
             renderItem={renderItem}
             initialNumToRender={3}
             maxToRenderPerBatch={3}
-            windowSize={9}
+            windowSize={13}
+            updateCellsBatchingPeriod={100}
             getItemLayout={getItemLayout}
             keyExtractor={keyExtractor}
             contentContainerStyle={{
