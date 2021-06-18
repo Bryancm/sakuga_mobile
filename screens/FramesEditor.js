@@ -1,6 +1,16 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { SafeAreaView, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
-import { Divider, Icon, Layout, Button, Text, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
+import { SafeAreaView, StyleSheet, ActivityIndicator } from 'react-native';
+import {
+  Divider,
+  Icon,
+  Layout,
+  Button,
+  Text,
+  TopNavigation,
+  TopNavigationAction,
+  OverflowMenu,
+  MenuItem,
+} from '@ui-kitten/components';
 import { RNFFprobe, RNFFmpegConfig } from 'react-native-ffmpeg';
 import VideoPlayer from 'react-native-video-controls';
 import { Slider } from '../components/slider';
@@ -37,6 +47,45 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   const [paused, setPaused] = useState(false);
   const [usingSlider, setUsingSlider] = useState(false);
   const [duration, setDuration] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [rate, setRate] = useState(1);
+
+  const toggleMenu = () => {
+    setPaused(true);
+    setMenuVisible(!menuVisible);
+  };
+
+  const menuAnchor = () => (
+    <Button
+      delayPressIn={0}
+      delayPressOut={0}
+      appearance="ghost"
+      style={styles.pauseButton}
+      onPress={toggleMenu}
+      accessoryRight={() => <Text category="c1">{`x${rate}`}</Text>}
+    />
+  );
+
+  const updateRate = (rate) => {
+    setRate(rate);
+    setMenuVisible(false);
+    setPaused(false);
+  };
+
+  const RateMenu = () => (
+    <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>
+      <MenuItem key="1" title={<Text category="c1">x0.05</Text>} onPress={() => updateRate(0.05)} />
+      <MenuItem key="2" title={<Text category="c1">x0.1</Text>} onPress={() => updateRate(0.1)} />
+      <MenuItem key="3" title={<Text category="c1">x0.25</Text>} onPress={() => updateRate(0.25)} />
+      <MenuItem key="4" title={<Text category="c1">x0.50</Text>} onPress={() => updateRate(0.5)} />
+      <MenuItem key="5" title={<Text category="c1">x0.75</Text>} onPress={() => updateRate(0.75)} />
+      <MenuItem key="6" title={<Text category="c1">x1</Text>} onPress={() => updateRate(1)} />
+      <MenuItem key="7" title={<Text category="c1">x1.25</Text>} onPress={() => updateRate(1.25)} />
+      <MenuItem key="8" title={<Text category="c1">x1.50</Text>} onPress={() => updateRate(1.5)} />
+      <MenuItem key="9" title={<Text category="c1">x1.75</Text>} onPress={() => updateRate(1.75)} />
+      <MenuItem key="10" title={<Text category="c1">x2</Text>} onPress={() => updateRate(2)} />
+    </OverflowMenu>
+  );
 
   const deleteFramesCache = async () => {
     const dir = `${RNFS.CachesDirectoryPath}/framesCache`;
@@ -194,6 +243,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
               controlAnimationTiming={1}
               controlTimeout={1}
               showOnStart={false}
+              rate={rate}
             />
           </Layout>
 
@@ -203,7 +253,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
                 ...styles.buttonContainer,
                 justifyContent: 'space-between',
                 paddingHorizontal: 8,
-                marginBottom: 40,
+                marginBottom: 50,
               }}>
               <Layout
                 style={{
@@ -220,6 +270,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
                   onPress={toggleVideo}
                   accessoryRight={paused ? PlayIcon : PauseIcon}
                 />
+                <RateMenu />
                 <Button
                   delayPressIn={0}
                   delayPressOut={0}
@@ -242,7 +293,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
                   appearance="ghost"
                   style={styles.pauseButton}
                   onPress={changeStepCount}
-                  accessoryRight={() => <Text category="s2">{`x${stepCount}`}</Text>}
+                  accessoryRight={() => <Text category="c1">{`x${stepCount}f`}</Text>}
                 />
               </Layout>
               <Text status="primary" category="s2">
