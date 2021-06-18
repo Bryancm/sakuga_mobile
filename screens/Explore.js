@@ -30,6 +30,15 @@ export const ExploreScreen = ({ navigation }) => {
     [],
   );
 
+  const getItemLayout = useCallback(
+    (item, index) => ({
+      length: item.menuType === 'tag' ? 100 : 260,
+      offset: item.menuType === 'tag' ? 100 * index : 260 * index,
+      index,
+    }),
+    [],
+  );
+
   return (
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -43,10 +52,10 @@ export const ExploreScreen = ({ navigation }) => {
             showsVerticalScrollIndicator={false}
             data={exploreData}
             renderItem={renderItem}
-            initialNumToRender={4}
-            maxToRenderPerBatch={4}
-            windowSize={12}
-            updateCellsBatchingPeriod={100}
+            initialNumToRender={3}
+            maxToRenderPerBatch={3}
+            windowSize={9}
+            getItemLayout={getItemLayout}
             keyExtractor={keyExtractor}
             contentContainerStyle={{
               paddingBottom: 10,

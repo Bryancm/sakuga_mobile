@@ -139,8 +139,8 @@ android {
         applicationId 'com.sakugabo'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 24
-        versionName '2.0.4'
+        versionCode 25
+        versionName '2.0.5'
         multiDexEnabled true
     }
     splits {
