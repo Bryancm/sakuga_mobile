@@ -289,7 +289,7 @@ export const GifEditorScreen = ({ navigation, route }) => {
             <Layout
               style={{
                 ...styles.buttonContainer,
-                justifyContent: 'space-between',
+                justifyContent: 'flex-start',
                 marginBottom: 0,
                 paddingHorizontal: 8,
                 backgroundColor: 'transparent',
@@ -302,7 +302,7 @@ export const GifEditorScreen = ({ navigation, route }) => {
               />
               <RateMenu />
             </Layout>
-            <Layout style={{ ...styles.buttonContainer, marginBottom: 50 }}>
+            <Layout style={{ ...styles.buttonContainer, marginBottom: 45 }}>
               <Button size="small" appearance="ghost" onPress={() => changeFPS(5)}>
                 <Text status={fps === 5 ? 'primary' : 'basic'} category={fps === 5 ? 's1' : 's2'}>
                   5 FPS
@@ -365,6 +365,7 @@ const styles = StyleSheet.create({
   },
   image: { width: '100%', height: 320, backgroundColor: '#000' },
   pauseButton: {
+    marginRight: 8,
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 0,

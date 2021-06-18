@@ -260,7 +260,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
                   ...styles.buttonContainer,
                   marginBottom: 0,
                   justifyContent: 'space-between',
-                  width: '55%',
+                  width: '57%',
                 }}>
                 <Button
                   delayPressIn={0}
