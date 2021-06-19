@@ -15,7 +15,7 @@ export const TagHorizontalList = ({ title, menuType, search = '', order, type })
   const fetchTags = async (page, isFirst, search, order, type) => {
     try {
       if (!isFirst) setFetching(true);
-      const response = await getTags({ name: search, page, order, type });
+      const response = await getTags({ name: search, page, order, type, limit: 30 });
       const filteredTags = response.filter((t) => !data.some((currentTag) => currentTag.id === t.id));
       let newData = [...data, ...filteredTags];
       if (page === 1) newData = filteredTags;
@@ -66,7 +66,7 @@ export const TagHorizontalList = ({ title, menuType, search = '', order, type })
         <ScrollView horizontal>
           <FlatList
             bounces={false}
-            numColumns={25}
+            numColumns={15}
             data={data}
             renderItem={renderItem}
             windowSize={10}
