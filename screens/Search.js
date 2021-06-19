@@ -64,7 +64,7 @@ export const SearchScreen = ({ navigation }) => {
   const initData = async () => {
     try {
       const currentHistory = await getData('tagHistory');
-      const newData = await getTags({});
+      const newData = await getTags({ limit: 10 });
       currentHistory ? setData([...currentHistory, ...newData]) : setData(newData);
     } catch (error) {
       console.log('ERROR_INIT_DATA: ', error);
@@ -86,7 +86,7 @@ export const SearchScreen = ({ navigation }) => {
     const splittedQuery = query.split(' ');
     const lastItem = splittedQuery[splittedQuery.length - 1];
     if (!query) setRange({});
-    getTags({ name: lastItem.toLowerCase(), order: 'count' })
+    getTags({ name: lastItem.toLowerCase(), order: 'count', limit: 10 })
       .then((d) => {
         query ? setData(d) : initData();
       })
