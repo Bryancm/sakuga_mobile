@@ -5,8 +5,9 @@ export const getPosts = async ({
   include_votes = 0,
   user = '',
   password_hash = '',
+  limit = '',
 }) => {
-  const url = `https://www.sakugabooru.com/post.json?page=${page}&tags=${search}&filter=1&api_version=2&include_tags=${include_tags}&include_votes=${include_votes}&login=${user}&password_hash=${password_hash}`;
+  const url = `https://www.sakugabooru.com/post.json?page=${page}&tags=${search}&filter=1&api_version=2&include_tags=${include_tags}&include_votes=${include_votes}&login=${user}&password_hash=${password_hash}&limit=${limit}`;
   const response = await fetch(url);
   return response.json();
 };
