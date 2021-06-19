@@ -1,6 +1,16 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { SafeAreaView, StyleSheet, Dimensions, ActivityIndicator, Platform } from 'react-native';
-import { Divider, Icon, Layout, Button, Text, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
+import {
+  Divider,
+  Icon,
+  Layout,
+  Button,
+  Text,
+  TopNavigation,
+  TopNavigationAction,
+  OverflowMenu,
+  MenuItem,
+} from '@ui-kitten/components';
 import { VideoPlayer, Trimmer } from 'react-native-video-processing';
 import { RNFFmpeg } from 'react-native-ffmpeg';
 import RNFS from 'react-native-fs';
@@ -38,6 +48,45 @@ export const GifEditorScreen = ({ navigation, route }) => {
   const [fps, setFPS] = useState(8);
   const [loading, setLoading] = useState(true);
   const [loadingGIF, setLoadingGIF] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [rate, setRate] = useState(1);
+
+  const toggleMenu = () => {
+    setPaused(true);
+    setMenuVisible(!menuVisible);
+  };
+
+  const menuAnchor = () => (
+    <Button
+      delayPressIn={0}
+      delayPressOut={0}
+      appearance="ghost"
+      style={styles.pauseButton}
+      onPress={toggleMenu}
+      accessoryRight={() => <Text category="c1">{`x${rate}`}</Text>}
+    />
+  );
+
+  const updateRate = (rate) => {
+    setRate(rate);
+    setMenuVisible(false);
+    setPaused(false);
+  };
+
+  const RateMenu = () => (
+    <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>
+      <MenuItem key="1" title={<Text category="c1">x0.05</Text>} onPress={() => updateRate(0.05)} />
+      <MenuItem key="2" title={<Text category="c1">x0.1</Text>} onPress={() => updateRate(0.1)} />
+      <MenuItem key="3" title={<Text category="c1">x0.25</Text>} onPress={() => updateRate(0.25)} />
+      <MenuItem key="4" title={<Text category="c1">x0.50</Text>} onPress={() => updateRate(0.5)} />
+      <MenuItem key="5" title={<Text category="c1">x0.75</Text>} onPress={() => updateRate(0.75)} />
+      <MenuItem key="6" title={<Text category="c1">x1</Text>} onPress={() => updateRate(1)} />
+      <MenuItem key="7" title={<Text category="c1">x1.25</Text>} onPress={() => updateRate(1.25)} />
+      <MenuItem key="8" title={<Text category="c1">x1.50</Text>} onPress={() => updateRate(1.5)} />
+      <MenuItem key="9" title={<Text category="c1">x1.75</Text>} onPress={() => updateRate(1.75)} />
+      <MenuItem key="10" title={<Text category="c1">x2</Text>} onPress={() => updateRate(2)} />
+    </OverflowMenu>
+  );
 
   const deleteGIFCache = async () => {
     const dir = `${RNFS.CachesDirectoryPath}/gifCache`;
@@ -202,13 +251,14 @@ export const GifEditorScreen = ({ navigation, route }) => {
           style={{ backgroundColor: 'black' }}
           resizeMode={VideoPlayer.Constants.resizeMode.CONTAIN}
           onChange={onVideoChange} // get Current time on every second
+          rate={rate}
         />
 
         <Layout style={styles.controlContainer}>
           <Layout
             style={{
               ...styles.buttonContainer,
-              justifyContent: 'space-between',
+              justifyContent: 'flex-start',
               marginBottom: 0,
               paddingHorizontal: 8,
             }}>
@@ -218,6 +268,7 @@ export const GifEditorScreen = ({ navigation, route }) => {
               onPress={toggleVideo}
               accessoryRight={play ? PauseIcon : PlayIcon}
             />
+            <RateMenu />
           </Layout>
           <Layout style={styles.buttonContainer}>
             <Button size="small" appearance="ghost" onPress={() => changeFPS(5)}>
@@ -283,6 +334,7 @@ const styles = StyleSheet.create({
   },
   image: { width: '100%', height: 210, backgroundColor: '#000' },
   pauseButton: {
+    marginRight: 8,
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 0,
