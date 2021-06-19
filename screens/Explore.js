@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { SafeAreaView, FlatList } from 'react-native';
 import { Divider, Layout, TopNavigation, TopNavigationAction, Icon } from '@ui-kitten/components';
 import { PostHorizontalList } from '../components/postHorizontalList';
