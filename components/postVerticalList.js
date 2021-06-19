@@ -283,7 +283,7 @@ export const PostVerticalList = ({
       initialNumToRender={layoutType === 'small' ? 8 : 4}
       maxToRenderPerBatch={layoutType === 'small' ? 8 : 4}
       windowSize={layoutType === 'small' ? 8 : 6}
-      onEndReachedThreshold={0.5}
+      onEndReachedThreshold={12}
       updateCellsBatchingPeriod={100}
       onViewableItemsChanged={onViewableItemsChanged}
       viewabilityConfig={{
