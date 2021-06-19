@@ -1,5 +1,5 @@
-export const getTags = async ({ name = '', page = 1, order = 'date', type = '' }) => {
-  const url = `https://www.sakugabooru.com/tag.json?order=${order}&page=${page}&type=${type}&name=${name}`;
+export const getTags = async ({ name = '', page = 1, order = 'date', type = '', limit = '' }) => {
+  const url = `https://www.sakugabooru.com/tag.json?order=${order}&page=${page}&type=${type}&name=${name}&limit=${limit}`;
   const response = await fetch(url);
   return response.json();
 };
