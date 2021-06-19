@@ -168,9 +168,9 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType, date, s
           horizontal
           data={data}
           renderItem={renderItem}
-          windowSize={6}
-          initialNumToRender={4}
-          maxToRenderPerBatch={4}
+          windowSize={4}
+          initialNumToRender={2}
+          maxToRenderPerBatch={2}
           keyExtractor={keyExtractor}
           ListEmptyComponent={
             <Layout style={styles.center}>
