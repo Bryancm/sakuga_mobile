@@ -66,7 +66,7 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType, date, s
   const fetchPost = async (page, isFirst, search) => {
     try {
       if (!isFirst) setFetching(true);
-      var params = { search, page, include_tags: 1, include_votes: 1 };
+      var params = { search, page, include_tags: 1, include_votes: 1, limit: 8 };
       const user = await getData('user');
       if (user) params = { ...params, user: user.name, password_hash: user.password_hash };
       const response = await getPosts(params);
