@@ -50,7 +50,8 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   const [rate, setRate] = useState(1);
 
   const toggleMenu = () => {
-    setPaused(true);
+    setPlay(false);
+    setReplay(false);
     setMenuVisible(!menuVisible);
   };
 
@@ -68,7 +69,8 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   const updateRate = (rate) => {
     setRate(rate);
     setMenuVisible(false);
-    setPaused(false);
+    setPlay(true);
+    setReplay(true);
   };
 
   const RateMenu = () => (
@@ -263,7 +265,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
           style={{ backgroundColor: 'black' }}
           resizeMode={VideoPlayer.Constants.resizeMode.CONTAIN}
           onChange={onVideoChange} // get Current time on every second
-          rate={rate}
+          volume={rate}
         />
 
         <Layout style={styles.controlContainer}>
@@ -278,7 +280,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
                 ...styles.buttonContainer,
                 marginBottom: 0,
                 justifyContent: 'space-between',
-                width: '55%',
+                width: '65%',
               }}>
               <Button
                 appearance="ghost"
@@ -303,7 +305,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
                 appearance="ghost"
                 style={styles.pauseButton}
                 onPress={changeStepCount}
-                accessoryRight={() => <Text category="s2">{`x${stepCount}f`}</Text>}
+                accessoryRight={() => <Text category="c1">{`x${stepCount}f`}</Text>}
               />
             </Layout>
             <Text status="primary" category="s2">

@@ -52,7 +52,8 @@ export const GifEditorScreen = ({ navigation, route }) => {
   const [rate, setRate] = useState(1);
 
   const toggleMenu = () => {
-    setPaused(true);
+    setPlay(false);
+    setReplay(false);
     setMenuVisible(!menuVisible);
   };
 
@@ -70,7 +71,8 @@ export const GifEditorScreen = ({ navigation, route }) => {
   const updateRate = (rate) => {
     setRate(rate);
     setMenuVisible(false);
-    setPaused(false);
+    setPlay(true);
+    setReplay(true);
   };
 
   const RateMenu = () => (
@@ -251,7 +253,7 @@ export const GifEditorScreen = ({ navigation, route }) => {
           style={{ backgroundColor: 'black' }}
           resizeMode={VideoPlayer.Constants.resizeMode.CONTAIN}
           onChange={onVideoChange} // get Current time on every second
-          rate={rate}
+          volume={rate}
         />
 
         <Layout style={styles.controlContainer}>
