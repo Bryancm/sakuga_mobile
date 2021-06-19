@@ -25,6 +25,7 @@
     "react-native-ffmpeg": "^0.5.1",
     "react-native-fs": "^2.18.0",
     "react-native-gesture-handler": "^1.10.3",
+    "react-native-image-viewing": "^0.2.0",
     "react-native-parsed-text": "^0.0.22",
     "react-native-reanimated": "^2.1.0",
     "react-native-safe-area-context": "^3.2.0",
