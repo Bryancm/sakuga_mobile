@@ -16,13 +16,13 @@ Sakuga usually refers to a remarkably higher quality animation sequence used to 
   
 ## Tech Stack
 
-- React Native
-- UI Kitten
-- React Native Ffmpeg
-- React Native Video
+- [React Native](https://reactnative.dev)
+- [UI Kitten](https://akveo.github.io/react-native-ui-kitten/)
+- [React Native Ffmpeg](https://github.com/tanersener/react-native-ffmpeg)
+- [React Native Video](https://github.com/react-native-video/react-native-video)
 - [React Native Video Proccessing](https://github.com/shahen94/react-native-video-processing)
-- React Navigation
-- Sakugabooru API
+- [React Navigation](https://reactnavigation.org)
+- [Sakugabooru API](https://www.sakugabooru.com/help/api)
 
 
   
