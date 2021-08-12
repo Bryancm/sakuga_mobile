@@ -9,8 +9,8 @@ Sakuga usually refers to a remarkably higher quality animation sequence used to 
 <div style="display:flex;flex-direction:row;" >
   <img style="margin-right:20px" src="https://raw.githubusercontent.com/Bryancm/sakuga_mobile/main/assets/images/screenshot_1.png?token=AEI2HV3GFBVXMMWLUPHAA2DBCVFTK" width="260" height="589" />
   <img src="https://raw.githubusercontent.com/Bryancm/sakuga_mobile/main/assets/images/screenshot_1.png?token=AEI2HV3GFBVXMMWLUPHAA2DBCVFTK" width="260" height="589" />
-  <img src="https://raw.githubusercontent.com/Bryancm/sakuga_mobile/main/assets/images/screenshot_1.png?token=AEI2HV3GFBVXMMWLUPHAA2DBCVFTK" width="260" height="589" />
-  <img src="https://raw.githubusercontent.com/Bryancm/sakuga_mobile/main/assets/images/screenshot_1.png?token=AEI2HV3GFBVXMMWLUPHAA2DBCVFTK" width="260" height="589" />
+<!--   <img src="https://raw.githubusercontent.com/Bryancm/sakuga_mobile/main/assets/images/screenshot_1.png?token=AEI2HV3GFBVXMMWLUPHAA2DBCVFTK" width="260" height="589" /> -->
+<!--   <img src="https://raw.githubusercontent.com/Bryancm/sakuga_mobile/main/assets/images/screenshot_1.png?token=AEI2HV3GFBVXMMWLUPHAA2DBCVFTK" width="260" height="589" /> -->
 </div>
 
   
