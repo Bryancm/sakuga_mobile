@@ -6,7 +6,7 @@ Sakuga usually refers to a remarkably higher quality animation sequence used to 
 
 ## Screenshots
 
-<div style="display:flex;flex-direction:row;" >
+<div style="display:flex;flex-direction:row;text-align:center;" >
     <img align="left" src="https://raw.githubusercontent.com/Bryancm/sakuga_mobile/main/assets/images/screenshot_1.pngtoken=AEI2HV3GFBVXMMWLUPHAA2DBCVFTK" width="260" height="589" />
   <img align="center"  src="https://raw.githubusercontent.com/Bryancm/sakuga_mobile/main/assets/images/screenshot_1.png?token=AEI2HV3GFBVXMMWLUPHAA2DBCVFTK" width="260" height="589" />
   <img align="right"  src="https://raw.githubusercontent.com/Bryancm/sakuga_mobile/main/assets/images/screenshot_1.png?token=AEI2HV3GFBVXMMWLUPHAA2DBCVFTK" width="260" height="589" />
