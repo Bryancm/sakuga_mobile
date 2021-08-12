@@ -74,6 +74,7 @@ Until I finished the iOS version I notice that React Native Video Proccessing do
 - User can create post
 - User can customize the explore section
 - User can view post previews when small layout is active
+- Add Picture in Picture
 
 
   
