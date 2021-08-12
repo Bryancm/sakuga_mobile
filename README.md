@@ -8,7 +8,7 @@ Sakuga usually refers to a remarkably higher quality animation sequence used to 
 
 <!-- ![App Screenshot](https://raw.githubusercontent.com/Bryancm/sakuga_mobile/main/assets/images/screenshot_1.png?token=AEI2HV43J3KO3D3MQA6FEKDBCVD6C) -->
 
-<img src="https://raw.githubusercontent.com/Bryancm/sakuga_mobile/main/assets/images/screenshot_1.png?token=AEI2HV4CE6QH4OQZ3IXHGTLBCVE4A" width="100" height="100" />
+<img src="https://raw.githubusercontent.com/Bryancm/sakuga_mobile/main/assets/images/screenshot_1.png?token=AEI2HV4CE6QH4OQZ3IXHGTLBCVE4A" width="200" height="600" />
   
 ## Tech Stack
 
