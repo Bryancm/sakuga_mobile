@@ -86,5 +86,5 @@ For support, email me bryan.mtzs@gmail.com or send me a message on twitter [@bry
 
 Contributions are always welcome!
 
-Please don't hesitate to open a pull request. You can also send me a message on Twitter.
+Please don't hesitate to do a fork and a pull request. You can also send me a message on Twitter.
   
