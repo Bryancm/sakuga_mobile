@@ -20,7 +20,7 @@ Sakuga usually refers to a remarkably higher quality animation sequence used to 
 - UI Kitten
 - React Native Ffmpeg
 - React Native Video
-- React Native Video Processing
+- [React Native Video Proccessing](https://github.com/shahen94/react-native-video-processing)
 - React Navigation
 - Sakugabooru API
 
