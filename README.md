@@ -57,6 +57,7 @@ Sakuga usually refers to a remarkably higher quality animation sequence used to 
 ```
 For iOS [React Native Video Proccessing](https://github.com/shahen94/react-native-video-processing) has to be installed manually please follow the official installation instructions.
 - Android
+
 Until I finished the iOS version I notice that React Native Video Proccessing doesn't work properly on android so I decided to remove it and put a new solution for video trim (a slider) but because of this I still need to refactor some code before doing the merge (it is a roadmap activity). In the meantime you can use the android branch to run it on android.
 ```bash  //iOS
 //swicth to android branch
