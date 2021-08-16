@@ -26,7 +26,7 @@ Sakuga usually refers to a remarkably higher quality animation sequence used to 
 - [React Navigation](https://reactnavigation.org)
 - [Sakugabooru API](https://www.sakugabooru.com/help/api)
 
-More dependencies can be found on package.json file
+More details on dependencies can be found on package.json file.
 
 
   
