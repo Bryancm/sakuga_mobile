@@ -38,10 +38,11 @@ Sakuga usually refers to a remarkably higher quality animation sequence used to 
     ├── screens                 # Main screens that the app navigator uses (also are functional components)
     ├── util                    # Some util like date and storage functions
     ├── App.js                  # Main App file
-    ├── custom-theme.json       # Color theme
-    ├── mapping.json            # Custom fonts
+    ├── custom-theme.json       # UI Kitten file for color theme
+    ├── mapping.json            # UI Kiitten mapping file for custom fonts
     ├── package.json            # Dependencies, scripts and project details
     ├── react-native.config.js  # Config dependencies
+    ├── style.js                # Tags style
     └── README.md
 
   
