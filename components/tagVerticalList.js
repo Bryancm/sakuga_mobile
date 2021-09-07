@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FlatList, ActivityIndicator, RefreshControl, StyleSheet } from 'react-native';
+import { FlatList, ActivityIndicator, RefreshControl, StyleSheet, Platform } from 'react-native';
 import { getTags } from '../api/tag';
 import { Layout, Text } from '@ui-kitten/components';
 import { useNavigation } from '@react-navigation/native';

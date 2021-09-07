@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, FlatList, TouchableOpacity, Alert, Dimensions } from 'react-native';
+import { StyleSheet, FlatList, TouchableOpacity, Alert, Dimensions, Platform } from 'react-native';
 import { Layout, Text, Icon, Button } from '@ui-kitten/components';
 import { getTagStyle } from '../util/api';
 
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '58%',
     position: 'absolute',
-    top: screenHeight > 736 ? 90 : 70,
+    top: screenHeight > 736 && !Platform.isPad ? 90 : 70,
     left: 0,
     zIndex: 10,
   },

@@ -4,6 +4,7 @@ import { Text, Icon, Layout, Input, Button } from '@ui-kitten/components';
 import { registerUser } from '../api/user';
 import { sha1 } from 'react-native-sha1';
 import { storeData } from '../util/storage';
+import { scale } from 'react-native-size-matters';
 
 const EmailIcon = (props) => <Icon {...props} name="email-outline" />;
 const PersonIcon = (props) => <Icon {...props} name="person-outline" />;
@@ -114,7 +115,10 @@ export const CreateAccountForm = ({ loadUser, from, navigateBack, navigatePostLi
         {errors.map((e) => (
           <Text category="c2">{e}</Text>
         ))}
-        <Button style={{ width: '100%', marginTop: 24, marginBottom: 16 }} onPress={createAccount} disabled={loading}>
+        <Button
+          style={{ width: scale(220), marginTop: 24, marginBottom: 16 }}
+          onPress={createAccount}
+          disabled={loading}>
           {loading ? <ActivityIndicator /> : <Text category="h6">Create account</Text>}
         </Button>
       </Layout>
@@ -126,15 +130,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 8,
+    alignItems: 'center',
   },
   inputContainer: {
     flex: 1,
     padding: 8,
     paddingTop: 24,
     justifyContent: 'center',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   input: {
     marginVertical: 2,
+    width: scale(220),
   },
 });

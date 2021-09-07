@@ -23,6 +23,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import FastImage from 'react-native-fast-image';
 import { RNFFmpeg } from 'react-native-ffmpeg';
 import RNFS from 'react-native-fs';
+import { verticalScale } from 'react-native-size-matters';
 
 const SortIcon = () => (
   <Icon
@@ -38,8 +39,8 @@ const SortIcon = () => (
 const ArrowDown = (props) => <Icon {...props} name="arrow-ios-downward-outline" fill="#D4D4D4" />;
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const SendIcon = (props) => <Icon {...props} name="corner-down-right-outline" />;
-const screenHeight = Dimensions.get('window').height;
-const videoHeight = 233;
+
+const videoHeight = Platform.isPad ? verticalScale(280) : verticalScale(232);
 
 export const DetailsScreen = ({ navigation, route }) => {
   const mounted = useRef(true);

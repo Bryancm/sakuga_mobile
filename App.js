@@ -20,6 +20,7 @@ import { default as mapping } from './mapping.json';
 import { AppNavigator } from './navigation/Navigator';
 import RNFS from 'react-native-fs';
 import SplashScreen from 'react-native-splash-screen';
+import Orientation from 'react-native-orientation-locker';
 
 /**
  * Use any valid `name` property from eva icons (e.g `github`, or `heart-outline`)
@@ -75,6 +76,7 @@ export default () => {
 
   useEffect(() => {
     AppState.addEventListener('change', handleAppState);
+    if (!Platform.isPad) Orientation.lockToPortrait();
     SplashScreen.hide();
     return () => {
       AppState.removeEventListener('change', handleAppState);

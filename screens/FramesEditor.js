@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { SafeAreaView, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
+import { SafeAreaView, StyleSheet, Dimensions, ActivityIndicator, Platform, useWindowDimensions } from 'react-native';
 import {
   Divider,
   Icon,
@@ -13,6 +13,7 @@ import {
 } from '@ui-kitten/components';
 import { VideoPlayer, Trimmer } from 'react-native-video-processing';
 import RNFS from 'react-native-fs';
+import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
 
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const GridIcon = (props) => <Icon {...props} name="grid-outline" />;
@@ -20,13 +21,13 @@ const ArrowRightIcon = () => <Icon name="arrowhead-right-outline" style={{ width
 const ArrowLeftIcon = () => <Icon name="arrowhead-left-outline" style={{ width: 25, height: 25 }} fill="#D4D4D4" />;
 const PlayIcon = () => <Icon name="play-circle-outline" style={{ width: 25, height: 25 }} fill="#D4D4D4" />;
 const PauseIcon = () => <Icon name="pause-circle-outline" style={{ width: 25, height: 25 }} fill="#D4D4D4" />;
-const screenWidth = Dimensions.get('window').width;
 
 const formatSeconds = (seconds) => {
   return new Date(seconds ? seconds * 1000 : 0).toISOString().substr(14, 8);
 };
 
 export const FramesEditorScreen = ({ navigation, route }) => {
+  const { width } = useWindowDimensions();
   var abortController = new AbortController();
   const mounted = useRef(true);
   const videoPlayer = useRef();
@@ -242,6 +243,16 @@ export const FramesEditorScreen = ({ navigation, route }) => {
       </Layout>
     );
 
+  var w = scale(270);
+  var h = scale(270);
+  if (width < 694 && width >= 507) {
+    w = scale(200);
+    h = scale(200);
+  } else if (width <= 320) {
+    w = scale(140);
+    h = scale(140);
+  }
+
   return (
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -253,20 +264,25 @@ export const FramesEditorScreen = ({ navigation, route }) => {
           accessoryRight={renderRightActions}
         />
         <Divider />
-
-        <VideoPlayer
-          ref={videoPlayer}
-          startTime={startTime} // seconds
-          endTime={endTime} // seconds
-          play={play} // default false
-          replay={replay} // should player play video again if it's ended
-          currentTime={currentTime}
-          source={url}
-          style={{ backgroundColor: 'black' }}
-          resizeMode={VideoPlayer.Constants.resizeMode.CONTAIN}
-          onChange={onVideoChange} // get Current time on every second
-          volume={rate}
-        />
+        <Layout style={{ flex: 1, paddingTop: 10, justifyContent: 'flex-start', alignItems: 'center' }}>
+          <Layout style={{ width: w, height: h }}>
+            <VideoPlayer
+              ref={videoPlayer}
+              startTime={startTime} // seconds
+              endTime={endTime} // seconds
+              play={play} // default false
+              replay={replay} // should player play video again if it's ended
+              currentTime={currentTime}
+              playerWidth={w}
+              playerHeight={h}
+              source={url}
+              style={{ backgroundColor: 'black' }}
+              resizeMode={VideoPlayer.Constants.resizeMode.CONTAIN}
+              onChange={onVideoChange} // get Current time on every second
+              volume={rate}
+            />
+          </Layout>
+        </Layout>
 
         <Layout style={styles.controlContainer}>
           <Layout
@@ -280,7 +296,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
                 ...styles.buttonContainer,
                 marginBottom: 0,
                 justifyContent: 'space-between',
-                width: '65%',
+                width: '70%',
               }}>
               <Button
                 appearance="ghost"
@@ -316,7 +332,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
           <Trimmer
             source={url}
             height={60}
-            width={screenWidth - 8}
+            width={width}
             onTrackerMove={onTrackerMove} // iOS only
             currentTime={currentTimeTrimmer} // use this prop to set tracker position iOS only
             themeColor="#C3070B" // iOS only
@@ -365,7 +381,7 @@ const styles = StyleSheet.create({
   },
   controlContainer: {
     position: 'absolute',
-    bottom: '15%',
+    bottom: Platform.isPad ? '5%' : '15%',
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',

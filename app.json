@@ -1,4 +1,5 @@
 {
   "name": "SakugaMobile",
-  "displayName": "SakugaMobile"
+  "displayName": "SakugaMobile",
+  "backgroundColor": "#000000"
 }

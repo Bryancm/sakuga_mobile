@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { SafeAreaView, StyleSheet, Dimensions, ActivityIndicator, Platform } from 'react-native';
+import { SafeAreaView, StyleSheet, ActivityIndicator, Platform, useWindowDimensions } from 'react-native';
 import {
   Divider,
   Icon,
@@ -15,6 +15,7 @@ import { VideoPlayer, Trimmer } from 'react-native-video-processing';
 import { RNFFmpeg } from 'react-native-ffmpeg';
 import RNFS from 'react-native-fs';
 import RNFetchBlob from 'rn-fetch-blob';
+import { scale, verticalScale } from 'react-native-size-matters';
 
 const GifIcon = () => (
   <Text style={{ paddingTop: 3, fontWeight: 'bold' }} category="s1">
@@ -24,7 +25,6 @@ const GifIcon = () => (
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const PlayIcon = () => <Icon name="play-circle-outline" style={{ width: 25, height: 25 }} fill="#D4D4D4" />;
 const PauseIcon = () => <Icon name="pause-circle-outline" style={{ width: 25, height: 25 }} fill="#D4D4D4" />;
-const screenWidth = Dimensions.get('window').width;
 
 const formatSeconds = (seconds) => {
   return new Date(seconds ? seconds * 1000 : 0).toISOString().substr(14, 8);
@@ -50,6 +50,8 @@ export const GifEditorScreen = ({ navigation, route }) => {
   const [loadingGIF, setLoadingGIF] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
   const [rate, setRate] = useState(1);
+
+  const { width } = useWindowDimensions();
 
   const toggleMenu = () => {
     setPlay(false);
@@ -230,6 +232,16 @@ export const GifEditorScreen = ({ navigation, route }) => {
       </Layout>
     );
 
+  var w = scale(270);
+  var h = scale(270);
+  if (width < 694 && width >= 507) {
+    w = scale(200);
+    h = scale(200);
+  } else if (width <= 320) {
+    w = scale(140);
+    h = scale(140);
+  }
+
   return (
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -241,20 +253,25 @@ export const GifEditorScreen = ({ navigation, route }) => {
           accessoryRight={renderRightActions}
         />
         <Divider />
-
-        <VideoPlayer
-          ref={videoPlayer}
-          startTime={startTime} // seconds
-          endTime={endTime} // seconds
-          play={play} // default false
-          replay={replay} // should player play video again if it's ended
-          currentTime={currentTime}
-          source={url}
-          style={{ backgroundColor: 'black' }}
-          resizeMode={VideoPlayer.Constants.resizeMode.CONTAIN}
-          onChange={onVideoChange} // get Current time on every second
-          volume={rate}
-        />
+        <Layout style={{ flex: 1, paddingTop: 10, justifyContent: 'flex-start', alignItems: 'center' }}>
+          <Layout style={{ width: w, height: h }}>
+            <VideoPlayer
+              ref={videoPlayer}
+              startTime={startTime} // seconds
+              endTime={endTime} // seconds
+              play={play} // default false
+              replay={replay} // should player play video again if it's ended
+              currentTime={currentTime}
+              playerWidth={w}
+              playerHeight={h}
+              source={url}
+              style={{ backgroundColor: 'black' }}
+              resizeMode={VideoPlayer.Constants.resizeMode.CONTAIN}
+              onChange={onVideoChange} // get Current time on every second
+              volume={rate}
+            />
+          </Layout>
+        </Layout>
 
         <Layout style={styles.controlContainer}>
           <Layout
@@ -303,7 +320,7 @@ export const GifEditorScreen = ({ navigation, route }) => {
           <Trimmer
             source={url}
             height={60}
-            width={screenWidth - 8}
+            width={width}
             onTrackerMove={onTrackerMove} // iOS only
             currentTime={currentTimeTrimmer} // use this prop to set tracker position iOS only
             themeColor="#C3070B" // iOS only
@@ -336,7 +353,7 @@ const styles = StyleSheet.create({
   },
   image: { width: '100%', height: 210, backgroundColor: '#000' },
   pauseButton: {
-    marginRight: 8,
+    marginRight: 12,
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 0,
@@ -353,7 +370,7 @@ const styles = StyleSheet.create({
   },
   controlContainer: {
     position: 'absolute',
-    bottom: '18%',
+    bottom: Platform.isPad ? '5%' : '18%',
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',

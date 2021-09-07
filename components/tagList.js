@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, Platform } from 'react-native';
 import { Layout, Text, Button, Icon } from '@ui-kitten/components';
 import { tagStyles } from '../styles';
 import { useNavigation } from '@react-navigation/native';
@@ -13,9 +13,10 @@ const ChevronUpIcon = (props) => (
 );
 
 export const TagList = ({ tags, style, level = '2', loadCount = false, setPaused }) => {
+  const isPad = Platform.isPad;
   const [more, setMore] = useState();
   const [allTags, setAllTags] = useState(tags);
-  const [postTags, setTags] = useState(allTags.slice(0, 5));
+  const [postTags, setTags] = useState(isPad ? allTags : allTags.slice(0, 5));
   const navigation = useNavigation();
 
   const navigatePostList = (from, isPosts, menuType, search, order, type) => {
@@ -77,7 +78,7 @@ export const TagList = ({ tags, style, level = '2', loadCount = false, setPaused
             </Layout>
           ),
         )}
-      {tags.length > 5 && (
+      {tags.length > 5 && !isPad && (
         <Button
           size="small"
           status="basic"

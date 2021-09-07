@@ -253,7 +253,7 @@ export const SearchScreen = ({ navigation }) => {
   return (
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
-        <Layout style={{ flexDirection: 'row' }}>
+        <Layout style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
           <Input
             style={{ padding: 8, width: '77%' }}
             size="small"

@@ -100,11 +100,7 @@ export const AppNavigator = () => (
       <Stack.Screen name="PostList" component={PostListScreen} />
       <Stack.Screen name="Settings" component={SettingScreen} />
       <Stack.Screen name="Search" component={SearchScreen} options={{ cardStyleInterpolator: forFade }} />
-      <Stack.Screen
-        name="Detail"
-        component={DetailsScreen}
-        options={{ gestureDirection: 'vertical', cardStyleInterpolator: forVerticalModal }}
-      />
+      <Stack.Screen name="Detail" component={DetailsScreen} options={{ cardStyleInterpolator: forVerticalModal }} />
       <Stack.Screen
         name="GifEditor"
         component={GifEditorScreen}

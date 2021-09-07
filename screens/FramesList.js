@@ -1,5 +1,12 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
-import { SafeAreaView, FlatList, ActivityIndicator, TouchableOpacity, Image } from 'react-native';
+import {
+  SafeAreaView,
+  FlatList,
+  ActivityIndicator,
+  TouchableOpacity,
+  Platform,
+  useWindowDimensions,
+} from 'react-native';
 import { Divider, Layout, TopNavigation, TopNavigationAction, Icon, Text } from '@ui-kitten/components';
 import FastImage from 'react-native-fast-image';
 import { RNFFmpeg } from 'react-native-ffmpeg';
@@ -7,6 +14,7 @@ import RNFS from 'react-native-fs';
 import RNFetchBlob from 'rn-fetch-blob';
 import Share from 'react-native-share';
 import Toast from 'react-native-simple-toast';
+import { scale, verticalScale } from 'react-native-size-matters';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back-outline" />;
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
@@ -36,6 +44,8 @@ export const FramesListScreen = ({ navigation, route }) => {
   const [selectView, setSelectView] = useState(false);
   const [loading, setLoading] = useState(true);
   const [frames, setFrames] = useState([]);
+
+  const { width } = useWindowDimensions();
 
   const getVideoFrames = useCallback(async () => {
     try {
@@ -134,7 +144,12 @@ export const FramesListScreen = ({ navigation, route }) => {
       delayPressIn={0}
       delayPressOut={0}
       activeOpacity={0.7}
-      style={{ width: '33%', height: 100, marginRight: 2, marginBottom: 2 }}
+      style={{
+        width: !Platform.isPad || width <= 320 ? '33%' : '25%',
+        height: !Platform.isPad || width <= 320 ? verticalScale(80) : verticalScale(100),
+        marginRight: 2,
+        marginBottom: 2,
+      }}
       onPress={() => onItemPress({ item, index })}>
       <FastImage style={{ width: '100%', height: '100%' }} source={item} />
       {item.selected && <CheckmarkIcon />}
@@ -177,10 +192,11 @@ export const FramesListScreen = ({ navigation, route }) => {
             flex: 1,
           }}>
           <FlatList
+            key={`w-${width}`}
             data={frames}
             renderItem={renderItem}
             keyExtractor={keyExtractor}
-            numColumns={3}
+            numColumns={!Platform.isPad || width <= 320 ? 3 : 4}
             columnWrapperStyle={{
               flex: 1,
               justifyContent: 'flex-start',
