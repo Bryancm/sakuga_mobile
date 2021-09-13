@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { SafeAreaView, StyleSheet, Dimensions, ActivityIndicator, Platform, useWindowDimensions } from 'react-native';
+import { SafeAreaView, StyleSheet, ActivityIndicator, Platform, useWindowDimensions } from 'react-native';
 import {
   Divider,
   Icon,
@@ -27,7 +27,7 @@ const formatSeconds = (seconds) => {
 };
 
 export const FramesEditorScreen = ({ navigation, route }) => {
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   var abortController = new AbortController();
   const mounted = useRef(true);
   const videoPlayer = useRef();
@@ -245,13 +245,17 @@ export const FramesEditorScreen = ({ navigation, route }) => {
 
   var w = scale(270);
   var h = scale(270);
+  var jc = 'flex-start';
   if (width < 694 && width >= 507) {
     w = scale(200);
     h = scale(200);
-  } else if (width <= 320) {
-    w = scale(140);
-    h = scale(140);
+  } else if (width <= 375) {
+    w = !Platform.isPad ? width : scale(140);
+    h = !Platform.isPad ? scale(232) : scale(140);
+    jc = 'flex-start';
   }
+
+  // console.log(width);
 
   return (
     <Layout style={{ flex: 1 }}>
@@ -264,7 +268,13 @@ export const FramesEditorScreen = ({ navigation, route }) => {
           accessoryRight={renderRightActions}
         />
         <Divider />
-        <Layout style={{ flex: 1, paddingTop: 10, justifyContent: 'flex-start', alignItems: 'center' }}>
+        <Layout
+          style={{
+            flex: 1,
+            paddingTop: Platform.isPad ? 10 : '30%',
+            justifyContent: jc,
+            alignItems: 'center',
+          }}>
           <Layout style={{ width: w, height: h }}>
             <VideoPlayer
               ref={videoPlayer}

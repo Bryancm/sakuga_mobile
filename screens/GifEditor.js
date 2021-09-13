@@ -234,12 +234,14 @@ export const GifEditorScreen = ({ navigation, route }) => {
 
   var w = scale(270);
   var h = scale(270);
+  var jc = 'flex-start';
   if (width < 694 && width >= 507) {
     w = scale(200);
     h = scale(200);
-  } else if (width <= 320) {
-    w = scale(140);
-    h = scale(140);
+  } else if (width <= 375) {
+    w = !Platform.isPad ? width : scale(140);
+    h = !Platform.isPad ? scale(232) : scale(140);
+    jc = 'flex-start';
   }
 
   return (
@@ -253,7 +255,7 @@ export const GifEditorScreen = ({ navigation, route }) => {
           accessoryRight={renderRightActions}
         />
         <Divider />
-        <Layout style={{ flex: 1, paddingTop: 10, justifyContent: 'flex-start', alignItems: 'center' }}>
+        <Layout style={{ flex: 1, paddingTop: Platform.isPad ? 10 : '30%', justifyContent: jc, alignItems: 'center' }}>
           <Layout style={{ width: w, height: h }}>
             <VideoPlayer
               ref={videoPlayer}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, ActivityIndicator } from 'react-native';
+import { StyleSheet, ActivityIndicator, Platform } from 'react-native';
 import { Text, Icon, Layout, Input, Button } from '@ui-kitten/components';
 import { login } from '../api/user';
 import { sha1 } from 'react-native-sha1';
@@ -70,10 +70,17 @@ export const LoginForm = ({ loadUser, from, navigateBack, navigatePostList, navi
           onChangeText={onChangePassword}
         />
         {error && <Text category="c2">{error}</Text>}
-        <Button style={{ width: scale(220), marginTop: 24, marginBottom: 16 }} onPress={loginUser} disabled={loading}>
+        <Button
+          style={{ width: Platform.isPad ? scale(220) : '100%', marginTop: 24, marginBottom: 16 }}
+          onPress={loginUser}
+          disabled={loading}>
           {loading ? <ActivityIndicator /> : <Text category="h6">Login</Text>}
         </Button>
-        <Button appearance="outline" style={{ width: scale(220) }} disabled={loading} onPress={navigateCreateAccount}>
+        <Button
+          appearance="outline"
+          style={{ width: Platform.isPad ? scale(220) : '100%' }}
+          disabled={loading}
+          onPress={navigateCreateAccount}>
           <Text status={loading ? 'basic' : 'primary'} category="h6">
             Create account
           </Text>
@@ -87,7 +94,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 8,
-    alignItems: 'center',
+    alignItems: Platform.isPad ? 'center' : 'stretch',
   },
   inputContainer: {
     flex: 1,
@@ -98,6 +105,6 @@ const styles = StyleSheet.create({
   },
   input: {
     marginVertical: 2,
-    width: scale(220),
+    width: Platform.isPad ? scale(220) : '100%',
   },
 });

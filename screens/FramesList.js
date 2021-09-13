@@ -145,8 +145,8 @@ export const FramesListScreen = ({ navigation, route }) => {
       delayPressOut={0}
       activeOpacity={0.7}
       style={{
-        width: !Platform.isPad || width <= 320 ? '33%' : '25%',
-        height: !Platform.isPad || width <= 320 ? verticalScale(80) : verticalScale(100),
+        width: !Platform.isPad || width <= 375 ? '33%' : '25%',
+        height: !Platform.isPad || width <= 375 ? verticalScale(80) : verticalScale(100),
         marginRight: 2,
         marginBottom: 2,
       }}
@@ -196,7 +196,7 @@ export const FramesListScreen = ({ navigation, route }) => {
             data={frames}
             renderItem={renderItem}
             keyExtractor={keyExtractor}
-            numColumns={!Platform.isPad || width <= 320 ? 3 : 4}
+            numColumns={!Platform.isPad || width <= 375 ? 3 : 4}
             columnWrapperStyle={{
               flex: 1,
               justifyContent: 'flex-start',

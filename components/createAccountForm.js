@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, ActivityIndicator, Linking } from 'react-native';
+import { StyleSheet, ActivityIndicator, Linking, Platform } from 'react-native';
 import { Text, Icon, Layout, Input, Button } from '@ui-kitten/components';
 import { registerUser } from '../api/user';
 import { sha1 } from 'react-native-sha1';
@@ -116,7 +116,7 @@ export const CreateAccountForm = ({ loadUser, from, navigateBack, navigatePostLi
           <Text category="c2">{e}</Text>
         ))}
         <Button
-          style={{ width: scale(220), marginTop: 24, marginBottom: 16 }}
+          style={{ width: Platform.isPad ? scale(220) : '100%', marginTop: 24, marginBottom: 16 }}
           onPress={createAccount}
           disabled={loading}>
           {loading ? <ActivityIndicator /> : <Text category="h6">Create account</Text>}
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 8,
-    alignItems: 'center',
+    alignItems: Platform.isPad ? 'center' : 'stretch',
   },
   inputContainer: {
     flex: 1,
@@ -141,6 +141,6 @@ const styles = StyleSheet.create({
   },
   input: {
     marginVertical: 2,
-    width: scale(220),
+    width: Platform.isPad ? scale(220) : '100%',
   },
 });
