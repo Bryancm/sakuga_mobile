@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { SafeAreaView, ActivityIndicator } from 'react-native';
+import { SafeAreaView, ActivityIndicator, Platform } from 'react-native';
 import { Divider, Layout, TopNavigation, TopNavigationAction, Icon } from '@ui-kitten/components';
 import { PostVerticalList } from '../components/postVerticalList';
 import { getData } from '../util/storage';
@@ -20,8 +20,8 @@ export const NewScreen = ({ navigation }) => {
         setLayoutType(settings.sizeForNew);
       }
     } else {
-      setAutoPlay(true);
-      setLayoutType('large');
+      setAutoPlay(Platform.isPad ? false : true);
+      setLayoutType(Platform.isPad ? 'grid' : 'large');
     }
   };
 

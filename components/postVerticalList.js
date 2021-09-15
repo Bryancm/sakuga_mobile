@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { FlatList, ActivityIndicator, RefreshControl, StyleSheet, Alert, Dimensions } from 'react-native';
 import { CardSmall } from './cardSmall';
 import { Card } from '../components/card';
+import { SmallCard as GridCard } from './cardHorizontal';
 import { getPosts } from '../api/post';
 import { Layout, Text, Button, Icon } from '@ui-kitten/components';
 import { tagStyles } from '../styles';
@@ -212,16 +213,24 @@ export const PostVerticalList = ({
 
   const renderItem = useCallback(
     ({ item, index }) => {
-      return layoutType === 'small' ? (
+      if (layoutType === 'grid')
+        return (
+          <GridCard item={item} deleteAlert={showDeleteButton ? deleteAlert : false} navigateDetail={navigateDetail} />
+        );
+
+      if (layoutType === 'large')
+        return (
+          <Card
+            ref={(ref) => (cellRefs[index] = ref)}
+            item={item}
+            deleteAlert={showDeleteButton ? deleteAlert : false}
+            navigateDetail={navigateDetail}
+            autoPlay={autoPlay}
+          />
+        );
+
+      return (
         <CardSmall item={item} deleteAlert={showDeleteButton ? deleteAlert : false} navigateDetail={navigateDetail} />
-      ) : (
-        <Card
-          ref={(ref) => (cellRefs[index] = ref)}
-          item={item}
-          deleteAlert={showDeleteButton ? deleteAlert : false}
-          navigateDetail={navigateDetail}
-          autoPlay={autoPlay}
-        />
       );
     },
     [layoutType, autoPlay],
@@ -268,6 +277,32 @@ export const PostVerticalList = ({
     }
   }, []);
 
+  const listProps = useCallback(() => {
+    var props = {
+      initialNumToRender: 8,
+      maxToRenderPerBatch: 8,
+      windowSize: 8,
+      numColumns: 1,
+    };
+    if (layoutType === 'grid') {
+      props.initialNumToRender = 12;
+      props.maxToRenderPerBatch = 12;
+      props.windowSize = 12;
+      props.numColumns = 4;
+      props.columnWrapperStyle = {
+        flex: 1,
+        justifyContent: 'space-evenly',
+      };
+    }
+    if (layoutType === 'large') {
+      props.initialNumToRender = 4;
+      props.maxToRenderPerBatch = 4;
+      props.windowSize = 6;
+      props.numColumns = 1;
+    }
+    return props;
+  }, [layoutType]);
+
   if (focus) return <Layout style={{ ...styles.center, height: '100%' }} />;
   if (isLoading)
     return (
@@ -278,11 +313,10 @@ export const PostVerticalList = ({
 
   return (
     <FlatList
+      {...listProps()}
+      key={`post_list_${layoutType}`}
       data={data}
       renderItem={renderItem}
-      initialNumToRender={layoutType === 'small' ? 8 : 4}
-      maxToRenderPerBatch={layoutType === 'small' ? 8 : 4}
-      windowSize={layoutType === 'small' ? 8 : 6}
       onEndReachedThreshold={12}
       updateCellsBatchingPeriod={100}
       onViewableItemsChanged={onViewableItemsChanged}

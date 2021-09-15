@@ -2,7 +2,7 @@ import React from 'react';
 import { ActivityIndicator, Platform } from 'react-native';
 import { Icon, Layout, Text, Button, OverflowMenu, MenuItem } from '@ui-kitten/components';
 import { storeData, getData } from '../util/storage';
-import { vote } from '../api/post';
+import { getPosts, vote } from '../api/post';
 import Toast from 'react-native-simple-toast';
 import Clipboard from '@react-native-community/clipboard';
 import RNFetchBlob from 'rn-fetch-blob';
@@ -107,6 +107,16 @@ export const PostMenu = ({
     }
   };
 
+  const verifyVote = async (user) => {
+    const post = await getPosts({
+      search: `id:${item.id}`,
+      include_votes: 1,
+      user: user.name,
+      password_hash: user.password_hash,
+    });
+    return post.votes[item.id] ? post.votes[item.id] : 0;
+  };
+
   const addScore = async (score) => {
     try {
       toggleMenu();
@@ -116,8 +126,14 @@ export const PostMenu = ({
         setLoading(false);
         return navigation.navigate('Login');
       }
+
+      const prevVote = await verifyVote(user);
+      if (prevVote === score) {
+        setLoading(false);
+        return Toast.showWithGravity('Already voted', Toast.SHORT, Toast.CENTER);
+      }
       await vote({ id: item.id, score, user: user.name, password_hash: user.password_hash });
-      var newItemScore = itemScore + score;
+      var newItemScore = itemScore - prevVote + score;
       if (score === 0) newItemScore = itemScore - userScore;
       setItemScore(newItemScore);
       setUserScore(score);
