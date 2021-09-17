@@ -26,6 +26,7 @@ import { RNFFmpeg } from 'react-native-ffmpeg';
 import RNFS from 'react-native-fs';
 import { verticalScale } from 'react-native-size-matters';
 import { useDeviceOrientationChange } from 'react-native-orientation-locker';
+import { findTag } from '../api/tag';
 
 const SortIcon = () => (
   <Icon
@@ -54,7 +55,7 @@ export const DetailsScreen = ({ navigation, route }) => {
   const item = route.params.item;
   // const [item, setItem] = useState(route.params.item);
   const title = route.params.title;
-  const tags = route.params.tags;
+  // const tags = route.params.tags;
   const isVideo =
     item.file_ext !== 'gif' && item.file_ext !== 'jpg' && item.file_ext !== 'jpeg' && item.file_ext !== 'png';
 
@@ -72,6 +73,27 @@ export const DetailsScreen = ({ navigation, route }) => {
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [commentSort, setCommentSort] = useState('Newest');
   const [url, setUrl] = useState(converProxyUrl(item.file_url));
+  const [tags, setTags] = useState(route.params.tags);
+
+  const getTagCount = async () => {
+    try {
+      var tagFetches = [];
+      var newTags = [];
+      for (const tag of tags) {
+        tagFetches.push(findTag({ name: tag.tag }));
+      }
+      const responses = await Promise.all(tagFetches);
+      for (let index = 0; index < responses.length; index++) {
+        const response = responses[index];
+        const responseTag = response.find((t) => t.name === tags[index].tag);
+        const newTag = { ...tags[index], count: responseTag.count };
+        newTags.push(newTag);
+      }
+      setTags(newTags);
+    } catch (error) {
+      console.log('GET_TAG_COUNT_ERROR: ', error);
+    }
+  };
 
   useDeviceOrientationChange((orientation) => setOrientation(orientation));
 
@@ -256,6 +278,7 @@ export const DetailsScreen = ({ navigation, route }) => {
     loadUser();
     updatePostHistory();
     fetchComments();
+    getTagCount();
     return () => {
       mounted.current = false;
     };
@@ -411,13 +434,6 @@ export const DetailsScreen = ({ navigation, route }) => {
 
   const isLandscape = width >= 592 && orientation.includes('LANDSCAPE');
 
-  const urlPress = (url) => {
-    Linking.canOpenURL(url).then((supported) => {
-      if (!supported) return console.log("Don't know how to open URI: " + url);
-      Linking.openURL(url);
-    });
-  };
-
   return (
     <Layout level="2" style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1, flexDirection: isLandscape ? 'row' : 'column' }}>
@@ -482,7 +498,7 @@ export const DetailsScreen = ({ navigation, route }) => {
             />
           )}
 
-          {isLandscape && <TagList tags={tags} style={styles.tagContainer} loadCount={true} item={item} />}
+          {isLandscape && <TagList tags={tags} style={styles.tagContainer} loadCount={false} item={item} />}
 
           {isLandscape && <DetailFooter item={item} style={styles.titleContainer} />}
         </Layout>

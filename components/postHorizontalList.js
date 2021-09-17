@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { FlatList, ActivityIndicator, StyleSheet, Dimensions } from 'react-native';
 import { Layout, Text, Button, Icon } from '@ui-kitten/components';
 import { SmallCard } from './cardHorizontal';
@@ -15,11 +15,19 @@ const capitalize = (s) => {
   return s && s[0].toUpperCase() + s.slice(1);
 };
 
-export const PostHorizontalList = ({ search = '', title, tags, menuType, date, secondDate, from }) => {
+export const PostHorizontalList = forwardRef((props, ref) => {
+  const { itemSearch = '', title, tags, menuType, date, secondDate, from } = props;
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
+  const [search, setSearch] = useState('');
   const [message, setMessage] = useState('Nobody here but us chickens!');
   const navigation = useNavigation();
+
+  useImperativeHandle(ref, () => ({
+    loadPosts() {
+      if (!search) setSearch(itemSearch);
+    },
+  }));
 
   const postWithDetails = (tagsWithType, post, votes) => {
     var artist = '';
@@ -66,6 +74,10 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType, date, s
   const fetchPost = async (page, isFirst, search) => {
     try {
       if (!isFirst) setFetching(true);
+      if (!search) {
+        setData([]);
+        return clearLoading();
+      }
       var params = { search, page, include_tags: 1, include_votes: 1, limit: 8 };
       const user = await getData('user');
       if (user) params = { ...params, user: user.name, password_hash: user.password_hash };
@@ -168,9 +180,9 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType, date, s
           horizontal
           data={data}
           renderItem={renderItem}
-          windowSize={4}
-          initialNumToRender={2}
-          maxToRenderPerBatch={2}
+          windowSize={8}
+          initialNumToRender={8}
+          maxToRenderPerBatch={8}
           keyExtractor={keyExtractor}
           ListEmptyComponent={
             <Layout style={styles.center}>
@@ -190,7 +202,7 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType, date, s
       )}
     </Layout>
   );
-};
+});
 
 const styles = StyleSheet.create({
   center: { alignItems: 'center', justifyContent: 'center', height: 244, width: screenWidth },

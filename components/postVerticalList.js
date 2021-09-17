@@ -299,9 +299,9 @@ export const PostVerticalList = ({
       numColumns: 1,
     };
     if (layoutType === 'grid') {
-      props.initialNumToRender = 12;
-      props.maxToRenderPerBatch = 12;
-      props.windowSize = 12;
+      props.initialNumToRender = 8;
+      props.maxToRenderPerBatch = 8;
+      props.windowSize = 8;
       props.numColumns = 4;
       props.columnWrapperStyle = {
         flex: 1,
@@ -338,7 +338,7 @@ export const PostVerticalList = ({
       key={`post_list_${layoutType}_${width}`}
       data={data}
       renderItem={renderItem}
-      onEndReachedThreshold={12}
+      onEndReachedThreshold={1}
       updateCellsBatchingPeriod={100}
       onViewableItemsChanged={onViewableItemsChanged}
       viewabilityConfig={{

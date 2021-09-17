@@ -8,6 +8,7 @@ import { exploreData } from '../util/exploreData';
 const SearchIcon = (props) => <Icon {...props} name="search-outline" />;
 
 export const ExploreScreen = ({ navigation }) => {
+  let cellRefs = {};
   const [data, setData] = useState(exploreData);
   const navigateSearch = () => {
     navigation.navigate('Search');
@@ -16,14 +17,15 @@ export const ExploreScreen = ({ navigation }) => {
   const keyExtractor = useCallback((item) => item.id, []);
 
   const renderItem = useCallback(
-    ({ item }) =>
+    ({ item, index }) =>
       item.menuType === 'tag' ? (
         <TagHorizontalList title={item.title} menuType={item.menuType} type={item.type} order={item.order} />
       ) : (
         <PostHorizontalList
+          ref={(ref) => (cellRefs[index] = ref)}
           title={item.title}
           menuType={item.menuType}
-          search={item.search}
+          itemSearch={item.search}
           date={item.date}
           secondDate={item.secondDate}
         />
@@ -40,6 +42,16 @@ export const ExploreScreen = ({ navigation }) => {
     [],
   );
 
+  const onViewableItemsChanged = useCallback(({ changed }) => {
+    const item = changed[0];
+    const cell = cellRefs[item.index];
+    if (cell) {
+      if (item.isViewable) {
+        cell.loadPosts();
+      }
+    }
+  }, []);
+
   return (
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -50,6 +62,7 @@ export const ExploreScreen = ({ navigation }) => {
             flex: 1,
           }}>
           <FlatList
+            onViewableItemsChanged={onViewableItemsChanged}
             showsVerticalScrollIndicator={false}
             data={data}
             renderItem={renderItem}
