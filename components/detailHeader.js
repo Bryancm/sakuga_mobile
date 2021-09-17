@@ -20,7 +20,6 @@ export const DetailHeader = ({ title, style, url, setPaused, file_ext, id, isVid
 
   const getFrameRate = async () => {
     const { frameRate } = await ProcessingManager.getVideoInfo(url);
-    console.log(frameRate);
     setFrameRate(frameRate);
   };
 
