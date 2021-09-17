@@ -14,9 +14,10 @@ const ChevronUpIcon = (props) => (
 
 export const TagList = ({ tags, style, level = '2', loadCount = false, setPaused }) => {
   const isPad = Platform.isPad;
+  const maxTags = isPad ? 10 : 5;
   const [more, setMore] = useState();
   const [allTags, setAllTags] = useState(tags);
-  const [postTags, setTags] = useState(isPad ? allTags : allTags.slice(0, 5));
+  const [postTags, setTags] = useState(allTags.slice(0, maxTags));
   const navigation = useNavigation();
 
   const navigatePostList = (from, isPosts, menuType, search, order, type) => {
@@ -40,7 +41,7 @@ export const TagList = ({ tags, style, level = '2', loadCount = false, setPaused
         newTags.push(newTag);
       }
       setAllTags(newTags);
-      const t = more ? newTags : newTags.slice(0, 5);
+      const t = more ? newTags : newTags.slice(0, maxTags);
       setTags(t);
     } catch (error) {
       console.log('GET_TAG_COUNT_ERROR: ', error);
@@ -50,44 +51,46 @@ export const TagList = ({ tags, style, level = '2', loadCount = false, setPaused
     if (loadCount) getTagCount();
   }, []);
   const toggleMore = () => {
-    if (more) setTags(allTags.slice(0, 5));
+    if (more) setTags(allTags.slice(0, maxTags));
     if (!more) setTags(allTags);
     setMore(!more);
   };
   return (
     <Layout level={level} style={style}>
-      {postTags.length > 0 &&
-        postTags.map((t, i) =>
-          t.style ? (
-            <TouchableOpacity
-              key={i}
-              delayPressIn={0}
-              delayPressOut={0}
-              activeOpacity={0.7}
-              style={{ ...t.style, marginRight: 4, marginBottom: 8 }}
-              onPress={() => navigatePostList(t.tag, true, 'post', t.tag)}>
-              <Text category="c1" style={{ color: t.style.color }} numberOfLines={1}>
-                {`${t.tag ? t.tag : t}${t.count ? ' ' + t.count : ''}`}
-              </Text>
-            </TouchableOpacity>
-          ) : (
-            <Layout level={level} key={i} style={{ ...tagStyles.basic_outline, marginRight: 4, marginBottom: 8 }}>
-              <Text category="c1" numberOfLines={1}>
-                {`${t.tag ? t.tag : t}${t.count ? ' ' + t.count : ''}`}
-              </Text>
-            </Layout>
-          ),
+      <Layout level={level} style={style}>
+        {postTags.length > 0 &&
+          postTags.map((t, i) =>
+            t.style ? (
+              <TouchableOpacity
+                key={i}
+                delayPressIn={0}
+                delayPressOut={0}
+                activeOpacity={0.7}
+                style={{ ...t.style, marginRight: 4, marginBottom: 8 }}
+                onPress={() => navigatePostList(t.tag, true, 'post', t.tag)}>
+                <Text category="c1" style={{ color: t.style.color }} numberOfLines={1}>
+                  {`${t.tag ? t.tag : t}${t.count ? ' ' + t.count : ''}`}
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <Layout level={level} key={i} style={{ ...tagStyles.basic_outline, marginRight: 4, marginBottom: 8 }}>
+                <Text category="c1" numberOfLines={1}>
+                  {`${t.tag ? t.tag : t}${t.count ? ' ' + t.count : ''}`}
+                </Text>
+              </Layout>
+            ),
+          )}
+        {tags.length > maxTags && (
+          <Button
+            size="small"
+            status="basic"
+            appearance="ghost"
+            accessoryRight={more ? ChevronUpIcon : ChevronDownIcon}
+            style={{ paddingHorizontal: 0, paddingVertical: 0 }}
+            onPress={toggleMore}
+          />
         )}
-      {tags.length > 5 && !isPad && (
-        <Button
-          size="small"
-          status="basic"
-          appearance="ghost"
-          accessoryRight={more ? ChevronUpIcon : ChevronDownIcon}
-          style={{ paddingHorizontal: 0, paddingVertical: 0 }}
-          onPress={toggleMore}
-        />
-      )}
+      </Layout>
     </Layout>
   );
 };

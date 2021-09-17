@@ -7,7 +7,8 @@ import {
   Alert,
   TouchableOpacity,
   Platform,
-  Dimensions,
+  useWindowDimensions,
+  Linking,
 } from 'react-native';
 import { Divider, Icon, Layout, Input, Button, Text } from '@ui-kitten/components';
 import { DetailHeader } from '../components/detailHeader';
@@ -24,6 +25,7 @@ import FastImage from 'react-native-fast-image';
 import { RNFFmpeg } from 'react-native-ffmpeg';
 import RNFS from 'react-native-fs';
 import { verticalScale } from 'react-native-size-matters';
+import { useDeviceOrientationChange } from 'react-native-orientation-locker';
 
 const SortIcon = () => (
   <Icon
@@ -43,6 +45,8 @@ const SendIcon = (props) => <Icon {...props} name="corner-down-right-outline" />
 const videoHeight = Platform.isPad ? verticalScale(280) : verticalScale(232);
 
 export const DetailsScreen = ({ navigation, route }) => {
+  const { width } = useWindowDimensions();
+
   const mounted = useRef(true);
   const video = useRef();
   const commentList = useRef();
@@ -54,6 +58,7 @@ export const DetailsScreen = ({ navigation, route }) => {
   const isVideo =
     item.file_ext !== 'gif' && item.file_ext !== 'jpg' && item.file_ext !== 'jpeg' && item.file_ext !== 'png';
 
+  const [orientation, setOrientation] = useState('');
   const [inputIsFocused, setInputIsFocused] = useState(false);
   const [text, setText] = useState();
   const [comments, setComments] = useState([]);
@@ -67,6 +72,8 @@ export const DetailsScreen = ({ navigation, route }) => {
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [commentSort, setCommentSort] = useState('Newest');
   const [url, setUrl] = useState(converProxyUrl(item.file_url));
+
+  useDeviceOrientationChange((orientation) => setOrientation(orientation));
 
   const navigateLogin = () => {
     setPaused(true);
@@ -402,56 +409,83 @@ export const DetailsScreen = ({ navigation, route }) => {
 
   const sortedComments = sortComments(comments);
 
+  const isLandscape = width >= 592 && orientation.includes('LANDSCAPE');
+
+  const urlPress = (url) => {
+    Linking.canOpenURL(url).then((supported) => {
+      if (!supported) return console.log("Don't know how to open URI: " + url);
+      Linking.openURL(url);
+    });
+  };
+
   return (
     <Layout level="2" style={{ flex: 1 }}>
-      <SafeAreaView style={{ flex: 1 }}>
-        {!isVideo && (
-          <TouchableOpacity delayPressIn={0} delayPressOut={0} activeOpacity={0.7} onPress={onImagePress}>
-            <Button appearance="ghost" accessoryRight={ArrowDown} style={styles.closeButton} onPress={navigateBack} />
-            {loadingImage && (
-              <Layout
-                style={{
-                  ...styles.image,
-                  position: 'absolute',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  zIndex: 10,
-                  opacity: 0.7,
-                }}>
-                <ActivityIndicator />
-              </Layout>
-            )}
-            <FastImage
-              source={{ uri: item.file_url }}
-              style={styles.image}
-              resizeMode="contain"
-              onLoadEnd={() => setLoadingImage(false)}
+      <SafeAreaView style={{ flex: 1, flexDirection: isLandscape ? 'row' : 'column' }}>
+        <Layout level="2" style={{ width: isLandscape ? '65%' : '100%' }}>
+          {!isVideo && (
+            <TouchableOpacity delayPressIn={0} delayPressOut={0} activeOpacity={0.7} onPress={onImagePress}>
+              <Button appearance="ghost" accessoryRight={ArrowDown} style={styles.closeButton} onPress={navigateBack} />
+              {loadingImage && (
+                <Layout
+                  style={{
+                    ...styles.image,
+                    position: 'absolute',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    zIndex: 10,
+                    opacity: 0.7,
+                  }}>
+                  <ActivityIndicator />
+                </Layout>
+              )}
+              <FastImage
+                source={{ uri: item.file_url }}
+                style={styles.image}
+                resizeMode="contain"
+                onLoadEnd={() => setLoadingImage(false)}
+              />
+            </TouchableOpacity>
+          )}
+          {isVideo && (
+            <Layout style={styles.image}>
+              <VideoPlayer
+                ref={video}
+                paused={paused}
+                source={{ uri: url }}
+                navigator={navigation}
+                controlAnimationTiming={250}
+                controlTimeout={3000}
+                scrubbing={1}
+                repeat={true}
+                muted={true}
+                disableVolume={true}
+                toggleResizeModeOnFullscreen={false}
+                controls={false}
+                seekColor="#C3070B"
+                onEnterFullscreen={onEnterFullscreen}
+                onFullscreenPlayerWillDismiss={onFullscreenPlayerWillDismiss}
+                // onError={onVideoError}
+                onLoad={onLoad}
+              />
+            </Layout>
+          )}
+          {isLandscape && (
+            <DetailHeader
+              title={title}
+              style={styles.titleContainer}
+              url={url}
+              file_ext={item.file_ext}
+              setPaused={setPaused}
+              id={item.id}
+              isVideo={isVideo}
+              item={item}
             />
-          </TouchableOpacity>
-        )}
-        {isVideo && (
-          <Layout style={styles.image}>
-            <VideoPlayer
-              ref={video}
-              paused={paused}
-              source={{ uri: url }}
-              navigator={navigation}
-              controlAnimationTiming={250}
-              controlTimeout={3000}
-              scrubbing={1}
-              repeat={true}
-              muted={true}
-              disableVolume={true}
-              toggleResizeModeOnFullscreen={false}
-              controls={false}
-              seekColor="#C3070B"
-              onEnterFullscreen={onEnterFullscreen}
-              onFullscreenPlayerWillDismiss={onFullscreenPlayerWillDismiss}
-              // onError={onVideoError}
-              onLoad={onLoad}
-            />
-          </Layout>
-        )}
+          )}
+
+          {isLandscape && <TagList tags={tags} style={styles.tagContainer} loadCount={true} item={item} />}
+
+          {isLandscape && <DetailFooter item={item} style={styles.titleContainer} />}
+        </Layout>
         <CommentList
           commentList={commentList}
           data={user === undefined ? [] : sortedComments}
@@ -465,18 +499,21 @@ export const DetailsScreen = ({ navigation, route }) => {
           seek={seek}
           header={
             <Layout level="2">
-              <DetailHeader
-                title={title}
-                style={styles.titleContainer}
-                url={url}
-                file_ext={item.file_ext}
-                setPaused={setPaused}
-                id={item.id}
-                isVideo={isVideo}
-              />
-              <TagList tags={tags} style={styles.tagContainer} loadCount={true} />
-              <DetailFooter item={item} style={styles.titleContainer} />
-              <Divider style={{ marginBottom: 12 }} />
+              {!isLandscape && (
+                <DetailHeader
+                  title={title}
+                  style={styles.titleContainer}
+                  url={url}
+                  file_ext={item.file_ext}
+                  setPaused={setPaused}
+                  id={item.id}
+                  isVideo={isVideo}
+                  item={item}
+                />
+              )}
+              {!isLandscape && <TagList tags={tags} style={styles.tagContainer} loadCount={true} />}
+              {!isLandscape && <DetailFooter item={item} style={styles.titleContainer} />}
+              {!isLandscape && <Divider style={{ marginBottom: 12 }} />}
               <Layout level="3" style={{ margin: 8, borderRadius: 2, padding: 0 }}>
                 <Input
                   ref={input}
@@ -550,4 +587,6 @@ const styles = StyleSheet.create({
     opacity: 0.7,
     zIndex: 10,
   },
+  url: { color: '#2980b9' },
+  text: { fontSize: 12, color: '#808080' },
 });

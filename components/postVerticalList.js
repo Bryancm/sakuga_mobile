@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FlatList, ActivityIndicator, RefreshControl, StyleSheet, Alert, Dimensions } from 'react-native';
+import {
+  FlatList,
+  ActivityIndicator,
+  RefreshControl,
+  StyleSheet,
+  Alert,
+  Dimensions,
+  useWindowDimensions,
+} from 'react-native';
 import { CardSmall } from './cardSmall';
 import { Card } from '../components/card';
 import { SmallCard as GridCard } from './cardHorizontal';
@@ -26,6 +34,7 @@ export const PostVerticalList = ({
   setRemoveAll,
   autoPlay,
 }) => {
+  const { width } = useWindowDimensions();
   let cellRefs = {};
   let viewableIndex = 0;
   const [page, setPage] = useState(1);
@@ -167,6 +176,11 @@ export const PostVerticalList = ({
     refetch();
   }, [autoPlay]);
 
+  // useEffect(() => {
+  //   setLoading(true);
+  //   refetch();
+  // }, [width]);
+
   useEffect(() => {
     if (from === 'Search') {
       clearLoading();
@@ -213,7 +227,7 @@ export const PostVerticalList = ({
 
   const renderItem = useCallback(
     ({ item, index }) => {
-      if (layoutType === 'grid')
+      if (layoutType === 'grid' && width > 592)
         return (
           <GridCard item={item} deleteAlert={showDeleteButton ? deleteAlert : false} navigateDetail={navigateDetail} />
         );
@@ -233,7 +247,7 @@ export const PostVerticalList = ({
         <CardSmall item={item} deleteAlert={showDeleteButton ? deleteAlert : false} navigateDetail={navigateDetail} />
       );
     },
-    [layoutType, autoPlay],
+    [layoutType, autoPlay, width],
   );
 
   const onEndReached = async () => {
@@ -300,8 +314,15 @@ export const PostVerticalList = ({
       props.windowSize = 6;
       props.numColumns = 1;
     }
+    if (width <= 592) {
+      props.initialNumToRender = 8;
+      props.maxToRenderPerBatch = 8;
+      props.windowSize = 8;
+      props.numColumns = 1;
+      delete props.columnWrapperStyle;
+    }
     return props;
-  }, [layoutType]);
+  }, [layoutType, width]);
 
   if (focus) return <Layout style={{ ...styles.center, height: '100%' }} />;
   if (isLoading)
@@ -314,7 +335,7 @@ export const PostVerticalList = ({
   return (
     <FlatList
       {...listProps()}
-      key={`post_list_${layoutType}`}
+      key={`post_list_${layoutType}_${width}`}
       data={data}
       renderItem={renderItem}
       onEndReachedThreshold={12}
