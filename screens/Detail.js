@@ -25,7 +25,7 @@ import FastImage from 'react-native-fast-image';
 import { RNFFmpeg } from 'react-native-ffmpeg';
 import RNFS from 'react-native-fs';
 import { verticalScale } from 'react-native-size-matters';
-import { useDeviceOrientationChange } from 'react-native-orientation-locker';
+import { useDeviceOrientationChange, useOrientationChange } from 'react-native-orientation-locker';
 import { findTag } from '../api/tag';
 
 const SortIcon = () => (
@@ -95,7 +95,10 @@ export const DetailsScreen = ({ navigation, route }) => {
     }
   };
 
-  useDeviceOrientationChange((orientation) => setOrientation(orientation));
+  useOrientationChange((orientation) => {
+    // console.log(orientation);
+    setOrientation(orientation);
+  });
 
   const navigateLogin = () => {
     setPaused(true);

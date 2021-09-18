@@ -302,7 +302,7 @@ export const PostVerticalList = ({
       props.initialNumToRender = 8;
       props.maxToRenderPerBatch = 8;
       props.windowSize = 8;
-      props.numColumns = 4;
+      props.numColumns = 3;
       props.columnWrapperStyle = {
         flex: 1,
         justifyContent: 'space-evenly',

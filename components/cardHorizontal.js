@@ -20,7 +20,7 @@ export const SmallCard = ({ item, navigateDetail }) => {
       delayPressIn={0}
       delayPressOut={0}
       activeOpacity={0.7}
-      style={{ ...styles.container, width: Platform.isPad ? width * 0.24 : 180 }}
+      style={{ ...styles.container, width: Platform.isPad ? width * 0.32 : 180 }}
       onPress={goToDetail}>
       <FastImage style={styles.image} source={{ uri: item.preview_url }} resizeMode="contain" />
       <Layout style={styles.tagContainer}>
