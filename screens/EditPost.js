@@ -15,11 +15,12 @@ import {
   TopNavigation,
   TopNavigationAction,
   Input,
-  CheckBox,
+  Toggle,
   Text,
   OverflowMenu,
   MenuItem,
   Button,
+  Divider,
 } from '@ui-kitten/components';
 import { AutoComplete } from '../components/autoComplete';
 import { getData } from '../util/storage';
@@ -31,8 +32,15 @@ const HashIcon = (props) => <Icon {...props} name="hash-outline" />;
 const MonitorIcon = (props) => <Icon {...props} name="monitor-outline" />;
 const TagIcon = (props) => <Icon {...props} name="pricetags-outline" />;
 const FilterIcon = (props) => <Icon {...props} name="funnel-outline" />;
+const CheckMarkIcon = (props) => <Icon {...props} name="checkmark-outline" />;
 
-const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
+const BackIcon = (props) => <Icon {...props} name="arrow-back-outline" />;
+const EditHistoryIcon = (props) => <Icon {...props} name="clock-outline" />;
+const SaveIcon = (props) => <Icon {...props} name="save-outline" />;
+
+const capitalize = (s) => {
+  return s && s[0].toUpperCase() + s.slice(1);
+};
 
 export const EditPost = ({ route }) => {
   const { height } = useWindowDimensions();
@@ -52,6 +60,7 @@ export const EditPost = ({ route }) => {
   const [loading, setLoading] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
   const [data, setData] = useState([]);
+  const [relatedType, setRelatedType] = useState('All');
   const navigation = useNavigation();
 
   //   const loadUser = async () => {
@@ -68,10 +77,11 @@ export const EditPost = ({ route }) => {
   //     return unsubscribe;
   //   }, [navigation]);
 
-  const getRelated = async () => {
+  const getRelated = async (type) => {
     try {
+      setLoading(true);
       var relatedTags = [];
-      const related = await getRelatedTags({ tags });
+      const related = await getRelatedTags({ tags, type });
       const keys = Object.keys(related);
       for (const key of keys) {
         const tgs = related[key].map((t) => ({
@@ -137,8 +147,8 @@ export const EditPost = ({ route }) => {
       appearance="ghost"
       accessoryLeft={FilterIcon}
       onPress={toggleMenu}>
-      <Text appearance="hint" category="s1">
-        All
+      <Text appearance="hint" category="s2">
+        {relatedType}
       </Text>
     </Button>
   );
@@ -160,14 +170,16 @@ export const EditPost = ({ route }) => {
   };
 
   const onFocus = (e) => {
+    setRelatedTags([]);
     setIsFocused(true);
-    scrollView.current.scrollTo({ y: 210, animated: true });
+    scrollView.current.scrollTo({ y: 270, animated: true });
   };
 
   const cancelInput = () => {
+    setIsFocused(false);
     Keyboard.dismiss();
     scrollView.current.scrollTo({ y: 0, animated: true });
-    setIsFocused(false);
+    getRelated();
   };
 
   const TagButtons = () => (
@@ -177,7 +189,7 @@ export const EditPost = ({ route }) => {
           style={{ paddingHorizontal: 0, paddingVertical: 0, height: 10 }}
           status="basic"
           appearance="ghost"
-          accessoryRight={CloseIcon}
+          accessoryRight={CheckMarkIcon}
           onPress={cancelInput}
         />
       )}
@@ -214,35 +226,61 @@ export const EditPost = ({ route }) => {
     setTags(splittedValue.join(' '));
   };
 
+  var renderRightActions = () => (
+    <React.Fragment>
+      <TopNavigationAction icon={EditHistoryIcon} />
+      <TopNavigationAction icon={SaveIcon} />
+    </React.Fragment>
+  );
+
+  const updateRealtedTags = (type) => {
+    setRelatedType(type ? capitalize(type) : 'All');
+    toggleMenu();
+    getRelated(type);
+  };
+
   return (
     <Layout style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
-        <TopNavigation title="Edit Post" alignment="center" accessoryLeft={renderBackAction} />
-        {isFocused && <AutoComplete data={data} onPress={onAutoCompletePress} top={240} height={'38%'} />}
-        <ScrollView ref={scrollView} contentContainerStyle={{ minHeight: height * 1.5 }}>
-          <Layout style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Input
-              label="Parent Post"
-              size="large"
-              autoCapitalize="none"
-              keyboardType="numeric"
-              placeholder="Post ID"
-              keyboardAppearance="dark"
-              style={{ ...styles.input, width: '55%' }}
-              accessoryRight={HashIcon}
-              value={parent}
-              onChangeText={onChangeParent}
-            />
+        <TopNavigation
+          title="Edit Post"
+          alignment="center"
+          accessoryLeft={renderBackAction}
+          accessoryRight={renderRightActions}
+        />
+        {isFocused && <AutoComplete data={data} onPress={onAutoCompletePress} top={270} height={'34%'} />}
+        <ScrollView
+          ref={scrollView}
+          contentContainerStyle={{ minHeight: height * 1.5 }}
+          keyboardShouldPersistTaps={isFocused ? 'always' : 'never'}
+          scrollEnabled={isFocused ? false : true}>
+          <Layout
+            style={{ ...styles.input, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Text category="s2">Show in index</Text>
+            <Toggle size="small" checked={showInIndex} onChange={onChangeIndex}></Toggle>
+          </Layout>
+          <Divider />
+          <Input
+            label="Parent Post"
+            size="large"
+            autoCapitalize="none"
+            keyboardType="numeric"
+            placeholder="Post ID"
+            keyboardAppearance="dark"
+            style={styles.input}
+            accessoryRight={HashIcon}
+            value={parent}
+            onChangeText={onChangeParent}
+          />
 
-            <CheckBox
+          {/* <CheckBox
               checked={showInIndex}
               onChange={onChangeIndex}
               style={{ ...styles.input, width: '40%', justifyContent: 'center', alignItems: 'center' }}>
               <Text appearance="hint" category="s2">
                 Show in index
               </Text>
-            </CheckBox>
-          </Layout>
+            </CheckBox> */}
 
           <Input
             label="Source"
@@ -266,7 +304,6 @@ export const EditPost = ({ route }) => {
             // clearButtonMode="always"
             enablesReturnKeyAutomatically={true}
             keyboardAppearance="dark"
-            keyboardShouldPersistTaps={isFocused ? 'always' : 'never'}
             value={tags}
             onChangeText={onChangeTags}
             accessoryRight={TagButtons}
@@ -274,19 +311,35 @@ export const EditPost = ({ route }) => {
             style={styles.input}
             onFocus={onFocus}
           />
-
-          <Layout style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Text appearance="hint" category="s2">
-              Related tags
-            </Text>
-            <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>
-              <MenuItem key="1" title={<Text category="c1">All</Text>} />
-              <MenuItem key="2" title={<Text category="c1">Artist</Text>} />
-              <MenuItem key="3" title={<Text category="c1">Terms</Text>} />
-              <MenuItem key="3" title={<Text category="c1">Copyright</Text>} />
-              <MenuItem key="3" title={<Text category="c1">Meta</Text>} />
-            </OverflowMenu>
-          </Layout>
+          <Divider />
+          {!isFocused && (
+            <Layout
+              style={{ ...styles.input, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text appearance="hint" category="s2">
+                Related tags
+              </Text>
+              <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>
+                <MenuItem key="1" onPress={() => updateRealtedTags()} title={<Text category="c1">All</Text>} />
+                <MenuItem
+                  key="2"
+                  onPress={() => updateRealtedTags('artist')}
+                  title={<Text category="c1">Artist</Text>}
+                />
+                <MenuItem key="3" onPress={() => updateRealtedTags('term')} title={<Text category="c1">Terms</Text>} />
+                <MenuItem
+                  key="4"
+                  onPress={() => updateRealtedTags('copyright')}
+                  title={<Text category="c1">Copyright</Text>}
+                />
+                <MenuItem
+                  key="6"
+                  onPress={() => updateRealtedTags('general')}
+                  title={<Text category="c1">General</Text>}
+                />
+                <MenuItem key="5" onPress={() => updateRealtedTags('meta')} title={<Text category="c1">Meta</Text>} />
+              </OverflowMenu>
+            </Layout>
+          )}
           {loading && (
             <Layout style={{ justifyContent: 'center', alignItems: 'center' }}>
               <ActivityIndicator />
@@ -295,8 +348,8 @@ export const EditPost = ({ route }) => {
           {!loading && !isFocused && (
             <Layout>
               {relatedTags.map((tag, index) => (
-                <Layout key={tag.name} style={{ marginVertical: 8 }}>
-                  <Text category="s1" style={{ marginVertical: 8 }}>
+                <Layout key={tag.name} style={{ marginBottom: 8 }}>
+                  <Text category="s1" style={{ marginBottom: 8 }}>
                     {tag.name}
                   </Text>
                   {tag.tags.map((t, i) => {
