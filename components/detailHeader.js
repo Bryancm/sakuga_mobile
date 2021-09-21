@@ -40,6 +40,12 @@ export const DetailHeader = ({ title, style, url, setPaused, file_ext, id, isVid
     navigation.navigate('FramesEditor', { url, title, file_ext, id });
   };
 
+  const navigateEditPost = () => {
+    setPaused(true);
+    toggleMenu();
+    navigation.navigate('EditPost', { item });
+  };
+
   const menuAnchor = () => (
     <Button
       style={{ paddingHorizontal: 0, paddingTop: 16 }}
@@ -89,7 +95,12 @@ export const DetailHeader = ({ title, style, url, setPaused, file_ext, id, isVid
               title={<Text category="c1">GIF</Text>}
               accessoryLeft={ImageIcon}
             />
-            {/* <MenuItem key="3" title={<Text category="c1">Edit</Text>} accessoryLeft={EditIcon} /> */}
+            <MenuItem
+              key="3"
+              onPress={navigateEditPost}
+              title={<Text category="c1">Edit</Text>}
+              accessoryLeft={EditIcon}
+            />
           </OverflowMenu>
         </Layout>
       )}

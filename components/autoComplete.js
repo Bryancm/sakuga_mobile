@@ -8,12 +8,14 @@ const TagIcon = (props) => <Icon {...props} name="pricetags-outline" />;
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const screenHeight = Dimensions.get('window').height;
 
-export const AutoComplete = ({ data, onPress, deleteItemFromHistory }) => {
+export const AutoComplete = ({ data, onPress, deleteItemFromHistory, top, height }) => {
   const renderItem = ({ item }) => {
     const tagStyle = getTagStyle(item.type);
     const style = tagStyle.color ? { ...styles.text, color: tagStyle.color } : styles.text;
     const onTagPress = () => onPress(item.name);
-    const deleteHistoryAlert = () =>
+    const deleteHistoryAlert = () => {
+      if (!deleteItemFromHistory) return;
+
       Alert.alert('Remove', `Do you want to remove ${item.name} from yout history ?`, [
         {
           text: 'Cancel',
@@ -21,6 +23,7 @@ export const AutoComplete = ({ data, onPress, deleteItemFromHistory }) => {
         },
         { text: 'Confirm', onPress: () => deleteItemFromHistory(item.id), style: 'destructive' },
       ]);
+    };
 
     return (
       <TouchableOpacity
@@ -59,7 +62,12 @@ export const AutoComplete = ({ data, onPress, deleteItemFromHistory }) => {
   const keyStractor = (item) => item.id.toString();
 
   return (
-    <Layout style={styles.container}>
+    <Layout
+      style={{
+        ...styles.container,
+        top: top ? top : screenHeight > 736 && !Platform.isPad ? 90 : 70,
+        height: height ? height : '58%',
+      }}>
       <FlatList
         keyboardShouldPersistTaps="always"
         data={data}
