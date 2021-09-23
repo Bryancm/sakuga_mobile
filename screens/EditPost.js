@@ -105,11 +105,14 @@ export const EditPost = ({ route }) => {
 
   const onChangeParent = (parent) => setParent(parent);
   const onChangeSource = (source) => setSource(source);
-  // const onChangeTags = (tags) => setTags(tags);
   const onChangeIndex = (showInIndex) => setShowInIndex(showInIndex);
 
   const navigateBack = () => {
     navigation.goBack();
+  };
+
+  const navigateHitory = () => {
+    navigation.navigate('EditHistory', { item });
   };
 
   const renderBackAction = () => <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
@@ -126,32 +129,36 @@ export const EditPost = ({ route }) => {
 
   const openTagGuidelines = () => openUrl('https://www.sakugabooru.com/wiki/show?title=tag_guidelines');
 
-  const tagsCaption = () => (
-    <Text appearance="hint" category="c2">
-      Separate tags with spaces{' '}
-      <Text status="primary" category="c2" onPress={openTagGuidelines}>
-        (tag guidelines)
-      </Text>
-    </Text>
-  );
-
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
   };
 
-  const menuAnchor = () => (
-    <Button
-      size="small"
-      style={{ paddingHorizontal: 0 }}
-      status="basic"
-      appearance="ghost"
-      accessoryLeft={FilterIcon}
-      onPress={toggleMenu}>
-      <Text appearance="hint" category="s2">
-        {relatedType}
-      </Text>
-    </Button>
-  );
+  const onChangeTags = (query) => {
+    setTags(query);
+    const splittedQuery = query.split(' ');
+    const lastItem = splittedQuery[splittedQuery.length - 1];
+    getTags({ name: lastItem.toLowerCase(), order: 'count', limit: 10 })
+      .then((d) => {
+        query ? setData(d) : setData([]);
+      })
+      .catch((e) => {
+        console.log('CHANGE_SEARCH_TEXT_ERROR: ', e);
+        setData([]);
+      });
+  };
+
+  const onAutoCompletePress = (tag) => {
+    const splittedValue = tags ? tags.split(' ') : [];
+    const index = tags ? splittedValue.length - 1 : 0;
+    splittedValue[index] = tag + ' ';
+    setTags(splittedValue.join(' '));
+  };
+
+  const updateRealtedTags = (type) => {
+    setRelatedType(type ? capitalize(type) : 'All');
+    toggleMenu();
+    getRelated(type);
+  };
 
   const updateTags = (relatedTag, index, relatedIndex) => {
     var newTags = tags;
@@ -182,6 +189,29 @@ export const EditPost = ({ route }) => {
     getRelated();
   };
 
+  const tagsCaption = () => (
+    <Text appearance="hint" category="c2">
+      Separate tags with spaces{' '}
+      <Text status="primary" category="c2" onPress={openTagGuidelines}>
+        (tag guidelines)
+      </Text>
+    </Text>
+  );
+
+  const menuAnchor = () => (
+    <Button
+      size="small"
+      style={{ paddingHorizontal: 0 }}
+      status="basic"
+      appearance="ghost"
+      accessoryLeft={FilterIcon}
+      onPress={toggleMenu}>
+      <Text appearance="hint" category="s2">
+        {relatedType}
+      </Text>
+    </Button>
+  );
+
   const TagButtons = () => (
     <Layout style={{ backgroundColor: 'transparent', alignItems: 'center', justifyContent: 'center' }}>
       {isFocused && (
@@ -204,40 +234,12 @@ export const EditPost = ({ route }) => {
     </Layout>
   );
 
-  const onChangeTags = (query) => {
-    setTags(query);
-    const splittedQuery = query.split(' ');
-    const lastItem = splittedQuery[splittedQuery.length - 1];
-    // if (!query) setRange({});
-    getTags({ name: lastItem.toLowerCase(), order: 'count', limit: 10 })
-      .then((d) => {
-        query ? setData(d) : setData([]);
-      })
-      .catch((e) => {
-        console.log('CHANGE_SEARCH_TEXT_ERROR: ', e);
-        setData([]);
-      });
-  };
-
-  const onAutoCompletePress = (tag) => {
-    const splittedValue = tags ? tags.split(' ') : [];
-    const index = tags ? splittedValue.length - 1 : 0;
-    splittedValue[index] = tag + ' ';
-    setTags(splittedValue.join(' '));
-  };
-
   var renderRightActions = () => (
     <React.Fragment>
-      <TopNavigationAction icon={EditHistoryIcon} />
+      <TopNavigationAction icon={EditHistoryIcon} onPress={navigateHitory} />
       <TopNavigationAction icon={SaveIcon} />
     </React.Fragment>
   );
-
-  const updateRealtedTags = (type) => {
-    setRelatedType(type ? capitalize(type) : 'All');
-    toggleMenu();
-    getRelated(type);
-  };
 
   return (
     <Layout style={styles.container}>
@@ -273,15 +275,6 @@ export const EditPost = ({ route }) => {
             onChangeText={onChangeParent}
           />
 
-          {/* <CheckBox
-              checked={showInIndex}
-              onChange={onChangeIndex}
-              style={{ ...styles.input, width: '40%', justifyContent: 'center', alignItems: 'center' }}>
-              <Text appearance="hint" category="s2">
-                Show in index
-              </Text>
-            </CheckBox> */}
-
           <Input
             label="Source"
             caption="Source of the media"
@@ -301,8 +294,6 @@ export const EditPost = ({ route }) => {
             size="large"
             placeholder="Tags"
             autoCorrect={false}
-            // clearButtonMode="always"
-            enablesReturnKeyAutomatically={true}
             keyboardAppearance="dark"
             value={tags}
             onChangeText={onChangeTags}
