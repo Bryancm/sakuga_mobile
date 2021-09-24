@@ -14,23 +14,8 @@ const CalendarIcon = (props) => <Icon {...props} name="calendar-outline" />;
 
 export const EditHistory = ({ route }) => {
   const { item } = route.params;
-  const [user, setUser] = useState();
   const [data, setData] = useState([]);
   const navigation = useNavigation();
-
-  //   const loadUser = async () => {
-  //     let newUser = false;
-  //     const currentUser = await getData('user');
-  //     if (currentUser && currentUser.name !== user) newUser = currentUser.name;
-  //     setUser(newUser);
-  //   };
-
-  //   useEffect(() => {
-  //     const unsubscribe = navigation.addListener('focus', async () => {
-  //       loadUser();
-  //     });
-  //     return unsubscribe;
-  //   }, [navigation]);
 
   const classToType = (spanClass) => {
     if (!spanClass) return -1;
@@ -43,7 +28,6 @@ export const EditHistory = ({ route }) => {
   };
 
   const getHistory = async () => {
-    // const res = await fetch('https://www.sakugabooru.com/history?show_all_tags=0&search=post%3A165619');
     const res = await fetch('https://www.sakugabooru.com/history?show_all_tags=0&search=post%3A' + item.id);
     const htmlText = await res.text();
     const $ = cheerio.load(htmlText);
@@ -64,9 +48,7 @@ export const EditHistory = ({ route }) => {
           .toArray()
           .map((span) => {
             const splittedTags = $(span).text().split(' ');
-            console.log('==========================================================');
             for (const splittedTag of splittedTags) {
-              // const name = splittedTag.replace('+', '').replace('-', '');
               const name = splittedTag.substring(1);
               const notParentesisName = name.replace('(', '').replace(')', '').replace(',', '');
               const spanClass = $(span).find(`span > span > span:contains("${notParentesisName}")`).attr('class');
@@ -74,19 +56,16 @@ export const EditHistory = ({ route }) => {
               var obsolete = spanClass ? spanClass.includes('obsolete') : false;
               if (splittedTag[0] === '-') obsolete = true;
               tags.push({ name: splittedTag, spanClass, type, obsolete });
-              console.log({ name: splittedTag, spanClass, type, obsolete });
             }
-            console.log('==========================================================');
           });
         item.tags = tags;
         historyData.push(item);
       });
-    // console.log({ historyData });
+
     setData(historyData);
   };
 
   useEffect(() => {
-    // loadUser();
     getHistory();
   }, []);
 
@@ -96,17 +75,25 @@ export const EditHistory = ({ route }) => {
 
   const renderBackAction = () => <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
 
+  const navigatePostList = (from, isPosts, menuType, search, order, type) => {
+    navigation.push('PostList', { from, isPosts, menuType, search, order, type });
+  };
+
   const renderItem = ({ item }) => {
     return (
-      <Layout key={item.date} style={{ paddingVertical: 8, justifyContent: 'center' }}>
-        {/* <Divider /> */}
+      <Layout style={{ paddingVertical: 8, justifyContent: 'center' }}>
         <Layout
           style={{
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}>
-          <Button style={{ paddingBottom: 0 }} size="small" appearance="ghost" accessoryLeft={UserIcon}>
+          <Button
+            style={{ paddingBottom: 0 }}
+            size="small"
+            appearance="ghost"
+            accessoryLeft={UserIcon}
+            onPress={() => navigatePostList(`user:${item.author}`, true, 'post', `user:${item.author}`)}>
             <Text category="c2">{item.author}</Text>
           </Button>
           <Button style={{ paddingBottom: 0 }} size="small" appearance="ghost" accessoryLeft={CalendarIcon}>
@@ -128,7 +115,11 @@ export const EditHistory = ({ route }) => {
             }
             const hasComa = tag.name.includes(',');
             return (
-              <Text category="s2" style={{ color: style.color, lineHeight: 18 }} key={`${tag.name}_${index}`}>
+              <Text
+                category="s2"
+                style={{ color: style.color, lineHeight: 18 }}
+                key={`${tag.name}_${index}`}
+                onPress={() => (tag.spanClass ? navigatePostList(name, true, 'post', name) : () => {})}>
                 {tag.obsolete && tag.name && !tag.name.includes('+') && tag.spanClass && (
                   <Text category="s2" status="primary">
                     -
@@ -154,11 +145,13 @@ export const EditHistory = ({ route }) => {
     );
   };
 
+  const keyExtractor = (item, index) => `${index}`;
+
   return (
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
         <TopNavigation title="Edit History" alignment="center" accessoryLeft={renderBackAction} />
-        <FlatList data={data} renderItem={renderItem} />
+        <FlatList data={data} renderItem={renderItem} keyExtractor={keyExtractor} />
       </SafeAreaView>
     </Layout>
   );

@@ -10,7 +10,7 @@ const GridIcon = (props) => <Icon {...props} name="grid-outline" />;
 const EditIcon = (props) => <Icon {...props} name="edit-outline" />;
 const ImageIcon = (props) => <Icon {...props} name="image-outline" />;
 
-export const DetailHeader = ({ title, style, url, setPaused, file_ext, id, isVideo, item }) => {
+export const DetailHeader = ({ title, style, url, setPaused, file_ext, id, isVideo, item, setItem, setTags }) => {
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [frameRate, setFrameRate] = React.useState('');
 
@@ -43,7 +43,7 @@ export const DetailHeader = ({ title, style, url, setPaused, file_ext, id, isVid
   const navigateEditPost = () => {
     setPaused(true);
     toggleMenu();
-    navigation.navigate('EditPost', { item });
+    navigation.navigate('EditPost', { item, setItem, updateCurrentTags: setTags });
   };
 
   const menuAnchor = () => (

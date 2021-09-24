@@ -52,7 +52,8 @@ export const DetailsScreen = ({ navigation, route }) => {
   const video = useRef();
   const commentList = useRef();
   const input = useRef();
-  const item = route.params.item;
+  const originalItem = route.params.item;
+  const [item, setItem] = useState(route.params.item);
   // const [item, setItem] = useState(route.params.item);
   const title = route.params.title;
   // const tags = route.params.tags;
@@ -281,11 +282,14 @@ export const DetailsScreen = ({ navigation, route }) => {
     loadUser();
     updatePostHistory();
     fetchComments();
-    getTagCount();
     return () => {
       mounted.current = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (mounted.current) getTagCount();
+  }, [tags]);
 
   const cancelInput = () => {
     setText();
@@ -528,6 +532,8 @@ export const DetailsScreen = ({ navigation, route }) => {
                   id={item.id}
                   isVideo={isVideo}
                   item={item}
+                  setItem={setItem}
+                  setTags={setTags}
                 />
               )}
               {!isLandscape && <TagList tags={tags} style={styles.tagContainer} loadCount={true} />}

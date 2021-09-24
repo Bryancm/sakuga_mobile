@@ -26,6 +26,9 @@ import { AutoComplete } from '../components/autoComplete';
 import { getData } from '../util/storage';
 import { useNavigation } from '@react-navigation/native';
 import { getRelatedTags, getTags } from '../api/tag';
+import { updatePost } from '../api/post';
+import Toast from 'react-native-simple-toast';
+import { tagStyles } from '../styles';
 
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const HashIcon = (props) => <Icon {...props} name="hash-outline" />;
@@ -44,38 +47,104 @@ const capitalize = (s) => {
 
 export const EditPost = ({ route }) => {
   const { height } = useWindowDimensions();
-  const { item } = route.params;
+  const { item, setItem, updateCurrentTags } = route.params;
   var tags_string = '';
   item.tags.forEach((t) => {
     tags_string = tags_string + t.tag + ' ';
   });
 
   const scrollView = useRef();
-  const [parent, setParent] = useState(item.parent_id);
+  const [parent, setParent] = useState(item.parent_id ? `${item.parent_id}` : undefined);
   const [source, setSource] = useState(item.source);
   const [tags, setTags] = useState(tags_string);
   const [showInIndex, setShowInIndex] = useState(item.is_shown_in_index ? true : false);
   const [menuVisible, setMenuVisible] = useState(false);
   const [relatedTags, setRelatedTags] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [editLoading, setEditLoading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [data, setData] = useState([]);
   const [relatedType, setRelatedType] = useState('All');
   const navigation = useNavigation();
 
-  //   const loadUser = async () => {
-  //     let newUser = false;
-  //     const currentUser = await getData('user');
-  //     if (currentUser && currentUser.name !== user) newUser = currentUser.name;
-  //     setUser(newUser);
-  //   };
+  const navigateLogin = () => {
+    setEditLoading(false);
+    navigation.navigate('Login');
+  };
 
-  //   useEffect(() => {
-  //     const unsubscribe = navigation.addListener('focus', async () => {
-  //       loadUser();
-  //     });
-  //     return unsubscribe;
-  //   }, [navigation]);
+  const postWithDetails = (tagsWithType, post, votes = []) => {
+    var artist = '';
+    var copyright = '';
+    var tags = [];
+    for (const tag in tagsWithType) {
+      if (Object.hasOwnProperty.call(tagsWithType, tag)) {
+        const type = tagsWithType[tag];
+        if (post.tags.includes(tag)) {
+          var style = tagStyles.artist_outline;
+          if (type === 'artist') artist = artist + ' ' + capitalize(tag);
+          if (type === 'copyright') {
+            style = tagStyles.copyright_outline;
+            copyright = tag;
+          }
+          if (type === 'terminology') style = tagStyles.terminology_outline;
+          if (type === 'meta') style = tagStyles.meta_outline;
+          if (type === 'general') style = tagStyles.general_outline;
+          tags.push({ type, tag, style });
+        }
+      }
+    }
+    const name =
+      artist.trim() && artist.trim() !== 'Artist_unknown'
+        ? artist.replace('Artist_unknown', '').trim()
+        : copyright.trim();
+    const title = name ? capitalize(name).replace(/_/g, ' ') : name;
+
+    var userScore = 0;
+    for (const post_id in votes) {
+      if (Object.hasOwnProperty.call(votes, post_id)) {
+        const vote = votes[post_id];
+        if (Number(post_id) === post.id) userScore = vote;
+      }
+    }
+
+    tags.sort((a, b) => a.type > b.type);
+    post.userScore = userScore;
+    post.tags = tags;
+    post.title = title;
+    return post;
+  };
+
+  const editPost = async () => {
+    try {
+      setEditLoading(true);
+      const user = await getData('user');
+      if (!user) return navigateLogin();
+      const response = await updatePost({
+        id: item.id,
+        tags: tags,
+        old_tags: tags_string,
+        is_shown_in_index: showInIndex ? 1 : 0,
+        parent_id: parent ? parent : '',
+        user: user.name,
+        password_hash: user.password_hash,
+      });
+      console.log('RESPONSE: ', response);
+
+      if (!response.success) {
+        setEditLoading(false);
+        return Toast.showWithGravity(response.reason, Toast.SHORT, Toast.CENTER);
+      }
+      const updatedPost = postWithDetails(response.tags, response.post);
+      setItem(updatedPost);
+      updateCurrentTags(updatedPost.tags);
+      if (response.success) Toast.showWithGravity(`Success! Post Updated`, Toast.SHORT, Toast.CENTER);
+      setEditLoading(false);
+    } catch (error) {
+      console.log('EDIT_POST_ERROR: ', error);
+      Toast.showWithGravity(`Error, Please try again later :(`, Toast.SHORT, Toast.CENTER);
+      setEditLoading(false);
+    }
+  };
 
   const getRelated = async (type) => {
     try {
@@ -100,7 +169,7 @@ export const EditPost = ({ route }) => {
   };
 
   useEffect(() => {
-    getRelated();
+    // getRelated();
   }, []);
 
   const onChangeParent = (parent) => setParent(parent);
@@ -115,7 +184,7 @@ export const EditPost = ({ route }) => {
     navigation.navigate('EditHistory', { item });
   };
 
-  const renderBackAction = () => <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
+  const renderBackAction = () => <TopNavigationAction icon={CloseIcon} onPress={navigateBack} />;
 
   const openUrl = (url) => {
     Linking.canOpenURL(url).then((supported) => {
@@ -177,7 +246,7 @@ export const EditPost = ({ route }) => {
   };
 
   const onFocus = (e) => {
-    setRelatedTags([]);
+    // setRelatedTags({});
     setIsFocused(true);
     scrollView.current.scrollTo({ y: 270, animated: true });
   };
@@ -186,13 +255,13 @@ export const EditPost = ({ route }) => {
     setIsFocused(false);
     Keyboard.dismiss();
     scrollView.current.scrollTo({ y: 0, animated: true });
-    getRelated();
+    if (Object.keys(relatedTags).length > 0) getRelated();
   };
 
   const tagsCaption = () => (
-    <Text appearance="hint" category="c2">
+    <Text appearance="hint" category="c1">
       Separate tags with spaces{' '}
-      <Text status="primary" category="c2" onPress={openTagGuidelines}>
+      <Text status="primary" category="c1" onPress={openTagGuidelines}>
         (tag guidelines)
       </Text>
     </Text>
@@ -237,7 +306,7 @@ export const EditPost = ({ route }) => {
   var renderRightActions = () => (
     <React.Fragment>
       <TopNavigationAction icon={EditHistoryIcon} onPress={navigateHitory} />
-      <TopNavigationAction icon={SaveIcon} />
+      {editLoading ? <ActivityIndicator /> : <TopNavigationAction icon={SaveIcon} onPress={editPost} />}
     </React.Fragment>
   );
 
@@ -253,7 +322,7 @@ export const EditPost = ({ route }) => {
         {isFocused && <AutoComplete data={data} onPress={onAutoCompletePress} top={270} height={'34%'} />}
         <ScrollView
           ref={scrollView}
-          contentContainerStyle={{ minHeight: height * 1.5 }}
+          contentContainerStyle={{ minHeight: height * 1.15 }}
           keyboardShouldPersistTaps={isFocused ? 'always' : 'never'}
           scrollEnabled={isFocused ? false : true}>
           <Layout
@@ -303,7 +372,7 @@ export const EditPost = ({ route }) => {
             onFocus={onFocus}
           />
           <Divider />
-          {!isFocused && (
+          {!isFocused && Object.keys(relatedTags).length > 0 && (
             <Layout
               style={{ ...styles.input, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <Text appearance="hint" category="s2">
@@ -331,12 +400,21 @@ export const EditPost = ({ route }) => {
               </OverflowMenu>
             </Layout>
           )}
+          {!loading && !isFocused && Object.keys(relatedTags).length === 0 && (
+            <Layout style={{ justifyContent: 'center', alignItems: 'center', height: '15%' }}>
+              <Button accessoryRight={TagIcon} appearance="ghost" status="info" onPress={() => getRelated()}>
+                <Text category="s2" status="info">
+                  View related tags
+                </Text>
+              </Button>
+            </Layout>
+          )}
           {loading && (
-            <Layout style={{ justifyContent: 'center', alignItems: 'center' }}>
+            <Layout style={{ justifyContent: 'center', alignItems: 'center', height: '15%' }}>
               <ActivityIndicator />
             </Layout>
           )}
-          {!loading && !isFocused && (
+          {!loading && !isFocused && Object.keys(relatedTags).length > 0 && (
             <Layout>
               {relatedTags.map((tag, index) => (
                 <Layout key={tag.name} style={{ marginBottom: 8 }}>
