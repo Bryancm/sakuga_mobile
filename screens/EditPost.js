@@ -29,6 +29,7 @@ import { getRelatedTags, getTags } from '../api/tag';
 import { updatePost } from '../api/post';
 import Toast from 'react-native-simple-toast';
 import { tagStyles } from '../styles';
+import { scale } from 'react-native-size-matters';
 
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const HashIcon = (props) => <Icon {...props} name="hash-outline" />;
@@ -45,7 +46,7 @@ const capitalize = (s) => {
   return s && s[0].toUpperCase() + s.slice(1);
 };
 
-export const EditPost = ({ route }) => {
+export const EditPostScreen = ({ route }) => {
   const { height } = useWindowDimensions();
   const { item, setItem, updateCurrentTags } = route.params;
   var tags_string = '';
@@ -76,45 +77,35 @@ export const EditPost = ({ route }) => {
     var artist = '';
     var copyright = '';
     var tags = [];
-    for (const tag in tagsWithType) {
-      if (Object.hasOwnProperty.call(tagsWithType, tag)) {
-        const type = tagsWithType[tag];
-        if (post.tags.includes(tag)) {
-          var style = tagStyles.artist_outline;
-          if (type === 'artist') artist = artist + ' ' + capitalize(tag);
-          if (type === 'copyright') {
-            style = tagStyles.copyright_outline;
-            copyright = tag;
-          }
-          if (type === 'terminology') style = tagStyles.terminology_outline;
-          if (type === 'meta') style = tagStyles.meta_outline;
-          if (type === 'general') style = tagStyles.general_outline;
-          tags.push({ type, tag, style });
-        }
+    const postTags = post.tags.split(' ');
+    for (const tag of postTags) {
+      const type = tagsWithType[tag];
+      var style = tagStyles.artist_outline;
+      if (type === 'artist') artist = artist + ' ' + capitalize(tag);
+      if (type === 'copyright') {
+        style = tagStyles.copyright_outline;
+        copyright = tag;
       }
+      if (type === 'terminology') style = tagStyles.terminology_outline;
+      if (type === 'meta') style = tagStyles.meta_outline;
+      if (type === 'general') style = tagStyles.general_outline;
+      tags.push({ type, tag, style });
     }
+
     const name =
       artist.trim() && artist.trim() !== 'Artist_unknown'
         ? artist.replace('Artist_unknown', '').trim()
         : copyright.trim();
     const title = name ? capitalize(name).replace(/_/g, ' ') : name;
 
-    var userScore = 0;
-    for (const post_id in votes) {
-      if (Object.hasOwnProperty.call(votes, post_id)) {
-        const vote = votes[post_id];
-        if (Number(post_id) === post.id) userScore = vote;
-      }
-    }
-
     tags.sort((a, b) => a.type > b.type);
-    post.userScore = userScore;
+    post.userScore = votes[post.id] ? votes[post.id] : 0;
     post.tags = tags;
     post.title = title;
     return post;
   };
 
-  const editPost = async () => {
+  const editPostData = async () => {
     try {
       setEditLoading(true);
       const user = await getData('user');
@@ -306,7 +297,7 @@ export const EditPost = ({ route }) => {
   var renderRightActions = () => (
     <React.Fragment>
       <TopNavigationAction icon={EditHistoryIcon} onPress={navigateHitory} />
-      {editLoading ? <ActivityIndicator /> : <TopNavigationAction icon={SaveIcon} onPress={editPost} />}
+      {editLoading ? <ActivityIndicator /> : <TopNavigationAction icon={SaveIcon} onPress={editPostData} />}
     </React.Fragment>
   );
 
@@ -322,7 +313,7 @@ export const EditPost = ({ route }) => {
         {isFocused && <AutoComplete data={data} onPress={onAutoCompletePress} top={270} height={'34%'} />}
         <ScrollView
           ref={scrollView}
-          contentContainerStyle={{ minHeight: height * 1.15 }}
+          contentContainerStyle={{ minHeight: height * 1.15, alignItems: Platform.isPad ? 'center' : 'stretch' }}
           keyboardShouldPersistTaps={isFocused ? 'always' : 'never'}
           scrollEnabled={isFocused ? false : true}>
           <Layout
@@ -415,7 +406,7 @@ export const EditPost = ({ route }) => {
             </Layout>
           )}
           {!loading && !isFocused && Object.keys(relatedTags).length > 0 && (
-            <Layout>
+            <Layout style={{ width: Platform.isPad ? scale(220) : '100%' }}>
               {relatedTags.map((tag, index) => (
                 <Layout key={tag.name} style={{ marginBottom: 8 }}>
                   <Text category="s1" style={{ marginBottom: 8 }}>
@@ -452,7 +443,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 8,
-    alignItems: Platform.isPad ? 'center' : 'stretch',
+    alignItems: 'stretch',
     position: 'relative',
   },
   inputContainer: {

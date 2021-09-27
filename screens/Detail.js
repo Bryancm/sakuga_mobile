@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -25,8 +25,9 @@ import FastImage from 'react-native-fast-image';
 import { RNFFmpeg } from 'react-native-ffmpeg';
 import RNFS from 'react-native-fs';
 import { verticalScale } from 'react-native-size-matters';
-import { useDeviceOrientationChange, useOrientationChange } from 'react-native-orientation-locker';
+import Orientation from 'react-native-orientation-locker';
 import { findTag } from '../api/tag';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const SortIcon = () => (
   <Icon
@@ -45,8 +46,8 @@ const SendIcon = (props) => <Icon {...props} name="corner-down-right-outline" />
 
 const videoHeight = Platform.isPad ? verticalScale(280) : verticalScale(232);
 
-export const DetailsScreen = ({ navigation, route }) => {
-  const { width } = useWindowDimensions();
+export const DetailsScreen = React.memo(({ navigation, route }) => {
+  const { width, height } = useWindowDimensions();
 
   const mounted = useRef(true);
   const video = useRef();
@@ -55,12 +56,15 @@ export const DetailsScreen = ({ navigation, route }) => {
   const originalItem = route.params.item;
   const [item, setItem] = useState(route.params.item);
   // const [item, setItem] = useState(route.params.item);
-  const title = route.params.title;
+  const title = item.title ? item.title : route.params.title;
   // const tags = route.params.tags;
   const isVideo =
-    item.file_ext !== 'gif' && item.file_ext !== 'jpg' && item.file_ext !== 'jpeg' && item.file_ext !== 'png';
+    originalItem.file_ext !== 'gif' &&
+    originalItem.file_ext !== 'jpg' &&
+    originalItem.file_ext !== 'jpeg' &&
+    originalItem.file_ext !== 'png';
 
-  const [orientation, setOrientation] = useState('');
+  const [orientation, setOrientation] = useState(width < height ? 'PORTRAIT' : 'LANDSCAPE');
   const [inputIsFocused, setInputIsFocused] = useState(false);
   const [text, setText] = useState();
   const [comments, setComments] = useState([]);
@@ -73,10 +77,17 @@ export const DetailsScreen = ({ navigation, route }) => {
   const [loadingImage, setLoadingImage] = useState(true);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [commentSort, setCommentSort] = useState('Newest');
-  const [url, setUrl] = useState(converProxyUrl(item.file_url));
+  const [url, setUrl] = useState(converProxyUrl(originalItem.file_url));
   const [tags, setTags] = useState(route.params.tags);
 
-  const getTagCount = async () => {
+  useEffect(() => {
+    Orientation.addOrientationListener(setOrientation);
+    return () => {
+      Orientation.removeAllListeners();
+    };
+  }, []);
+
+  const getTagCount = useCallback(async () => {
     try {
       var tagFetches = [];
       var newTags = [];
@@ -90,22 +101,17 @@ export const DetailsScreen = ({ navigation, route }) => {
         const newTag = { ...tags[index], count: responseTag.count };
         newTags.push(newTag);
       }
-      setTags(newTags);
+      if (mounted.current) setTags(newTags);
     } catch (error) {
       console.log('GET_TAG_COUNT_ERROR: ', error);
     }
-  };
+  }, [tags]);
 
-  useOrientationChange((orientation) => {
-    // console.log(orientation);
-    setOrientation(orientation);
-  });
-
-  const navigateLogin = () => {
+  const navigateLogin = useCallback(() => {
     setPaused(true);
     clearLoading();
     navigation.navigate('Login');
-  };
+  }, []);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
@@ -121,14 +127,14 @@ export const DetailsScreen = ({ navigation, route }) => {
     return unsubscribe;
   }, [navigation]);
 
-  const loadUser = async () => {
+  const loadUser = useCallback(async () => {
     let newUser = false;
     const currentUser = await getData('user');
     if (currentUser && currentUser.name !== user) newUser = currentUser.name;
     setUser(newUser);
-  };
+  }, []);
 
-  const updatePostHistory = async () => {
+  const updatePostHistory = useCallback(async () => {
     try {
       var newHistory = [item];
       const currentHistory = await getData('postHistory');
@@ -140,9 +146,9 @@ export const DetailsScreen = ({ navigation, route }) => {
     } catch (error) {
       console.log('ADD_TO_HISTORY_ERROR: ', error);
     }
-  };
+  }, []);
 
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     try {
       const data = await getComments({ id: item.id });
       setComments(data);
@@ -152,20 +158,20 @@ export const DetailsScreen = ({ navigation, route }) => {
       setComments([]);
       clearLoading();
     }
-  };
+  }, []);
 
-  const clearLoading = () => {
+  const clearLoading = useCallback(() => {
     setFetching(false);
     setRefetching(false);
     setCommentLoading(false);
-  };
+  }, []);
 
-  const refetchComments = () => {
+  const refetchComments = useCallback(() => {
     setRefetching(true);
     fetchComments();
-  };
+  }, []);
 
-  const addPostComment = async () => {
+  const addPostComment = useCallback(async () => {
     try {
       setCommentLoading(true);
       const user = await getData('user');
@@ -188,40 +194,43 @@ export const DetailsScreen = ({ navigation, route }) => {
       clearLoading();
       Toast.show('Error, please try again later :(');
     }
-  };
+  }, [item, text]);
 
-  const editPostComment = async (id) => {
-    try {
-      setCommentLoading(true);
-      const user = await getData('user');
-      if (!user) return navigateLogin();
-      const body = text.replace(/\n/g, '%0D%0A');
-      const response = await editComment({ id, body, user: user.name, password_hash: user.password_hash });
-      // console.log({ response });
-      fetchComments();
-      cancelInput();
-      // Toast.show('Comment edited');
-      Toast.showWithGravity(`Comment edited`, Toast.SHORT, Toast.CENTER);
-    } catch (error) {
-      console.log('EDIT COMMENT ERROR', error);
-      clearLoading();
-      Toast.show('Error, please try again later :(');
-    }
-  };
+  const editPostComment = useCallback(
+    async (id) => {
+      try {
+        setCommentLoading(true);
+        const user = await getData('user');
+        if (!user) return navigateLogin();
+        const body = text.replace(/\n/g, '%0D%0A');
+        const response = await editComment({ id, body, user: user.name, password_hash: user.password_hash });
+        // console.log({ response });
+        fetchComments();
+        cancelInput();
+        // Toast.show('Comment edited');
+        Toast.showWithGravity(`Comment edited`, Toast.SHORT, Toast.CENTER);
+      } catch (error) {
+        console.log('EDIT COMMENT ERROR', error);
+        clearLoading();
+        Toast.show('Error, please try again later :(');
+      }
+    },
+    [text],
+  );
 
-  const onCommentButtonPress = () => {
+  const onCommentButtonPress = useCallback(() => {
     if (!text || !text.trim()) return Toast.showWithGravity(`Please type a comment`, Toast.SHORT, Toast.CENTER);
     editId ? editPostComment(editId) : addPostComment();
-  };
+  }, [text, editId]);
 
-  const onEditCommentButtonPress = ({ id, body, isQuote }) => {
+  const onEditCommentButtonPress = useCallback(({ id, body, isQuote }) => {
     setEditId(false);
     if (!isQuote) setEditId(id);
     setText(body);
     input.current.focus();
-  };
+  }, []);
 
-  const deleteCommentAlert = (id) => {
+  const deleteCommentAlert = useCallback((id) => {
     Alert.alert('Delete', `Do you want to delete this comment ?`, [
       {
         text: 'Cancel',
@@ -229,9 +238,9 @@ export const DetailsScreen = ({ navigation, route }) => {
       },
       { text: 'Confirm', onPress: () => onDeleteComment(id), style: 'destructive' },
     ]);
-  };
+  }, []);
 
-  const onDeleteComment = async (id) => {
+  const onDeleteComment = useCallback(async (id) => {
     try {
       setFetching(true);
       setComments([]);
@@ -247,9 +256,9 @@ export const DetailsScreen = ({ navigation, route }) => {
       clearLoading();
       Toast.show('Error, please try again later :(');
     }
-  };
+  }, []);
 
-  const flagCommentAlert = (id) => {
+  const flagCommentAlert = useCallback((id) => {
     Alert.alert('Flag', `Do you want to flag for delete this comment ?`, [
       {
         text: 'Cancel',
@@ -257,9 +266,9 @@ export const DetailsScreen = ({ navigation, route }) => {
       },
       { text: 'Confirm', onPress: () => onFlagComment(id), style: 'destructive' },
     ]);
-  };
+  }, []);
 
-  const onFlagComment = async (id) => {
+  const onFlagComment = useCallback(async (id) => {
     try {
       setFetching(true);
       setComments([]);
@@ -275,75 +284,75 @@ export const DetailsScreen = ({ navigation, route }) => {
       clearLoading();
       Toast.show('Error, please try again later :(');
     }
-  };
+  }, []);
 
   useEffect(() => {
     mounted.current = true;
     loadUser();
     updatePostHistory();
     fetchComments();
+    getTagCount();
     return () => {
       mounted.current = false;
     };
   }, []);
 
-  useEffect(() => {
-    if (mounted.current) getTagCount();
-  }, [tags]);
-
-  const cancelInput = () => {
+  const cancelInput = useCallback(() => {
     setText();
     setInputIsFocused(false);
     Keyboard.dismiss();
     commentList.current.scrollToOffset({ animated: true, offset: 0 });
-  };
+  }, []);
 
-  const CommentButtons = () => (
-    <Layout style={{ backgroundColor: 'transparent', flexDirection: 'row', alignItems: 'center' }}>
-      {inputIsFocused && !commentLoading && (
-        <Button
-          style={{ paddingHorizontal: 0, paddingVertical: 0, height: 10 }}
-          status="basic"
-          appearance="ghost"
-          accessoryRight={CloseIcon}
-          onPress={cancelInput}
-        />
-      )}
+  const CommentButtons = useCallback(
+    () => (
+      <Layout style={{ backgroundColor: 'transparent', flexDirection: 'row', alignItems: 'center' }}>
+        {inputIsFocused && !commentLoading && (
+          <Button
+            style={{ paddingHorizontal: 0, paddingVertical: 0, height: 10 }}
+            status="basic"
+            appearance="ghost"
+            accessoryRight={CloseIcon}
+            onPress={cancelInput}
+          />
+        )}
 
-      {inputIsFocused && !commentLoading && (
-        <Button
-          style={{ paddingHorizontal: 0, paddingVertical: 0, height: 10 }}
-          status="info"
-          appearance="ghost"
-          accessoryLeft={SendIcon}
-          onPress={onCommentButtonPress}
-        />
-      )}
+        {inputIsFocused && !commentLoading && (
+          <Button
+            style={{ paddingHorizontal: 0, paddingVertical: 0, height: 10 }}
+            status="info"
+            appearance="ghost"
+            accessoryLeft={SendIcon}
+            onPress={onCommentButtonPress}
+          />
+        )}
 
-      {commentLoading && <ActivityIndicator />}
-    </Layout>
+        {commentLoading && <ActivityIndicator />}
+      </Layout>
+    ),
+    [inputIsFocused, commentLoading],
   );
 
-  const onInputFocus = () => {
+  const onInputFocus = useCallback(() => {
     commentList.current.scrollToOffset({ animated: true, offset: 185 });
     setInputIsFocused(true);
-  };
+  }, []);
 
-  const onChangeText = (text) => {
+  const onChangeText = useCallback((text) => {
     if (!text) cancelInput();
     setText(text);
-  };
+  }, []);
 
-  const onEnterFullscreen = () => {
+  const onEnterFullscreen = useCallback(() => {
     video.current.player.ref.presentFullscreenPlayer();
-  };
+  }, []);
 
-  const onFullscreenPlayerWillDismiss = () => {
+  const onFullscreenPlayerWillDismiss = useCallback(() => {
     video.current.methods.togglePlayPause();
     video.current.methods.toggleFullscreen();
-  };
+  }, []);
 
-  const download = async () => {
+  const download = useCallback(async () => {
     try {
       setLoadingImage(true);
       const {
@@ -384,15 +393,15 @@ export const DetailsScreen = ({ navigation, route }) => {
       console.log('download error: ', error);
       setLoadingImage(false);
     }
-  };
+  }, [item]);
 
-  const onImagePress = () => {
+  const onImagePress = useCallback(() => {
     download();
-  };
+  }, []);
 
-  const navigateBack = () => {
+  const navigateBack = useCallback(() => {
     navigation.goBack();
-  };
+  }, []);
 
   const onVideoError = (e) => {
     console.log('VIDEO_ERROR: ', e);
@@ -401,7 +410,7 @@ export const DetailsScreen = ({ navigation, route }) => {
     }
   };
 
-  const convertToMP4 = async () => {
+  const convertToMP4 = useCallback(async () => {
     try {
       const directory = `${RNFS.CachesDirectoryPath}/webmCache`;
       const exist = await RNFS.exists(directory);
@@ -417,29 +426,35 @@ export const DetailsScreen = ({ navigation, route }) => {
       console.log('CONVERT_TO_MP4_ERROR: ', error);
       // setUrl('format incompatible');
     }
-  };
+  }, [item]);
 
-  const seek = (seconds) => {
-    if (videoLoaded) video.current.player.ref.seek(seconds);
-  };
+  const seek = useCallback(
+    (seconds) => {
+      if (videoLoaded) video.current.player.ref.seek(seconds);
+    },
+    [videoLoaded],
+  );
 
-  const onLoad = () => {
+  const onLoad = useCallback(() => {
     setVideoLoaded(true);
-  };
+  }, []);
 
   const changeCommentSort = () => {
-    if (commentSort === 'Newest') return setCommentSort('Oldest');
-    setCommentSort('Newest');
+    console.log('changeCommentSort');
+    if (commentSort === 'Newest') {
+      setComments((oldComments) => oldComments.reverse());
+      setCommentSort('Oldest');
+    } else {
+      setComments((oldComments) => oldComments.sort((a, b) => new Date(a.created_at) < new Date(b.created_at)));
+      setCommentSort('Newest');
+    }
   };
 
-  const sortComments = () => {
-    if (commentSort === 'Newest') return comments.sort((a, b) => new Date(a.created_at) < new Date(b.created_at));
-    return comments.reverse();
-  };
-
-  const sortedComments = sortComments(comments);
+  // const sortedComments = sortComments(comments);
+  // const sortedComments = [];
 
   const isLandscape = width >= 592 && orientation.includes('LANDSCAPE');
+  console.log({ isLandscape, width, orientation });
 
   return (
     <Layout level="2" style={{ flex: 1 }}>
@@ -492,26 +507,28 @@ export const DetailsScreen = ({ navigation, route }) => {
               />
             </Layout>
           )}
-          {isLandscape && (
-            <DetailHeader
-              title={title}
-              style={styles.titleContainer}
-              url={url}
-              file_ext={item.file_ext}
-              setPaused={setPaused}
-              id={item.id}
-              isVideo={isVideo}
-              item={item}
-            />
-          )}
+          <ScrollView>
+            {isLandscape && (
+              <DetailHeader
+                title={title}
+                style={styles.titleContainer}
+                url={url}
+                file_ext={item.file_ext}
+                setPaused={setPaused}
+                id={item.id}
+                isVideo={isVideo}
+                item={item}
+              />
+            )}
 
-          {isLandscape && <TagList tags={tags} style={styles.tagContainer} loadCount={false} item={item} />}
+            {isLandscape && <TagList tags={tags} style={styles.tagContainer} loadCount={false} item={item} />}
 
-          {isLandscape && <DetailFooter item={item} style={styles.titleContainer} />}
+            {isLandscape && <DetailFooter item={item} style={styles.titleContainer} />}
+          </ScrollView>
         </Layout>
         <CommentList
           commentList={commentList}
-          data={user === undefined ? [] : sortedComments}
+          data={user === undefined ? [] : comments}
           isFetching={isFetching}
           isRefetching={isRefetching}
           refetch={refetchComments}
@@ -581,7 +598,7 @@ export const DetailsScreen = ({ navigation, route }) => {
       </SafeAreaView>
     </Layout>
   );
-};
+});
 
 const styles = StyleSheet.create({
   tagContainer: {

@@ -6,7 +6,7 @@ import FastImage from 'react-native-fast-image';
 import { PostMenu } from './postMenu';
 import { verticalScale, scale } from 'react-native-size-matters';
 
-export const SmallCard = ({ item, navigateDetail }) => {
+export const SmallCard = React.memo(({ item, navigateDetail }) => {
   const { width } = useWindowDimensions();
   const tags = item.tags;
   const title = item.title;
@@ -56,12 +56,13 @@ export const SmallCard = ({ item, navigateDetail }) => {
       </Layout>
     </TouchableOpacity>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 8,
     marginVertical: 8,
+    height: Platform.isPad ? verticalScale(200) : verticalScale(210),
   },
   infoContainer: {
     flexDirection: 'row',

@@ -33,39 +33,29 @@ export const PostHorizontalList = forwardRef((props, ref) => {
     var artist = '';
     var copyright = '';
     var tags = [];
-    for (const tag in tagsWithType) {
-      if (Object.hasOwnProperty.call(tagsWithType, tag)) {
-        const type = tagsWithType[tag];
-        if (post.tags.includes(tag)) {
-          var style = tagStyles.artist_outline;
-          if (type === 'artist') artist = artist + ' ' + capitalize(tag);
-          if (type === 'copyright') {
-            style = tagStyles.copyright_outline;
-            copyright = tag;
-          }
-          if (type === 'terminology') style = tagStyles.terminology_outline;
-          if (type === 'meta') style = tagStyles.meta_outline;
-          if (type === 'general') style = tagStyles.general_outline;
-          tags.push({ type, tag, style });
-        }
+    const postTags = post.tags.split(' ');
+    for (const tag of postTags) {
+      const type = tagsWithType[tag];
+      var style = tagStyles.artist_outline;
+      if (type === 'artist') artist = artist + ' ' + capitalize(tag);
+      if (type === 'copyright') {
+        style = tagStyles.copyright_outline;
+        copyright = tag;
       }
+      if (type === 'terminology') style = tagStyles.terminology_outline;
+      if (type === 'meta') style = tagStyles.meta_outline;
+      if (type === 'general') style = tagStyles.general_outline;
+      tags.push({ type, tag, style });
     }
+
     const name =
       artist.trim() && artist.trim() !== 'Artist_unknown'
         ? artist.replace('Artist_unknown', '').trim()
         : copyright.trim();
     const title = name ? capitalize(name).replace(/_/g, ' ') : name;
 
-    var userScore = 0;
-    for (const post_id in votes) {
-      if (Object.hasOwnProperty.call(votes, post_id)) {
-        const vote = votes[post_id];
-        if (Number(post_id) === post.id) userScore = vote;
-      }
-    }
-
     tags.sort((a, b) => a.type > b.type);
-    post.userScore = userScore;
+    post.userScore = votes[post.id] ? votes[post.id] : 0;
     post.tags = tags;
     post.title = title;
     return post;

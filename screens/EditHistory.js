@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, ScrollView, ActivityIndicator, FlatList } from 'react-native';
-import { Layout, Icon, TopNavigation, TopNavigationAction, Text, Button, Divider } from '@ui-kitten/components';
-import { CreateAccountForm } from '../components/createAccountForm';
-import { getData } from '../util/storage';
+import { SafeAreaView, FlatList, Platform } from 'react-native';
+import { Layout, Icon, TopNavigation, TopNavigationAction, Text, Button } from '@ui-kitten/components';
 import { useNavigation } from '@react-navigation/native';
 import { getTagStyle } from '../util/api';
-// import cheerio from 'react-native-cheerio';
+import { scale } from 'react-native-size-matters';
 const cheerio = require('react-native-cheerio');
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
@@ -81,7 +79,7 @@ export const EditHistory = ({ route }) => {
 
   const renderItem = ({ item }) => {
     return (
-      <Layout style={{ paddingVertical: 8, justifyContent: 'center' }}>
+      <Layout style={{ paddingVertical: 8, justifyContent: 'center', width: Platform.isPad ? scale(220) : '100%' }}>
         <Layout
           style={{
             flexDirection: 'row',
@@ -151,7 +149,13 @@ export const EditHistory = ({ route }) => {
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
         <TopNavigation title="Edit History" alignment="center" accessoryLeft={renderBackAction} />
-        <FlatList data={data} renderItem={renderItem} keyExtractor={keyExtractor} />
+
+        <FlatList
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          contentContainerStyle={{ alignItems: Platform.isPad ? 'center' : 'stretch' }}
+        />
       </SafeAreaView>
     </Layout>
   );
