@@ -71,14 +71,14 @@ export const LoginForm = ({ loadUser, from, navigateBack, navigatePostList, navi
         />
         {error && <Text category="c2">{error}</Text>}
         <Button
-          style={{ width: Platform.isPad ? scale(220) : '100%', marginTop: 24, marginBottom: 16 }}
+          style={{ width: Platform.isPad ? scale(140) : '100%', marginTop: 24, marginBottom: 16 }}
           onPress={loginUser}
           disabled={loading}>
           {loading ? <ActivityIndicator /> : <Text category="h6">Login</Text>}
         </Button>
         <Button
           appearance="outline"
-          style={{ width: Platform.isPad ? scale(220) : '100%' }}
+          style={{ width: Platform.isPad ? scale(140) : '100%' }}
           disabled={loading}
           onPress={navigateCreateAccount}>
           <Text status={loading ? 'basic' : 'primary'} category="h6">
@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 8,
     alignItems: Platform.isPad ? 'center' : 'stretch',
+    paddingTop: Platform.isPad ? 40 : 0,
   },
   inputContainer: {
     flex: 1,
@@ -105,6 +106,6 @@ const styles = StyleSheet.create({
   },
   input: {
     marginVertical: 2,
-    width: Platform.isPad ? scale(220) : '100%',
+    width: Platform.isPad ? scale(140) : '100%',
   },
 });

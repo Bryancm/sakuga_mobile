@@ -454,7 +454,6 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
   // const sortedComments = [];
 
   const isLandscape = width >= 592 && orientation.includes('LANDSCAPE');
-  console.log({ isLandscape, width, orientation });
 
   return (
     <Layout level="2" style={{ flex: 1 }}>

@@ -8,6 +8,7 @@ import {
   Linking,
   Keyboard,
   useWindowDimensions,
+  FlatList,
 } from 'react-native';
 import {
   Layout,
@@ -47,7 +48,7 @@ const capitalize = (s) => {
 };
 
 export const EditPostScreen = ({ route }) => {
-  const { height } = useWindowDimensions();
+  const { height, width } = useWindowDimensions();
   const { item, setItem, updateCurrentTags } = route.params;
   var tags_string = '';
   item.tags.forEach((t) => {
@@ -60,7 +61,7 @@ export const EditPostScreen = ({ route }) => {
   const [tags, setTags] = useState(tags_string);
   const [showInIndex, setShowInIndex] = useState(item.is_shown_in_index ? true : false);
   const [menuVisible, setMenuVisible] = useState(false);
-  const [relatedTags, setRelatedTags] = useState({});
+  const [relatedTags, setRelatedTags] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -237,16 +238,18 @@ export const EditPostScreen = ({ route }) => {
   };
 
   const onFocus = (e) => {
-    // setRelatedTags({});
+    setRelatedTags([]);
     setIsFocused(true);
-    scrollView.current.scrollTo({ y: 270, animated: true });
+    // scrollView.current.scrollTo({ y: 270, animated: true });
+    scrollView.current.scrollToOffset({ animated: true, offset: 270 });
   };
 
   const cancelInput = () => {
     setIsFocused(false);
     Keyboard.dismiss();
-    scrollView.current.scrollTo({ y: 0, animated: true });
-    if (Object.keys(relatedTags).length > 0) getRelated();
+    // scrollView.current.scrollTo({ y: 0, animated: true });
+    scrollView.current.scrollToOffset({ animated: true, offset: 0 });
+    getRelated();
   };
 
   const tagsCaption = () => (
@@ -301,6 +304,38 @@ export const EditPostScreen = ({ route }) => {
     </React.Fragment>
   );
 
+  const scaleValue = width < 375 ? scale(140) : scale(220);
+
+  const styleInput = { ...styles.input, width: Platform.isPad ? scaleValue : '100%' };
+  const renderItem = ({ item, index }) => {
+    return (
+      <Layout style={{ width: Platform.isPad ? scaleValue : '100%', marginBottom: 8 }}>
+        <Text category="s1" style={{ marginBottom: 8 }}>
+          {item.name}
+        </Text>
+        {item.tags.map((t, i) => {
+          const update = () => updateTags(t, i, index);
+          return (
+            <Button
+              key={i}
+              size="small"
+              appearance="ghost"
+              onPress={update}
+              status={t.status}
+              accessoryRight={TagIcon}
+              style={{ justifyContent: 'flex-start' }}>
+              <Text category="c1" style={{ marginVertical: 4 }} status={t.status}>
+                {t.name}
+              </Text>
+            </Button>
+          );
+        })}
+      </Layout>
+    );
+  };
+
+  const keyExtractor = (item) => item.name;
+
   return (
     <Layout style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -311,129 +346,122 @@ export const EditPostScreen = ({ route }) => {
           accessoryRight={renderRightActions}
         />
         {isFocused && <AutoComplete data={data} onPress={onAutoCompletePress} top={270} height={'34%'} />}
-        <ScrollView
+        <FlatList
           ref={scrollView}
+          data={relatedTags}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
           contentContainerStyle={{ minHeight: height * 1.15, alignItems: Platform.isPad ? 'center' : 'stretch' }}
           keyboardShouldPersistTaps={isFocused ? 'always' : 'never'}
-          scrollEnabled={isFocused ? false : true}>
-          <Layout
-            style={{ ...styles.input, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Text category="s2">Show in index</Text>
-            <Toggle size="small" checked={showInIndex} onChange={onChangeIndex}></Toggle>
-          </Layout>
-          <Divider />
-          <Input
-            label="Parent Post"
-            size="large"
-            autoCapitalize="none"
-            keyboardType="numeric"
-            placeholder="Post ID"
-            keyboardAppearance="dark"
-            style={styles.input}
-            accessoryRight={HashIcon}
-            value={parent}
-            onChangeText={onChangeParent}
-          />
-
-          <Input
-            label="Source"
-            caption="Source of the media"
-            size="large"
-            autoCapitalize="none"
-            placeholder="# EP"
-            keyboardAppearance="dark"
-            style={styles.input}
-            accessoryRight={MonitorIcon}
-            value={source}
-            onChangeText={onChangeSource}
-          />
-
-          <Input
-            multiline={true}
-            label="Tags"
-            size="large"
-            placeholder="Tags"
-            autoCorrect={false}
-            keyboardAppearance="dark"
-            value={tags}
-            onChangeText={onChangeTags}
-            accessoryRight={TagButtons}
-            caption={tagsCaption}
-            style={styles.input}
-            onFocus={onFocus}
-          />
-          <Divider />
-          {!isFocused && Object.keys(relatedTags).length > 0 && (
-            <Layout
-              style={{ ...styles.input, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text appearance="hint" category="s2">
-                Related tags
-              </Text>
-              <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>
-                <MenuItem key="1" onPress={() => updateRealtedTags()} title={<Text category="c1">All</Text>} />
-                <MenuItem
-                  key="2"
-                  onPress={() => updateRealtedTags('artist')}
-                  title={<Text category="c1">Artist</Text>}
-                />
-                <MenuItem key="3" onPress={() => updateRealtedTags('term')} title={<Text category="c1">Terms</Text>} />
-                <MenuItem
-                  key="4"
-                  onPress={() => updateRealtedTags('copyright')}
-                  title={<Text category="c1">Copyright</Text>}
-                />
-                <MenuItem
-                  key="6"
-                  onPress={() => updateRealtedTags('general')}
-                  title={<Text category="c1">General</Text>}
-                />
-                <MenuItem key="5" onPress={() => updateRealtedTags('meta')} title={<Text category="c1">Meta</Text>} />
-              </OverflowMenu>
-            </Layout>
-          )}
-          {!loading && !isFocused && Object.keys(relatedTags).length === 0 && (
+          scrollEnabled={isFocused ? false : true}
+          windowSize={3}
+          initialNumToRender={2}
+          maxToRenderPerBatch={1}
+          ListEmptyComponent={
             <Layout style={{ justifyContent: 'center', alignItems: 'center', height: '15%' }}>
-              <Button accessoryRight={TagIcon} appearance="ghost" status="info" onPress={() => getRelated()}>
-                <Text category="s2" status="info">
-                  View related tags
-                </Text>
-              </Button>
-            </Layout>
-          )}
-          {loading && (
-            <Layout style={{ justifyContent: 'center', alignItems: 'center', height: '15%' }}>
-              <ActivityIndicator />
-            </Layout>
-          )}
-          {!loading && !isFocused && Object.keys(relatedTags).length > 0 && (
-            <Layout style={{ width: Platform.isPad ? scale(220) : '100%' }}>
-              {relatedTags.map((tag, index) => (
-                <Layout key={tag.name} style={{ marginBottom: 8 }}>
-                  <Text category="s1" style={{ marginBottom: 8 }}>
-                    {tag.name}
+              {!loading && !isFocused && (
+                <Button accessoryRight={TagIcon} appearance="ghost" status="info" onPress={() => getRelated()}>
+                  <Text category="s2" status="info">
+                    View related tags
                   </Text>
-                  {tag.tags.map((t, i) => {
-                    const update = () => updateTags(t, i, index);
-                    return (
-                      <Button
-                        key={i}
-                        size="small"
-                        appearance="ghost"
-                        onPress={update}
-                        status={t.status}
-                        accessoryRight={TagIcon}
-                        style={{ justifyContent: 'flex-start' }}>
-                        <Text category="c1" style={{ marginVertical: 4 }} status={t.status}>
-                          {t.name}
-                        </Text>
-                      </Button>
-                    );
-                  })}
-                </Layout>
-              ))}
+                </Button>
+              )}
+              {loading && <ActivityIndicator />}
             </Layout>
-          )}
-        </ScrollView>
+          }
+          ListHeaderComponent={
+            <Layout>
+              <Layout
+                style={{ ...styleInput, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Text category="s2">Show in index</Text>
+                <Toggle size="small" checked={showInIndex} onChange={onChangeIndex}></Toggle>
+              </Layout>
+              <Divider />
+              <Input
+                label="Parent Post"
+                size="large"
+                autoCapitalize="none"
+                keyboardType="numeric"
+                placeholder="Post ID"
+                keyboardAppearance="dark"
+                style={styleInput}
+                accessoryRight={HashIcon}
+                value={parent}
+                onChangeText={onChangeParent}
+              />
+
+              <Input
+                label="Source"
+                caption="Source of the media"
+                size="large"
+                autoCapitalize="none"
+                placeholder="# EP"
+                keyboardAppearance="dark"
+                style={styleInput}
+                accessoryRight={MonitorIcon}
+                value={source}
+                onChangeText={onChangeSource}
+              />
+
+              <Input
+                multiline={true}
+                label="Tags"
+                size="large"
+                placeholder="Tags"
+                autoCorrect={false}
+                keyboardAppearance="dark"
+                value={tags}
+                onChangeText={onChangeTags}
+                accessoryRight={TagButtons}
+                caption={tagsCaption}
+                style={styleInput}
+                onFocus={onFocus}
+              />
+              <Divider />
+              {!isFocused && Object.keys(relatedTags).length > 0 && (
+                <Layout
+                  style={{
+                    ...styleInput,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                  <Text appearance="hint" category="s2">
+                    Related tags
+                  </Text>
+                  <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>
+                    <MenuItem key="1" onPress={() => updateRealtedTags()} title={<Text category="c1">All</Text>} />
+                    <MenuItem
+                      key="2"
+                      onPress={() => updateRealtedTags('artist')}
+                      title={<Text category="c1">Artist</Text>}
+                    />
+                    <MenuItem
+                      key="3"
+                      onPress={() => updateRealtedTags('term')}
+                      title={<Text category="c1">Terms</Text>}
+                    />
+                    <MenuItem
+                      key="4"
+                      onPress={() => updateRealtedTags('copyright')}
+                      title={<Text category="c1">Copyright</Text>}
+                    />
+                    <MenuItem
+                      key="6"
+                      onPress={() => updateRealtedTags('general')}
+                      title={<Text category="c1">General</Text>}
+                    />
+                    <MenuItem
+                      key="5"
+                      onPress={() => updateRealtedTags('meta')}
+                      title={<Text category="c1">Meta</Text>}
+                    />
+                  </OverflowMenu>
+                </Layout>
+              )}
+            </Layout>
+          }
+        />
       </SafeAreaView>
     </Layout>
   );

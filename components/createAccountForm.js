@@ -116,7 +116,7 @@ export const CreateAccountForm = ({ loadUser, from, navigateBack, navigatePostLi
           <Text category="c2">{e}</Text>
         ))}
         <Button
-          style={{ width: Platform.isPad ? scale(220) : '100%', marginTop: 24, marginBottom: 16 }}
+          style={{ width: Platform.isPad ? scale(140) : '100%', marginTop: 24, marginBottom: 16 }}
           onPress={createAccount}
           disabled={loading}>
           {loading ? <ActivityIndicator /> : <Text category="h6">Create account</Text>}
@@ -131,6 +131,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 8,
     alignItems: Platform.isPad ? 'center' : 'stretch',
+    paddingTop: Platform.isPad ? 40 : 0,
   },
   inputContainer: {
     flex: 1,
@@ -141,6 +142,6 @@ const styles = StyleSheet.create({
   },
   input: {
     marginVertical: 2,
-    width: Platform.isPad ? scale(220) : '100%',
+    width: Platform.isPad ? scale(140) : '100%',
   },
 });
