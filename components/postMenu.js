@@ -7,7 +7,6 @@ import Toast from 'react-native-simple-toast';
 import Clipboard from '@react-native-community/clipboard';
 import RNFetchBlob from 'rn-fetch-blob';
 import { useNavigation } from '@react-navigation/native';
-import { set } from 'react-native-reanimated';
 
 const MoreIcon = (props) => <Icon {...props} name="more-vertical-outline" />;
 const StarIcon = (props) => <Icon {...props} name="star-outline" />;
@@ -159,7 +158,8 @@ export const PostMenu = React.memo(
         });
         const fileExt = item.file_ext;
         const isIOS = Platform.OS === 'ios';
-        const filePath = `${directoryPath}/${item.title}_${item.id}.${fileExt}`;
+        const fileName = `${item.title}_${item.id}.${fileExt}`;
+        const filePath = `${directoryPath}/${fileName}`;
         const isVideo = fileExt !== 'gif' && fileExt !== 'jpg' && fileExt !== 'jpeg' && fileExt !== 'png';
         const mimeType = isVideo ? 'video/*' : 'image/*';
         const configOptions = Platform.select({
@@ -181,7 +181,9 @@ export const PostMenu = React.memo(
           },
         });
         const response = await RNFetchBlob.config(configOptions).fetch('GET', item.file_url);
+
         if (isIOS) RNFetchBlob.ios.previewDocument(response.path());
+
         setLoadingDownload(false);
       } catch (error) {
         Toast.show('Error, please try again later :(');

@@ -127,7 +127,7 @@ export const EditPostScreen = ({ route }) => {
         user: user.name,
         password_hash: user.password_hash,
       });
-      console.log('RESPONSE: ', response);
+      // console.log('RESPONSE: ', response);
 
       if (!response.success) {
         setEditLoading(false);
