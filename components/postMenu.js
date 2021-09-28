@@ -117,7 +117,7 @@ export const PostMenu = React.memo(
         const user = await getData('user');
         if (!user) {
           setLoading(false);
-          return navigation.navigate('Login');
+          return navigation.navigate('Login', { from: 'addScore' });
         }
 
         const prevVote = await verifyVote(user);

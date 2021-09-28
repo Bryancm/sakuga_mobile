@@ -83,30 +83,33 @@ export const DetailHeader = React.memo(
             </ParsedText>
           </Layout>
         </Layout>
-        {isVideo && file_ext !== 'webm' && (
-          <Layout level="2" style={{ flexDirection: 'row', height: '100%', alignItems: 'flex-start' }}>
-            <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>
+
+        <Layout level="2" style={{ flexDirection: 'row', height: '100%', alignItems: 'flex-start' }}>
+          <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>
+            {isVideo && file_ext !== 'webm' && (
               <MenuItem
                 key="1"
                 onPress={navigateFramesEditor}
                 title={<Text category="c1">Frames</Text>}
                 accessoryLeft={GridIcon}
               />
+            )}
+            {isVideo && file_ext !== 'webm' && (
               <MenuItem
                 key="2"
                 onPress={navigateGifEditor}
                 title={<Text category="c1">GIF</Text>}
                 accessoryLeft={ImageIcon}
               />
-              <MenuItem
-                key="3"
-                onPress={navigateEditPost}
-                title={<Text category="c1">Edit</Text>}
-                accessoryLeft={EditIcon}
-              />
-            </OverflowMenu>
-          </Layout>
-        )}
+            )}
+            <MenuItem
+              key="3"
+              onPress={navigateEditPost}
+              title={<Text category="c1">Edit</Text>}
+              accessoryLeft={EditIcon}
+            />
+          </OverflowMenu>
+        </Layout>
       </Layout>
     );
   },

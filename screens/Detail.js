@@ -78,7 +78,7 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [commentSort, setCommentSort] = useState('Newest');
   const [url, setUrl] = useState(converProxyUrl(originalItem.file_url));
-  const [tags, setTags] = useState(route.params.tags);
+  const [tags, setTags] = useState(originalItem.tags);
 
   useEffect(() => {
     Orientation.addOrientationListener(setOrientation);
@@ -87,11 +87,12 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
     };
   }, []);
 
-  const getTagCount = useCallback(async () => {
+  const getTagCount = useCallback(async (tags) => {
     try {
       var tagFetches = [];
       var newTags = [];
       for (const tag of tags) {
+        console.log(tag.tag);
         tagFetches.push(findTag({ name: tag.tag }));
       }
       const responses = await Promise.all(tagFetches);
@@ -105,12 +106,12 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
     } catch (error) {
       console.log('GET_TAG_COUNT_ERROR: ', error);
     }
-  }, [tags]);
+  }, []);
 
   const navigateLogin = useCallback(() => {
     setPaused(true);
     clearLoading();
-    navigation.navigate('Login');
+    navigation.navigate('Login', { from: 'login' });
   }, []);
 
   useEffect(() => {
@@ -291,11 +292,14 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
     loadUser();
     updatePostHistory();
     fetchComments();
-    getTagCount();
     return () => {
       mounted.current = false;
     };
   }, []);
+
+  useEffect(() => {
+    getTagCount(item.tags);
+  }, [item]);
 
   const cancelInput = useCallback(() => {
     setText();
@@ -440,7 +444,6 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
   }, []);
 
   const changeCommentSort = () => {
-    console.log('changeCommentSort');
     if (commentSort === 'Newest') {
       setComments((oldComments) => oldComments.reverse());
       setCommentSort('Oldest');
@@ -450,10 +453,8 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
     }
   };
 
-  // const sortedComments = sortComments(comments);
-  // const sortedComments = [];
-
   const isLandscape = width >= 592 && orientation.includes('LANDSCAPE');
+  console.log({ isLandscape });
 
   return (
     <Layout level="2" style={{ flex: 1 }}>
@@ -517,6 +518,8 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
                 id={item.id}
                 isVideo={isVideo}
                 item={item}
+                setItem={setItem}
+                setTags={setTags}
               />
             )}
 

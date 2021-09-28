@@ -31,6 +31,7 @@ import { updatePost } from '../api/post';
 import Toast from 'react-native-simple-toast';
 import { tagStyles } from '../styles';
 import { scale } from 'react-native-size-matters';
+import Orientation from 'react-native-orientation-locker';
 
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const HashIcon = (props) => <Icon {...props} name="hash-outline" />;
@@ -69,9 +70,16 @@ export const EditPostScreen = ({ route }) => {
   const [relatedType, setRelatedType] = useState('All');
   const navigation = useNavigation();
 
+  useEffect(() => {
+    Orientation.addOrientationListener(cancelInput);
+    return () => {
+      Orientation.removeAllListeners();
+    };
+  }, []);
+
   const navigateLogin = () => {
     setEditLoading(false);
-    navigation.navigate('Login');
+    navigation.navigate('Login', { from: 'EditPost' });
   };
 
   const postWithDetails = (tagsWithType, post, votes = []) => {
@@ -98,7 +106,6 @@ export const EditPostScreen = ({ route }) => {
         ? artist.replace('Artist_unknown', '').trim()
         : copyright.trim();
     const title = name ? capitalize(name).replace(/_/g, ' ') : name;
-
     tags.sort((a, b) => a.type > b.type);
     post.userScore = votes[post.id] ? votes[post.id] : 0;
     post.tags = tags;
@@ -128,9 +135,9 @@ export const EditPostScreen = ({ route }) => {
       }
       const updatedPost = postWithDetails(response.tags, response.post);
       setItem(updatedPost);
-      updateCurrentTags(updatedPost.tags);
       if (response.success) Toast.showWithGravity(`Success! Post Updated`, Toast.SHORT, Toast.CENTER);
       setEditLoading(false);
+      navigation.goBack();
     } catch (error) {
       console.log('EDIT_POST_ERROR: ', error);
       Toast.showWithGravity(`Error, Please try again later :(`, Toast.SHORT, Toast.CENTER);
@@ -159,10 +166,6 @@ export const EditPostScreen = ({ route }) => {
       setRelatedTags({});
     }
   };
-
-  useEffect(() => {
-    // getRelated();
-  }, []);
 
   const onChangeParent = (parent) => setParent(parent);
   const onChangeSource = (source) => setSource(source);
@@ -238,18 +241,15 @@ export const EditPostScreen = ({ route }) => {
   };
 
   const onFocus = (e) => {
-    setRelatedTags([]);
     setIsFocused(true);
-    // scrollView.current.scrollTo({ y: 270, animated: true });
     scrollView.current.scrollToOffset({ animated: true, offset: 270 });
   };
 
   const cancelInput = () => {
-    setIsFocused(false);
     Keyboard.dismiss();
-    // scrollView.current.scrollTo({ y: 0, animated: true });
     scrollView.current.scrollToOffset({ animated: true, offset: 0 });
-    getRelated();
+    if (isFocused) getRelated();
+    setIsFocused(false);
   };
 
   const tagsCaption = () => (
@@ -345,13 +345,21 @@ export const EditPostScreen = ({ route }) => {
           accessoryLeft={renderBackAction}
           accessoryRight={renderRightActions}
         />
-        {isFocused && <AutoComplete data={data} onPress={onAutoCompletePress} top={270} height={'34%'} />}
+        {isFocused && (
+          <AutoComplete
+            data={data}
+            onPress={onAutoCompletePress}
+            top={Platform.isPad ? 230 : 270}
+            height={'34%'}
+            width={scaleValue}
+          />
+        )}
         <FlatList
           ref={scrollView}
-          data={relatedTags}
+          data={isFocused || loading ? [] : relatedTags}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
-          contentContainerStyle={{ minHeight: height * 1.15, alignItems: Platform.isPad ? 'center' : 'stretch' }}
+          contentContainerStyle={{ minHeight: height * 1.23, alignItems: Platform.isPad ? 'center' : 'stretch' }}
           keyboardShouldPersistTaps={isFocused ? 'always' : 'never'}
           scrollEnabled={isFocused ? false : true}
           windowSize={3}

@@ -8,7 +8,7 @@ const TagIcon = (props) => <Icon {...props} name="pricetags-outline" />;
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const screenHeight = Dimensions.get('window').height;
 
-export const AutoComplete = ({ data, onPress, deleteItemFromHistory, top, height }) => {
+export const AutoComplete = ({ data, onPress, deleteItemFromHistory, top, height, width }) => {
   const renderItem = ({ item }) => {
     const tagStyle = getTagStyle(item.type);
     const style = tagStyle.color ? { ...styles.text, color: tagStyle.color } : styles.text;
@@ -68,15 +68,22 @@ export const AutoComplete = ({ data, onPress, deleteItemFromHistory, top, height
         top: top ? top : screenHeight > 736 && !Platform.isPad ? 90 : 70,
         height: height ? height : '58%',
       }}>
-      <FlatList
-        keyboardShouldPersistTaps="always"
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={keyStractor}
-        windowSize={6}
-        initialNumToRender={6}
-        maxToRenderPerBatch={6}
-      />
+      <Layout
+        style={{
+          width: '100%',
+          alignItems: Platform.isPad ? 'center' : 'flex-start',
+        }}>
+        <FlatList
+          keyboardShouldPersistTaps="always"
+          contentContainerStyle={{ width: width ? width : '100%' }}
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={keyStractor}
+          windowSize={6}
+          initialNumToRender={6}
+          maxToRenderPerBatch={6}
+        />
+      </Layout>
     </Layout>
   );
 };

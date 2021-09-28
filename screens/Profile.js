@@ -62,7 +62,7 @@ export const ProfileScreen = ({ navigation }) => {
 
   const onFavoritesPress = () => {
     if (user) return navigatePostList('Favorites', true, 'Favorites', `vote:3:${user} order:vote`);
-    navigation.navigate('Login');
+    navigation.navigate('Login', { from: 'favorites' });
   };
 
   if (user === undefined)
