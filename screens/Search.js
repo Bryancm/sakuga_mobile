@@ -280,7 +280,7 @@ export const SearchScreen = ({ navigation }) => {
             data={data}
             onPress={onAutoCompletePress}
             deleteItemFromHistory={deleteItemFromHistory}
-            width={width * 0.5}
+            width={Platform.isPad ? width * 0.5 : width}
             alignItems="center"
           />
         )}

@@ -349,10 +349,10 @@ export const EditPostScreen = ({ route }) => {
           <AutoComplete
             data={data}
             onPress={onAutoCompletePress}
-            top={Platform.isPad ? 230 : 270}
+            top={Platform.isPad ? 230 : 230}
             height={'34%'}
-            width={scaleValue}
-            alignItems={'center'}
+            width={Platform.isPad ? scaleValue : width * 0.95}
+            alignItems={Platform.isPad ? 'center' : 'flex-start'}
           />
         )}
         <FlatList
