@@ -92,7 +92,6 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
       var tagFetches = [];
       var newTags = [];
       for (const tag of tags) {
-        console.log(tag.tag);
         tagFetches.push(findTag({ name: tag.tag }));
       }
       const responses = await Promise.all(tagFetches);
@@ -454,7 +453,6 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
   };
 
   const isLandscape = width >= 592 && orientation.includes('LANDSCAPE');
-  console.log({ isLandscape });
 
   return (
     <Layout level="2" style={{ flex: 1 }}>
@@ -493,6 +491,7 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
                 navigator={navigation}
                 controlAnimationTiming={250}
                 controlTimeout={3000}
+                doubleTapTime={0}
                 scrubbing={1}
                 repeat={true}
                 muted={true}
@@ -504,6 +503,9 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
                 onFullscreenPlayerWillDismiss={onFullscreenPlayerWillDismiss}
                 // onError={onVideoError}
                 onLoad={onLoad}
+                pictureInPicture={true}
+                playWhenInactive={true}
+                tapAnywhereToPause={true}
               />
             </Layout>
           )}

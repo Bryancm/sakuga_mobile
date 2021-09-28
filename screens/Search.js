@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { SafeAreaView, StyleSheet, ActivityIndicator } from 'react-native';
+import { SafeAreaView, StyleSheet, ActivityIndicator, Platform, useWindowDimensions } from 'react-native';
 import {
   Icon,
   Layout,
@@ -27,6 +27,7 @@ const OptionsIcon = (props) => <Icon {...props} name="options-2-outline" />;
 const StarIcon = (props) => <Icon {...props} name="star-outline" />;
 
 export const SearchScreen = ({ navigation }) => {
+  const { width } = useWindowDimensions();
   const rangePicker = useRef();
   const [range, setRange] = useState({});
   const [value, setValue] = useState(null);
@@ -56,8 +57,8 @@ export const SearchScreen = ({ navigation }) => {
         setLayoutType(settings.sizeForSearch);
       }
     } else {
-      setAutoPlay(true);
-      setLayoutType('small');
+      setAutoPlay(Platform.isPad ? false : true);
+      setLayoutType(Platform.isPad ? 'grid' : 'large');
     }
   };
 
@@ -275,7 +276,13 @@ export const SearchScreen = ({ navigation }) => {
           </Button>
         </Layout>
         {focus && (
-          <AutoComplete data={data} onPress={onAutoCompletePress} deleteItemFromHistory={deleteItemFromHistory} />
+          <AutoComplete
+            data={data}
+            onPress={onAutoCompletePress}
+            deleteItemFromHistory={deleteItemFromHistory}
+            width={width * 0.5}
+            alignItems="center"
+          />
         )}
         <TabView
           style={{ flex: 1 }}

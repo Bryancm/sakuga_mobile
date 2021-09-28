@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, FlatList, Platform } from 'react-native';
+import { SafeAreaView, FlatList, Platform, ActivityIndicator, useWindowDimensions } from 'react-native';
 import { Layout, Icon, TopNavigation, TopNavigationAction, Text, Button } from '@ui-kitten/components';
 import { useNavigation } from '@react-navigation/native';
 import { getTagStyle } from '../util/api';
@@ -11,8 +11,10 @@ const UserIcon = (props) => <Icon {...props} name="person-outline" />;
 const CalendarIcon = (props) => <Icon {...props} name="calendar-outline" />;
 
 export const EditHistory = ({ route }) => {
+  const { width } = useWindowDimensions();
   const { item } = route.params;
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
 
   const classToType = (spanClass) => {
@@ -61,6 +63,7 @@ export const EditHistory = ({ route }) => {
       });
 
     setData(historyData);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -79,11 +82,16 @@ export const EditHistory = ({ route }) => {
 
   const renderItem = ({ item }) => {
     return (
-      <Layout style={{ paddingVertical: 8, justifyContent: 'center', width: Platform.isPad ? scale(220) : '100%' }}>
+      <Layout
+        style={{
+          paddingVertical: 8,
+
+          width: Platform.isPad && width > 375 ? scale(220) : '100%',
+        }}>
         <Layout
           style={{
             flexDirection: 'row',
-            alignItems: 'center',
+
             justifyContent: 'space-between',
           }}>
           <Button
@@ -101,7 +109,7 @@ export const EditHistory = ({ route }) => {
         <Layout
           style={{
             flexDirection: 'row',
-            alignItems: 'center',
+
             flexWrap: 'wrap',
             paddingLeft: 32,
           }}>
@@ -154,7 +162,12 @@ export const EditHistory = ({ route }) => {
           data={data}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
-          contentContainerStyle={{ alignItems: Platform.isPad ? 'center' : 'stretch' }}
+          contentContainerStyle={{ alignItems: Platform.isPad && width > 375 ? 'center' : 'stretch' }}
+          ListEmptyComponent={
+            <Layout style={{ justifyContent: 'center', alignItems: 'center', height: loading ? '100%' : '5%' }}>
+              {loading && <ActivityIndicator />}
+            </Layout>
+          }
         />
       </SafeAreaView>
     </Layout>

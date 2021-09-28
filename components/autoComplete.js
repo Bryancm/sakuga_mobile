@@ -8,7 +8,7 @@ const TagIcon = (props) => <Icon {...props} name="pricetags-outline" />;
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const screenHeight = Dimensions.get('window').height;
 
-export const AutoComplete = ({ data, onPress, deleteItemFromHistory, top, height, width }) => {
+export const AutoComplete = ({ data, onPress, deleteItemFromHistory, top, height, width, alignItems }) => {
   const renderItem = ({ item }) => {
     const tagStyle = getTagStyle(item.type);
     const style = tagStyle.color ? { ...styles.text, color: tagStyle.color } : styles.text;
@@ -71,7 +71,7 @@ export const AutoComplete = ({ data, onPress, deleteItemFromHistory, top, height
       <Layout
         style={{
           width: '100%',
-          alignItems: Platform.isPad ? 'center' : 'flex-start',
+          alignItems: alignItems ? alignItems : 'flex-start',
         }}>
         <FlatList
           keyboardShouldPersistTaps="always"

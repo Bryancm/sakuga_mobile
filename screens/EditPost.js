@@ -50,7 +50,7 @@ const capitalize = (s) => {
 
 export const EditPostScreen = ({ route }) => {
   const { height, width } = useWindowDimensions();
-  const { item, setItem, updateCurrentTags } = route.params;
+  const { item, setItem } = route.params;
   var tags_string = '';
   item.tags.forEach((t) => {
     tags_string = tags_string + t.tag + ' ';
@@ -352,6 +352,7 @@ export const EditPostScreen = ({ route }) => {
             top={Platform.isPad ? 230 : 270}
             height={'34%'}
             width={scaleValue}
+            alignItems={'center'}
           />
         )}
         <FlatList

@@ -224,7 +224,7 @@ export const PostVerticalList = ({
 
   const renderItem = useCallback(
     ({ item, index }) => {
-      if (layoutType === 'grid' && width > 592)
+      if (layoutType === 'grid' && width > 507)
         return (
           <GridCard item={item} deleteAlert={showDeleteButton ? deleteAlert : false} navigateDetail={navigateDetail} />
         );
@@ -244,7 +244,7 @@ export const PostVerticalList = ({
         <CardSmall item={item} deleteAlert={showDeleteButton ? deleteAlert : false} navigateDetail={navigateDetail} />
       );
     },
-    [autoPlay, showDeleteButton],
+    [autoPlay, showDeleteButton, layoutType, width],
   );
 
   const onEndReached = useCallback(async () => {
@@ -318,7 +318,7 @@ export const PostVerticalList = ({
       props.windowSize = 5;
       props.numColumns = 1;
     }
-    if (width <= 592 && Platform.isPad) {
+    if (width <= 507 && Platform.isPad) {
       props.initialNumToRender = 6;
       props.maxToRenderPerBatch = 3;
       props.windowSize = 9;
@@ -326,7 +326,7 @@ export const PostVerticalList = ({
       delete props.columnWrapperStyle;
     }
     return props;
-  }, [width]);
+  }, [layoutType, width]);
 
   if (focus) return <Layout style={{ ...styles.center, height: '100%' }} />;
   if (isLoading)
