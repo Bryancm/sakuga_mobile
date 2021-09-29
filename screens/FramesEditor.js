@@ -27,7 +27,7 @@ const formatSeconds = (seconds) => {
 };
 
 export const FramesEditorScreen = ({ navigation, route }) => {
-  const { width, height } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   var abortController = new AbortController();
   const mounted = useRef(true);
   const videoPlayer = useRef();
@@ -50,52 +50,58 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [rate, setRate] = useState(1);
 
-  const toggleMenu = () => {
+  const toggleMenu = useCallback(() => {
     setPlay(false);
     setReplay(false);
     setMenuVisible(!menuVisible);
-  };
+  }, [menuVisible]);
 
-  const menuAnchor = () => (
-    <Button
-      delayPressIn={0}
-      delayPressOut={0}
-      appearance="ghost"
-      style={styles.pauseButton}
-      onPress={toggleMenu}
-      accessoryRight={() => <Text category="c1">{`x${rate}`}</Text>}
-    />
+  const menuAnchor = useCallback(
+    () => (
+      <Button
+        delayPressIn={0}
+        delayPressOut={0}
+        appearance="ghost"
+        style={styles.pauseButton}
+        onPress={toggleMenu}
+        accessoryRight={() => <Text category="c1">{`x${rate}`}</Text>}
+      />
+    ),
+    [menuVisible],
   );
 
-  const updateRate = (rate) => {
+  const updateRate = useCallback((rate) => {
     setRate(rate);
     setMenuVisible(false);
     setPlay(true);
     setReplay(true);
-  };
+  }, []);
 
-  const RateMenu = () => (
-    <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>
-      <MenuItem key="1" title={<Text category="c1">x0.05</Text>} onPress={() => updateRate(0.05)} />
-      <MenuItem key="2" title={<Text category="c1">x0.1</Text>} onPress={() => updateRate(0.1)} />
-      <MenuItem key="3" title={<Text category="c1">x0.25</Text>} onPress={() => updateRate(0.25)} />
-      <MenuItem key="4" title={<Text category="c1">x0.50</Text>} onPress={() => updateRate(0.5)} />
-      <MenuItem key="5" title={<Text category="c1">x0.75</Text>} onPress={() => updateRate(0.75)} />
-      <MenuItem key="6" title={<Text category="c1">x1</Text>} onPress={() => updateRate(1)} />
-      <MenuItem key="7" title={<Text category="c1">x1.25</Text>} onPress={() => updateRate(1.25)} />
-      <MenuItem key="8" title={<Text category="c1">x1.50</Text>} onPress={() => updateRate(1.5)} />
-      <MenuItem key="9" title={<Text category="c1">x1.75</Text>} onPress={() => updateRate(1.75)} />
-      <MenuItem key="10" title={<Text category="c1">x2</Text>} onPress={() => updateRate(2)} />
-    </OverflowMenu>
+  const RateMenu = useCallback(
+    () => (
+      <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>
+        <MenuItem key="1" title={<Text category="c1">x0.05</Text>} onPress={() => updateRate(0.05)} />
+        <MenuItem key="2" title={<Text category="c1">x0.1</Text>} onPress={() => updateRate(0.1)} />
+        <MenuItem key="3" title={<Text category="c1">x0.25</Text>} onPress={() => updateRate(0.25)} />
+        <MenuItem key="4" title={<Text category="c1">x0.50</Text>} onPress={() => updateRate(0.5)} />
+        <MenuItem key="5" title={<Text category="c1">x0.75</Text>} onPress={() => updateRate(0.75)} />
+        <MenuItem key="6" title={<Text category="c1">x1</Text>} onPress={() => updateRate(1)} />
+        <MenuItem key="7" title={<Text category="c1">x1.25</Text>} onPress={() => updateRate(1.25)} />
+        <MenuItem key="8" title={<Text category="c1">x1.50</Text>} onPress={() => updateRate(1.5)} />
+        <MenuItem key="9" title={<Text category="c1">x1.75</Text>} onPress={() => updateRate(1.75)} />
+        <MenuItem key="10" title={<Text category="c1">x2</Text>} onPress={() => updateRate(2)} />
+      </OverflowMenu>
+    ),
+    [menuVisible],
   );
 
-  const deleteFramesCache = async () => {
+  const deleteFramesCache = useCallback(async () => {
     const dir = `${RNFS.CachesDirectoryPath}/framesCache`;
     const exist = await RNFS.exists(dir);
     if (exist) await RNFS.unlink(dir);
-  };
+  }, []);
 
-  const loadVideo = async () => {
+  const loadVideo = useCallback(async () => {
     try {
       await fetch(url, { signal: abortController.signal });
       if (mounted.current) setLoading(false);
@@ -103,7 +109,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
       console.log('DOWNLOAD_VIDEO_ERROR: ', error);
       if (mounted.current) setLoading(false);
     }
-  };
+  }, [mounted]);
 
   useEffect(() => {
     mounted.current = true;
@@ -176,25 +182,29 @@ export const FramesEditorScreen = ({ navigation, route }) => {
     setReplay(!replay);
   }, [play, replay]);
 
-  const navigateBack = () => {
+  const navigateBack = useCallback(() => {
     const setPaused = route.params.setPaused;
     if (setPaused) setPaused(false);
     navigation.goBack();
-  };
+  }, []);
 
-  const renderLeftAction = () => (
-    <TopNavigationAction delayPressIn={0} delayPressOut={0} icon={CloseIcon} onPress={navigateBack} />
+  const renderLeftAction = useCallback(
+    () => <TopNavigationAction delayPressIn={0} delayPressOut={0} icon={CloseIcon} onPress={navigateBack} />,
+    [],
   );
 
-  const navigateFramesList = () => {
+  const navigateFramesList = useCallback(() => {
     if (play) toggleVideo();
     navigation.navigate('FramesList', { startTime, endTime, title, id, file_ext, url });
-  };
+  }, [play, startTime, endTime]);
 
-  const renderRightActions = () => (
-    <React.Fragment>
-      <TopNavigationAction delayPressIn={0} delayPressOut={0} icon={GridIcon} onPress={navigateFramesList} />
-    </React.Fragment>
+  const renderRightActions = useCallback(
+    () => (
+      <React.Fragment>
+        <TopNavigationAction delayPressIn={0} delayPressOut={0} icon={GridIcon} onPress={navigateFramesList} />
+      </React.Fragment>
+    ),
+    [startTime, endTime],
   );
 
   const stepFoward = useCallback(() => {
@@ -242,20 +252,22 @@ export const FramesEditorScreen = ({ navigation, route }) => {
         </SafeAreaView>
       </Layout>
     );
+  const getWidthAndHeight = () => {
+    var w = scale(270);
+    var h = scale(270);
+    var jc = 'flex-start';
+    if (width < 694 && width >= 507) {
+      w = scale(200);
+      h = scale(200);
+    } else if (width <= 375) {
+      w = !Platform.isPad ? width : scale(140);
+      h = !Platform.isPad ? scale(232) : scale(140);
+      jc = 'flex-start';
+    }
+    return { w, h, jc };
+  };
 
-  var w = scale(270);
-  var h = scale(270);
-  var jc = 'flex-start';
-  if (width < 694 && width >= 507) {
-    w = scale(200);
-    h = scale(200);
-  } else if (width <= 375) {
-    w = !Platform.isPad ? width : scale(140);
-    h = !Platform.isPad ? scale(232) : scale(140);
-    jc = 'flex-start';
-  }
-
-  // console.log(width);
+  const { w, h, jc } = getWidthAndHeight();
 
   return (
     <Layout style={{ flex: 1 }}>

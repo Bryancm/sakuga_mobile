@@ -178,6 +178,7 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
       if (!user) return navigateLogin();
 
       // const body = text.replace(/\n/g, '%0D%0A');
+
       const response = await addComment({
         id: item.id,
         body: text,
@@ -194,7 +195,7 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
       clearLoading();
       Toast.show('Error, please try again later :(');
     }
-  }, [item, text]);
+  }, [text]);
 
   const editPostComment = useCallback(
     async (id) => {
@@ -207,6 +208,7 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
         // console.log({ response });
         fetchComments();
         cancelInput();
+        setEditId(false);
         // Toast.show('Comment edited');
         Toast.showWithGravity(`Comment edited`, Toast.SHORT, Toast.CENTER);
       } catch (error) {
@@ -333,7 +335,7 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
         {commentLoading && <ActivityIndicator />}
       </Layout>
     ),
-    [inputIsFocused, commentLoading],
+    [inputIsFocused, commentLoading, text, editId],
   );
 
   const onInputFocus = useCallback(() => {
