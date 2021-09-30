@@ -9,3 +9,9 @@ export const findTag = async ({ name = '' }) => {
   const response = await fetch(url);
   return response.json();
 };
+
+export const getRelatedTags = async ({ tags = '', type = '' }) => {
+  const url = `https://www.sakugabooru.com/tag/related.json?tags=${tags}&type=${type}`;
+  const response = await fetch(url);
+  return response.json();
+};

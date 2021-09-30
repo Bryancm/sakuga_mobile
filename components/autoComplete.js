@@ -7,7 +7,7 @@ const ClockIcon = (props) => <Icon {...props} name="clock-outline" />;
 const TagIcon = (props) => <Icon {...props} name="pricetags-outline" />;
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 
-export const AutoComplete = ({ data, onPress, deleteItemFromHistory }) => {
+export const AutoComplete = ({ data, onPress, deleteItemFromHistory, top, height }) => {
   const renderItem = ({ item }) => {
     const tagStyle = getTagStyle(item.type);
     const style = tagStyle.color ? { ...styles.text, color: tagStyle.color } : styles.text;
@@ -58,7 +58,7 @@ export const AutoComplete = ({ data, onPress, deleteItemFromHistory }) => {
   const keyStractor = (item) => item.id.toString();
 
   return (
-    <Layout style={styles.container}>
+    <Layout style={{ ...styles.container, top: top ? top : 45, height: height ? height : '90%' }}>
       <FlatList
         keyboardShouldPersistTaps="always"
         data={data}
@@ -75,9 +75,7 @@ export const AutoComplete = ({ data, onPress, deleteItemFromHistory }) => {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: '90%',
     position: 'absolute',
-    top: 45,
     left: 0,
     zIndex: 10,
   },

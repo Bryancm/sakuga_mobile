@@ -7,7 +7,8 @@ import { useNavigation } from '@react-navigation/native';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 
-export const LoginScreen = () => {
+export const LoginScreen = ({ route }) => {
+  const { from } = route.params;
   const [user, setUser] = useState();
   const navigation = useNavigation();
 
@@ -61,7 +62,7 @@ export const LoginScreen = () => {
         <ScrollView>
           <LoginForm
             loadUser={loadUser}
-            from="favorites"
+            from={from ? from : 'favorites'}
             navigateBack={navigateBack}
             navigatePostList={navigatePostList}
             navigateCreateAccount={navigateCreateAccount}

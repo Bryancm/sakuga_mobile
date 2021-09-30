@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { FlatList, ActivityIndicator, StyleSheet, Dimensions } from 'react-native';
 import { Layout, Text, Button, Icon } from '@ui-kitten/components';
 import { SmallCard } from './cardHorizontal';
@@ -15,49 +15,47 @@ const capitalize = (s) => {
   return s && s[0].toUpperCase() + s.slice(1);
 };
 
-export const PostHorizontalList = ({ search = '', title, tags, menuType, date, secondDate, from }) => {
+export const PostHorizontalList = forwardRef((props, ref) => {
+  const { itemSearch = '', title, tags, menuType, date, secondDate, from } = props;
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
+  const [search, setSearch] = useState('');
   const [message, setMessage] = useState('Nobody here but us chickens!');
   const navigation = useNavigation();
+
+  useImperativeHandle(ref, () => ({
+    loadPosts() {
+      if (!search) setSearch(itemSearch);
+    },
+  }));
 
   const postWithDetails = (tagsWithType, post, votes) => {
     var artist = '';
     var copyright = '';
     var tags = [];
-    for (const tag in tagsWithType) {
-      if (Object.hasOwnProperty.call(tagsWithType, tag)) {
-        const type = tagsWithType[tag];
-        if (post.tags.includes(tag)) {
-          var style = tagStyles.artist_outline;
-          if (type === 'artist') artist = artist + ' ' + capitalize(tag);
-          if (type === 'copyright') {
-            style = tagStyles.copyright_outline;
-            copyright = tag;
-          }
-          if (type === 'terminology') style = tagStyles.terminology_outline;
-          if (type === 'meta') style = tagStyles.meta_outline;
-          if (type === 'general') style = tagStyles.general_outline;
-          tags.push({ type, tag, style });
-        }
+    const postTags = post.tags.split(' ');
+    for (const tag of postTags) {
+      const type = tagsWithType[tag];
+      var style = tagStyles.artist_outline;
+      if (type === 'artist') artist = artist + ' ' + capitalize(tag);
+      if (type === 'copyright') {
+        style = tagStyles.copyright_outline;
+        copyright = tag;
       }
+      if (type === 'terminology') style = tagStyles.terminology_outline;
+      if (type === 'meta') style = tagStyles.meta_outline;
+      if (type === 'general') style = tagStyles.general_outline;
+      tags.push({ type, tag, style });
     }
+
     const name =
       artist.trim() && artist.trim() !== 'Artist_unknown'
         ? artist.replace('Artist_unknown', '').trim()
         : copyright.trim();
     const title = name ? capitalize(name).replace(/_/g, ' ') : name;
 
-    var userScore = 0;
-    for (const post_id in votes) {
-      if (Object.hasOwnProperty.call(votes, post_id)) {
-        const vote = votes[post_id];
-        if (Number(post_id) === post.id) userScore = vote;
-      }
-    }
-
     tags.sort((a, b) => a.type > b.type);
-    post.userScore = userScore;
+    post.userScore = votes[post.id] ? votes[post.id] : 0;
     post.tags = tags;
     post.title = title;
     return post;
@@ -66,6 +64,10 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType, date, s
   const fetchPost = async (page, isFirst, search) => {
     try {
       if (!isFirst) setFetching(true);
+      if (!search) {
+        setData([]);
+        return clearLoading();
+      }
       var params = { search, page, include_tags: 1, include_votes: 1, limit: 8 };
       const user = await getData('user');
       if (user) params = { ...params, user: user.name, password_hash: user.password_hash };
@@ -94,8 +96,7 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType, date, s
         const pageIndex = 18 * (page - 1);
         const start = pageIndex;
         const end = page * 18;
-        const newData = currentHistory.slice(start, end);
-        if (newData.length === 0) setHasMore(false);
+        const newData = from === 'Recent' ? currentHistory.slice(0, 8) : currentHistory.slice(start, end);
         newHistory = [...data, ...newData];
         if (page === 1) newHistory = newData;
       }
@@ -169,9 +170,9 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType, date, s
           horizontal
           data={data}
           renderItem={renderItem}
-          windowSize={4}
-          initialNumToRender={2}
-          maxToRenderPerBatch={2}
+          windowSize={8}
+          initialNumToRender={8}
+          maxToRenderPerBatch={8}
           keyExtractor={keyExtractor}
           ListEmptyComponent={
             <Layout style={styles.center}>
@@ -191,7 +192,7 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType, date, s
       )}
     </Layout>
   );
-};
+});
 
 const styles = StyleSheet.create({
   center: { alignItems: 'center', justifyContent: 'center', height: 244, width: screenWidth },

@@ -50,50 +50,56 @@ export const FramesEditorScreen = ({ navigation, route }) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [rate, setRate] = useState(1);
 
-  const toggleMenu = () => {
+  const toggleMenu = useCallback(() => {
     setPaused(true);
     setMenuVisible(!menuVisible);
-  };
+  }, [menuVisible]);
 
-  const menuAnchor = () => (
-    <Button
-      delayPressIn={0}
-      delayPressOut={0}
-      appearance="ghost"
-      style={styles.pauseButton}
-      onPress={toggleMenu}
-      accessoryRight={() => <Text category="c1">{`x${rate}`}</Text>}
-    />
+  const menuAnchor = useCallback(
+    () => (
+      <Button
+        delayPressIn={0}
+        delayPressOut={0}
+        appearance="ghost"
+        style={styles.pauseButton}
+        onPress={toggleMenu}
+        accessoryRight={() => <Text category="c1">{`x${rate}`}</Text>}
+      />
+    ),
+    [menuVisible],
   );
 
-  const updateRate = (rate) => {
+  const updateRate = useCallback((rate) => {
     setRate(rate);
     setMenuVisible(false);
     setPaused(false);
-  };
+  }, []);
 
-  const RateMenu = () => (
-    <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>
-      <MenuItem key="1" title={<Text category="c1">x0.05</Text>} onPress={() => updateRate(0.05)} />
-      <MenuItem key="2" title={<Text category="c1">x0.1</Text>} onPress={() => updateRate(0.1)} />
-      <MenuItem key="3" title={<Text category="c1">x0.25</Text>} onPress={() => updateRate(0.25)} />
-      <MenuItem key="4" title={<Text category="c1">x0.50</Text>} onPress={() => updateRate(0.5)} />
-      <MenuItem key="5" title={<Text category="c1">x0.75</Text>} onPress={() => updateRate(0.75)} />
-      <MenuItem key="6" title={<Text category="c1">x1</Text>} onPress={() => updateRate(1)} />
-      <MenuItem key="7" title={<Text category="c1">x1.25</Text>} onPress={() => updateRate(1.25)} />
-      <MenuItem key="8" title={<Text category="c1">x1.50</Text>} onPress={() => updateRate(1.5)} />
-      <MenuItem key="9" title={<Text category="c1">x1.75</Text>} onPress={() => updateRate(1.75)} />
-      <MenuItem key="10" title={<Text category="c1">x2</Text>} onPress={() => updateRate(2)} />
-    </OverflowMenu>
+  const RateMenu = useCallback(
+    () => (
+      <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>
+        <MenuItem key="1" title={<Text category="c1">x0.05</Text>} onPress={() => updateRate(0.05)} />
+        <MenuItem key="2" title={<Text category="c1">x0.1</Text>} onPress={() => updateRate(0.1)} />
+        <MenuItem key="3" title={<Text category="c1">x0.25</Text>} onPress={() => updateRate(0.25)} />
+        <MenuItem key="4" title={<Text category="c1">x0.50</Text>} onPress={() => updateRate(0.5)} />
+        <MenuItem key="5" title={<Text category="c1">x0.75</Text>} onPress={() => updateRate(0.75)} />
+        <MenuItem key="6" title={<Text category="c1">x1</Text>} onPress={() => updateRate(1)} />
+        <MenuItem key="7" title={<Text category="c1">x1.25</Text>} onPress={() => updateRate(1.25)} />
+        <MenuItem key="8" title={<Text category="c1">x1.50</Text>} onPress={() => updateRate(1.5)} />
+        <MenuItem key="9" title={<Text category="c1">x1.75</Text>} onPress={() => updateRate(1.75)} />
+        <MenuItem key="10" title={<Text category="c1">x2</Text>} onPress={() => updateRate(2)} />
+      </OverflowMenu>
+    ),
+    [menuVisible],
   );
 
-  const deleteFramesCache = async () => {
+  const deleteFramesCache = useCallback(async () => {
     const dir = `${RNFS.CachesDirectoryPath}/framesCache`;
     const exist = await RNFS.exists(dir);
     if (exist) await RNFS.unlink(dir);
-  };
+  }, []);
 
-  const loadVideo = async () => {
+  const loadVideo = useCallback(async () => {
     try {
       RNFFmpegConfig.disableLogs();
       await fetch(url, { signal: abortController.signal });
@@ -111,9 +117,9 @@ export const FramesEditorScreen = ({ navigation, route }) => {
       console.log('DOWNLOAD_VIDEO_ERROR: ', error);
       if (mounted.current) setLoading(false);
     }
-  };
+  }, [mounted]);
 
-  const setVideoInfo = (info) => {
+  const setVideoInfo = useCallback((info) => {
     const step = 1 / info.frameRate;
     const stepSize = Number(step.toFixed(4));
     const totalFps = Math.round(info.duration / stepSize);
@@ -121,7 +127,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
     setTotalFPS(totalFps);
     setEndTime(info.duration);
     setDuration(info.duration);
-  };
+  }, []);
 
   useEffect(() => {
     mounted.current = true;
@@ -138,21 +144,24 @@ export const FramesEditorScreen = ({ navigation, route }) => {
     setPaused(!paused);
   }, [paused]);
 
-  const navigateBack = () => {
+  const navigateBack = useCallback(() => {
     navigation.goBack();
-  };
+  }, []);
 
-  const renderLeftAction = () => <TopNavigationAction icon={CloseIcon} onPress={navigateBack} />;
+  const renderLeftAction = useCallback(() => <TopNavigationAction icon={CloseIcon} onPress={navigateBack} />, []);
 
-  const navigateFramesList = () => {
+  const navigateFramesList = useCallback(() => {
     setPaused(true);
     navigation.navigate('FramesList', { startTime, endTime, title, id, file_ext, url });
-  };
+  }, [startTime, endTime]);
 
-  const renderRightActions = () => (
-    <React.Fragment>
-      <TopNavigationAction icon={GridIcon} onPress={navigateFramesList} />
-    </React.Fragment>
+  const renderRightActions = useCallback(
+    () => (
+      <React.Fragment>
+        <TopNavigationAction icon={GridIcon} onPress={navigateFramesList} />
+      </React.Fragment>
+    ),
+    [startTime, endTime],
   );
 
   const stepFoward = useCallback(() => {
@@ -179,15 +188,15 @@ export const FramesEditorScreen = ({ navigation, route }) => {
     if (stepCount === 3) setStepCount(1);
   }, [stepCount]);
 
-  const setPositionAsync = (time, play) => {
+  const setPositionAsync = useCallback((time, play) => {
     setCurrentTime(time);
     video.current.methods.seekTo(time);
     play ? setPaused(false) : setPaused(true);
-  };
+  }, []);
 
-  const onProgress = (progress) => {
+  const onProgress = useCallback((progress) => {
     setCurrentTime(progress.currentTime);
-  };
+  }, []);
 
   useEffect(() => {
     setCurrentFPS(Math.round(currentTime / stepSize));

@@ -11,7 +11,7 @@ const QuoteIcon = (props) => <Icon {...props} name="message-square-outline" />;
 const FlagIcon = (props) => <Icon {...props} name="alert-circle-outline" />;
 const MoreIcon = (props) => <Icon {...props} name="more-vertical-outline" />;
 
-export const CommentItem = ({ item, user, onEdit, onDelete, onFlagComment, seek }) => {
+export const CommentItem = React.memo(({ item, user, onEdit, onDelete, onFlagComment, seek }) => {
   const [menuVisible, setMenuVisible] = React.useState(false);
 
   const toggleMenu = () => {
@@ -152,4 +152,4 @@ export const CommentItem = ({ item, user, onEdit, onDelete, onFlagComment, seek 
       ))}
     </Layout>
   );
-};
+});
