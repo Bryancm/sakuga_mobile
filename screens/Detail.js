@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Platform,
   useWindowDimensions,
-  Linking,
+  BackHandler,
 } from 'react-native';
 import { Divider, Icon, Layout, Input, Button, Text } from '@ui-kitten/components';
 import { DetailHeader } from '../components/detailHeader';
@@ -25,7 +25,7 @@ import FastImage from 'react-native-fast-image';
 import { RNFFmpeg } from 'react-native-ffmpeg';
 import RNFS from 'react-native-fs';
 import { verticalScale } from 'react-native-size-matters';
-// import Orientation from 'react-native-orientation-locker';
+import Orientation from 'react-native-orientation-locker';
 import { findTag } from '../api/tag';
 import { ScrollView } from 'react-native-gesture-handler';
 import ImageView from 'react-native-image-viewing';
@@ -89,6 +89,19 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
   //     Orientation.removeAllListeners();
   //   };
   // }, []);
+
+  const lockToPortrait = () => {
+    if (fullScreen) {
+      onExitFullScreen();
+      return true;
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', lockToPortrait);
+    return () => backHandler.remove();
+  }, []);
 
   const getTagCount = useCallback(async (tags) => {
     try {
@@ -354,11 +367,13 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
   const onEnterFullscreen = useCallback(() => {
     setFullScreen(true);
     video.current.player.ref.presentFullscreenPlayer();
+    Orientation.unlockAllOrientations();
   }, []);
 
   const onExitFullScreen = useCallback(() => {
     setFullScreen(false);
     video.current.player.ref.dismissFullscreenPlayer();
+    Orientation.lockToPortrait();
   }, []);
 
   const onFullscreenPlayerWillDismiss = useCallback(() => {
@@ -527,6 +542,7 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
                 playWhenInactive={true}
                 tapAnywhereToPause={true}
                 fullscreen={fullScreen}
+                disableBack={fullScreen}
               />
             </Layout>
           )}
