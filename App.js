@@ -10,6 +10,8 @@
  * @format
  */
 import 'react-native-gesture-handler';
+import 'intl';
+import 'intl/locale-data/jsonp/en';
 import React, { useEffect } from 'react';
 import { StyleSheet, AppState, Platform } from 'react-native';
 import { ApplicationProvider, IconRegistry, Layout } from '@ui-kitten/components';
