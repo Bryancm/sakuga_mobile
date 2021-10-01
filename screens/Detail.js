@@ -90,18 +90,18 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
   //   };
   // }, []);
 
-  const lockToPortrait = () => {
+  const lockToPortrait = useCallback(() => {
     if (fullScreen) {
       onExitFullScreen();
       return true;
     }
     return false;
-  };
+  }, [fullScreen]);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener('hardwareBackPress', lockToPortrait);
     return () => backHandler.remove();
-  }, []);
+  }, [fullScreen]);
 
   const getTagCount = useCallback(async (tags) => {
     try {

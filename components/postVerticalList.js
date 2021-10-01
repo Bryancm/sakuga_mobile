@@ -270,7 +270,7 @@ export const PostVerticalList = ({
   const listProps = useCallback(() => {
     var props = {
       initialNumToRender: 9,
-      maxToRenderPerBatch: 6,
+      maxToRenderPerBatch: 9,
       windowSize: 19,
       numColumns: 1,
     };
@@ -292,8 +292,8 @@ export const PostVerticalList = ({
       props.numColumns = 1;
     }
     if (width <= 507 && Platform.isPad) {
-      props.initialNumToRender = 6;
-      props.maxToRenderPerBatch = 3;
+      props.initialNumToRender = 9;
+      props.maxToRenderPerBatch = 9;
       props.windowSize = 12;
       props.numColumns = 1;
       delete props.columnWrapperStyle;
