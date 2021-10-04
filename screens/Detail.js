@@ -540,7 +540,7 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
                 // onError={onVideoError}
                 onLoad={onLoad}
                 playWhenInactive={true}
-                tapAnywhereToPause={true}
+                // tapAnywhereToPause={true}
                 fullscreen={fullScreen}
                 disableBack={fullScreen}
               />
