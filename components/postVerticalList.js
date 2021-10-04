@@ -20,13 +20,10 @@ import { useNavigation } from '@react-navigation/native';
 import { getData, storeData, removeData } from '../util/storage';
 import Toast from 'react-native-simple-toast';
 import { verticalScale } from 'react-native-size-matters';
+import { postWithDetails } from '../util/post';
 
 const UmbrellaIcon = (props) => <Icon {...props} name="umbrella-outline" />;
 const screenHeight = Dimensions.get('window').height;
-
-const capitalize = (s) => {
-  return s && s[0].toUpperCase() + s.slice(1);
-};
 
 export const PostVerticalList = ({
   search = '',
@@ -67,38 +64,6 @@ export const PostVerticalList = ({
     navigation.push('Detail', { item, title, tags });
   }, []);
 
-  const postWithDetails = useCallback((tagsWithType, post, votes) => {
-    var artist = '';
-    var copyright = '';
-    var tags = [];
-    const postTags = post.tags.split(' ');
-    for (const tag of postTags) {
-      const type = tagsWithType[tag];
-      var style = tagStyles.artist_outline;
-      if (type === 'artist') artist = artist + ' ' + capitalize(tag);
-      if (type === 'copyright') {
-        style = tagStyles.copyright_outline;
-        copyright = tag;
-      }
-      if (type === 'terminology') style = tagStyles.terminology_outline;
-      if (type === 'meta') style = tagStyles.meta_outline;
-      if (type === 'general') style = tagStyles.general_outline;
-      tags.push({ type, tag, style });
-    }
-
-    const name =
-      artist.trim() && artist.trim() !== 'Artist_unknown'
-        ? artist.replace('Artist_unknown', '').trim()
-        : copyright.trim();
-    const title = name ? capitalize(name).replace(/_/g, ' ') : name;
-
-    tags.sort((a, b) => a.type > b.type);
-    post.userScore = votes[post.id] ? votes[post.id] : 0;
-    post.tags = tags;
-    post.title = title;
-    return post;
-  }, []);
-
   const fetchPost = useCallback(
     async (page, isFirst, search) => {
       try {
@@ -108,10 +73,18 @@ export const PostVerticalList = ({
         if (user) params = { ...params, user: user.name, password_hash: user.password_hash };
         const response = await getPosts(params);
         if (response.posts.length === 0) setHasMore(false);
-        const postsWithTitle = response.posts.map((p) => postWithDetails(response.tags, p, response.votes));
-        // const filteredPosts = postsWithTitle.filter((p) => !data.some((currentPost) => currentPost.id === p.id));
-        var newData = data.concat(postsWithTitle);
-        if (page === 1) newData = postsWithTitle;
+        var newData = [];
+        if (page === 1) {
+          newData = response.posts.map((p) => postWithDetails(response.tags, p, response.votes));
+        } else {
+          var newPosts = [];
+          for (const p of response.posts) {
+            const newPost = postWithDetails(response.tags, p, response.votes);
+            const index = data.findIndex((post) => post.id === newPost.id);
+            if (index === -1) newPosts.push(newPost);
+          }
+          newData = data.concat(newPosts);
+        }
         if (!message || message === 'Error, please try again later :(') setMessage('Nobody here but us chickens!');
         setData(newData);
         clearLoading();

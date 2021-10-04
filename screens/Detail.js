@@ -505,9 +505,9 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
                 onFullscreenPlayerWillDismiss={onFullscreenPlayerWillDismiss}
                 // onError={onVideoError}
                 onLoad={onLoad}
-                pictureInPicture={true}
+                // pictureInPicture={true}
                 playWhenInactive={true}
-                tapAnywhereToPause={true}
+                // tapAnywhereToPause={true}
               />
             </Layout>
           )}
