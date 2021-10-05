@@ -212,7 +212,7 @@ export const EditPostScreen = ({ route }) => {
 
   const onFocus = (e) => {
     setIsFocused(true);
-    scrollView.current.scrollToOffset({ animated: true, offset: 270 });
+    scrollView.current.scrollToOffset({ animated: true, offset: 220 });
   };
 
   const cancelInput = () => {
@@ -319,6 +319,7 @@ export const EditPostScreen = ({ route }) => {
           accessoryLeft={renderBackAction}
           accessoryRight={renderRightActions}
         />
+        <Divider />
         {isFocused && (
           <AutoComplete
             data={data}
@@ -354,12 +355,12 @@ export const EditPostScreen = ({ route }) => {
           }
           ListHeaderComponent={
             <Layout>
-              <Layout
+              {/* <Layout
                 style={{ ...styleInput, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Text category="s2">Show in index</Text>
                 <Toggle size="small" checked={showInIndex} onChange={onChangeIndex}></Toggle>
-              </Layout>
-              <Divider />
+              </Layout> */}
+
               <Input
                 label="Parent Post"
                 size="large"
