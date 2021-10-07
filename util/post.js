@@ -29,7 +29,7 @@ export const postWithDetails = (tagsWithType, post, votes = []) => {
       : copyright.trim();
   const title = name ? capitalize(name).replace(/_/g, ' ') : name;
 
-  tags.sort((a, b) => a.type > b.type);
+  tags.sort((a, b) => a.type && a.type.localeCompare(b.type));
   post.userScore = votes[post.id] ? votes[post.id] : 0;
   post.tags = tags;
   post.title = title;
