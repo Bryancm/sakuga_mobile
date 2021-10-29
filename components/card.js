@@ -1,5 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
-import { StyleSheet, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
+import { StyleSheet, TouchableOpacity, ActivityIndicator, Platform } from 'react-native';
 import { Divider, Layout, Text, Icon } from '@ui-kitten/components';
 import { getRelativeTime } from '../util/date';
 import FastImage from 'react-native-fast-image';
@@ -7,10 +7,10 @@ import { TagList } from './tagList';
 import { PostMenu } from './postMenu';
 import VideoPlayer from 'react-native-video';
 import converProxyUrl from 'react-native-video-cache';
+import { verticalScale } from 'react-native-size-matters';
 
 const ImageIcon = (props) => <Icon {...props} name="image-outline" />;
-const screenHeight = Dimensions.get('window').height;
-const videoHeight = 233;
+const videoHeight = Platform.isPad ? verticalScale(233) : 233;
 
 export const Card = forwardRef((props, ref) => {
   const { item, navigateDetail, autoPlay } = props;

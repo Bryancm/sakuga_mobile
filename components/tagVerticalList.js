@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FlatList, ActivityIndicator, RefreshControl, StyleSheet } from 'react-native';
+import { FlatList, ActivityIndicator, RefreshControl, StyleSheet, Platform } from 'react-native';
 import { getTags } from '../api/tag';
 import { Layout, Text } from '@ui-kitten/components';
 import { useNavigation } from '@react-navigation/native';
@@ -80,7 +80,10 @@ export const TagVerticalList = ({ search = '', focus, order, type }) => {
     <FlatList
       numColumns={2}
       columnWrapperStyle={styles.row}
-      contentContainerStyle={{ paddingHorizontal: 8, paddingVertical: 8 }}
+      contentContainerStyle={{
+        paddingHorizontal: 8,
+        paddingVertical: 8,
+      }}
       data={data}
       renderItem={renderItem}
       onEndReachedThreshold={1}
@@ -104,7 +107,7 @@ export const TagVerticalList = ({ search = '', focus, order, type }) => {
 const styles = StyleSheet.create({
   row: {
     flex: 1,
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
   },
   center: { alignItems: 'center', justifyContent: 'center', height: 132, width: '100%' },
 });

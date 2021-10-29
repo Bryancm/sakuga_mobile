@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity, useWindowDimensions, Platform } from 'react-native';
 import { Layout, Text } from '@ui-kitten/components';
 import { getRelativeTime } from '../util/date';
 import FastImage from 'react-native-fast-image';
 import { PostMenu } from './postMenu';
+import { verticalScale, scale } from 'react-native-size-matters';
 
-export const SmallCard = ({ item, navigateDetail }) => {
+export const SmallCard = React.memo(({ item, navigateDetail }) => {
+  const { width } = useWindowDimensions();
   const tags = item.tags;
   const title = item.title;
 
@@ -18,9 +20,9 @@ export const SmallCard = ({ item, navigateDetail }) => {
       delayPressIn={0}
       delayPressOut={0}
       activeOpacity={0.7}
-      style={styles.container}
+      style={{ ...styles.container, width: Platform.isPad ? width * 0.32 : 180 }}
       onPress={goToDetail}>
-      <FastImage style={styles.image} source={{ uri: item.preview_url }} resizeMode="cover" />
+      <FastImage style={styles.image} source={{ uri: item.preview_url }} resizeMode="contain" />
       <Layout style={styles.tagContainer}>
         <Text category="c2" style={{ marginBottom: 6 }} numberOfLines={1}>
           {title}
@@ -54,12 +56,13 @@ export const SmallCard = ({ item, navigateDetail }) => {
       </Layout>
     </TouchableOpacity>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {
-    width: 180,
     paddingHorizontal: 8,
+    marginVertical: 8,
+    height: Platform.isPad ? verticalScale(200) : verticalScale(210),
   },
   infoContainer: {
     flexDirection: 'row',
@@ -67,7 +70,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   image: {
-    height: 115,
+    height: verticalScale(115),
     marginBottom: 5,
   },
   tagContainer: {},

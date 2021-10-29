@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import { SafeAreaView, ScrollView, Alert, ActivityIndicator, Platform } from 'react-native';
 import {
   Divider,
   Icon,
@@ -31,7 +31,11 @@ export const SettingScreen = ({ navigation, route }) => {
   const loadSettings = async () => {
     const userSettings = await getData('userSettings');
     if (userSettings) return setSettings(userSettings);
-    const defaultSettings = { sizeForNew: 'large', sizeForSearch: 'small', autoPlay: true };
+    const defaultSettings = {
+      sizeForNew: Platform.isPad ? 'grid' : 'large',
+      sizeForSearch: Platform.isPad ? 'grid' : 'small',
+      autoPlay: true,
+    };
     await storeData('userSettings', defaultSettings);
     setSettings(defaultSettings);
   };
@@ -62,11 +66,17 @@ export const SettingScreen = ({ navigation, route }) => {
   const radioSmall = () => (
     <Radio checked={settings.sizeForNew == 'small'} onChange={() => changeSettings({ sizeForNew: 'small' })} />
   );
+  const radioGrid = () => (
+    <Radio checked={settings.sizeForNew == 'grid'} onChange={() => changeSettings({ sizeForNew: 'grid' })} />
+  );
   const radioLarge2 = () => (
     <Radio checked={settings.sizeForSearch == 'large'} onChange={() => changeSettings({ sizeForSearch: 'large' })} />
   );
   const radioSmall2 = () => (
     <Radio checked={settings.sizeForSearch == 'small'} onChange={() => changeSettings({ sizeForSearch: 'small' })} />
+  );
+  const radioGrid2 = () => (
+    <Radio checked={settings.sizeForSearch == 'grid'} onChange={() => changeSettings({ sizeForSearch: 'grid' })} />
   );
   const toggleAutoplay = () => (
     <Toggle size="small" checked={settings.autoPlay} onChange={(autoPlay) => changeSettings({ autoPlay })} />
@@ -111,6 +121,14 @@ export const SettingScreen = ({ navigation, route }) => {
               accessoryRight={radioSmall}
               onPress={() => changeSettings({ sizeForNew: 'small' })}
             />
+            {Platform.isPad && <Divider />}
+            {Platform.isPad && (
+              <ListItem
+                title="Grid"
+                accessoryRight={radioGrid}
+                onPress={() => changeSettings({ sizeForNew: 'grid' })}
+              />
+            )}
           </Layout>
           <Layout level="2">
             <Button appearance="ghost" accessoryRight={LayoutIcon} style={{ paddingLeft: 0, width: 240 }}>
@@ -129,6 +147,14 @@ export const SettingScreen = ({ navigation, route }) => {
               accessoryRight={radioSmall2}
               onPress={() => changeSettings({ sizeForSearch: 'small' })}
             />
+            {Platform.isPad && <Divider />}
+            {Platform.isPad && (
+              <ListItem
+                title="Grid"
+                accessoryRight={radioGrid2}
+                onPress={() => changeSettings({ sizeForSearch: 'grid' })}
+              />
+            )}
           </Layout>
           <Layout level="2">
             <Button appearance="ghost" accessoryRight={PlayIcon} style={{ paddingLeft: 0, width: 143 }}>

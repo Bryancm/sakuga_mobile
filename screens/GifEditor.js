@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { SafeAreaView, StyleSheet, Dimensions, ActivityIndicator, Platform } from 'react-native';
+import { SafeAreaView, StyleSheet, ActivityIndicator, Platform, useWindowDimensions } from 'react-native';
 import {
   Divider,
   Icon,
@@ -15,6 +15,7 @@ import { VideoPlayer, Trimmer } from 'react-native-video-processing';
 import { RNFFmpeg } from 'react-native-ffmpeg';
 import RNFS from 'react-native-fs';
 import RNFetchBlob from 'rn-fetch-blob';
+import { scale, verticalScale } from 'react-native-size-matters';
 
 const GifIcon = () => (
   <Text style={{ paddingTop: 3, fontWeight: 'bold' }} category="s1">
@@ -24,7 +25,6 @@ const GifIcon = () => (
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const PlayIcon = () => <Icon name="play-circle-outline" style={{ width: 25, height: 25 }} fill="#D4D4D4" />;
 const PauseIcon = () => <Icon name="pause-circle-outline" style={{ width: 25, height: 25 }} fill="#D4D4D4" />;
-const screenWidth = Dimensions.get('window').width;
 
 const formatSeconds = (seconds) => {
   return new Date(seconds ? seconds * 1000 : 0).toISOString().substr(14, 8);
@@ -51,52 +51,60 @@ export const GifEditorScreen = ({ navigation, route }) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [rate, setRate] = useState(1);
 
-  const toggleMenu = () => {
+  const { width } = useWindowDimensions();
+
+  const toggleMenu = useCallback(() => {
     setPlay(false);
     setReplay(false);
     setMenuVisible(!menuVisible);
-  };
+  }, [menuVisible]);
 
-  const menuAnchor = () => (
-    <Button
-      delayPressIn={0}
-      delayPressOut={0}
-      appearance="ghost"
-      style={styles.pauseButton}
-      onPress={toggleMenu}
-      accessoryRight={() => <Text category="c1">{`x${rate}`}</Text>}
-    />
+  const menuAnchor = useCallback(
+    () => (
+      <Button
+        delayPressIn={0}
+        delayPressOut={0}
+        appearance="ghost"
+        style={styles.pauseButton}
+        onPress={toggleMenu}
+        accessoryRight={() => <Text category="c1">{`x${rate}`}</Text>}
+      />
+    ),
+    [menuVisible],
   );
 
-  const updateRate = (rate) => {
+  const updateRate = useCallback((rate) => {
     setRate(rate);
     setMenuVisible(false);
     setPlay(true);
     setReplay(true);
-  };
+  }, []);
 
-  const RateMenu = () => (
-    <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>
-      <MenuItem key="1" title={<Text category="c1">x0.05</Text>} onPress={() => updateRate(0.05)} />
-      <MenuItem key="2" title={<Text category="c1">x0.1</Text>} onPress={() => updateRate(0.1)} />
-      <MenuItem key="3" title={<Text category="c1">x0.25</Text>} onPress={() => updateRate(0.25)} />
-      <MenuItem key="4" title={<Text category="c1">x0.50</Text>} onPress={() => updateRate(0.5)} />
-      <MenuItem key="5" title={<Text category="c1">x0.75</Text>} onPress={() => updateRate(0.75)} />
-      <MenuItem key="6" title={<Text category="c1">x1</Text>} onPress={() => updateRate(1)} />
-      <MenuItem key="7" title={<Text category="c1">x1.25</Text>} onPress={() => updateRate(1.25)} />
-      <MenuItem key="8" title={<Text category="c1">x1.50</Text>} onPress={() => updateRate(1.5)} />
-      <MenuItem key="9" title={<Text category="c1">x1.75</Text>} onPress={() => updateRate(1.75)} />
-      <MenuItem key="10" title={<Text category="c1">x2</Text>} onPress={() => updateRate(2)} />
-    </OverflowMenu>
+  const RateMenu = useCallback(
+    () => (
+      <OverflowMenu anchor={menuAnchor} visible={menuVisible} onBackdropPress={toggleMenu}>
+        <MenuItem key="1" title={<Text category="c1">x0.05</Text>} onPress={() => updateRate(0.05)} />
+        <MenuItem key="2" title={<Text category="c1">x0.1</Text>} onPress={() => updateRate(0.1)} />
+        <MenuItem key="3" title={<Text category="c1">x0.25</Text>} onPress={() => updateRate(0.25)} />
+        <MenuItem key="4" title={<Text category="c1">x0.50</Text>} onPress={() => updateRate(0.5)} />
+        <MenuItem key="5" title={<Text category="c1">x0.75</Text>} onPress={() => updateRate(0.75)} />
+        <MenuItem key="6" title={<Text category="c1">x1</Text>} onPress={() => updateRate(1)} />
+        <MenuItem key="7" title={<Text category="c1">x1.25</Text>} onPress={() => updateRate(1.25)} />
+        <MenuItem key="8" title={<Text category="c1">x1.50</Text>} onPress={() => updateRate(1.5)} />
+        <MenuItem key="9" title={<Text category="c1">x1.75</Text>} onPress={() => updateRate(1.75)} />
+        <MenuItem key="10" title={<Text category="c1">x2</Text>} onPress={() => updateRate(2)} />
+      </OverflowMenu>
+    ),
+    [menuVisible],
   );
 
-  const deleteGIFCache = async () => {
+  const deleteGIFCache = useCallback(async () => {
     const dir = `${RNFS.CachesDirectoryPath}/gifCache`;
     const exist = await RNFS.exists(dir);
     if (exist) await RNFS.unlink(dir);
-  };
+  }, []);
 
-  const loadVideo = async () => {
+  const loadVideo = useCallback(async () => {
     try {
       await fetch(url, { signal: abortController.signal });
       if (mounted.current) setLoading(false);
@@ -104,7 +112,7 @@ export const GifEditorScreen = ({ navigation, route }) => {
       console.log('DOWNLOAD_VIDEO_ERROR: ', error);
       if (mounted.current) setLoading(false);
     }
-  };
+  }, [mounted]);
 
   useEffect(() => {
     mounted.current = true;
@@ -180,7 +188,7 @@ export const GifEditorScreen = ({ navigation, route }) => {
     navigation.goBack();
   };
 
-  const renderLeftAction = () => <TopNavigationAction icon={CloseIcon} onPress={navigateBack} />;
+  const renderLeftAction = useCallback(() => <TopNavigationAction icon={CloseIcon} onPress={navigateBack} />, []);
 
   const onNextPressed = useCallback(async () => {
     const dir = `${RNFS.CachesDirectoryPath}/gifCache`;
@@ -189,7 +197,7 @@ export const GifEditorScreen = ({ navigation, route }) => {
       const isIOS = Platform.OS === 'ios';
       await RNFS.mkdir(dir);
       const date = new Date().valueOf();
-      const t = title ? title.replace(/\s/g, '_').replace(/:/g, '_') : id;
+      const t = title ? title.replace(/\s/g, '_').replace(/:/g, '_').replaceAll('.', '').replaceAll('?', '') : id;
       const dir_with_filename = `${dir}/${t}_${date}_${id}.gif`;
       const file_url = url;
       const command = `-nostats -loglevel 0 -ss ${startTime} -to ${endTime}  -i ${file_url} -vf "fps=${fps},scale=480:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 ${dir_with_filename}`;
@@ -206,10 +214,13 @@ export const GifEditorScreen = ({ navigation, route }) => {
     }
   }, [startTime, endTime, title, id, file_ext, fps]);
 
-  const renderRightActions = () => (
-    <React.Fragment>
-      {loadingGIF ? <ActivityIndicator /> : <TopNavigationAction icon={GifIcon} onPress={onNextPressed} />}
-    </React.Fragment>
+  const renderRightActions = useCallback(
+    () => (
+      <React.Fragment>
+        {loadingGIF ? <ActivityIndicator /> : <TopNavigationAction icon={GifIcon} onPress={onNextPressed} />}
+      </React.Fragment>
+    ),
+    [loadingGIF],
   );
 
   if (loading)
@@ -230,6 +241,23 @@ export const GifEditorScreen = ({ navigation, route }) => {
       </Layout>
     );
 
+  const getWidthAndHeight = () => {
+    var w = scale(270);
+    var h = scale(270);
+    var jc = 'flex-start';
+    if (width < 694 && width >= 507) {
+      w = scale(200);
+      h = scale(200);
+    } else if (width <= 375) {
+      w = !Platform.isPad ? width : scale(140);
+      h = !Platform.isPad ? scale(232) : scale(140);
+      jc = 'flex-start';
+    }
+    return { w, h, jc };
+  };
+
+  const { w, h, jc } = getWidthAndHeight();
+
   return (
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -241,20 +269,25 @@ export const GifEditorScreen = ({ navigation, route }) => {
           accessoryRight={renderRightActions}
         />
         <Divider />
-
-        <VideoPlayer
-          ref={videoPlayer}
-          startTime={startTime} // seconds
-          endTime={endTime} // seconds
-          play={play} // default false
-          replay={replay} // should player play video again if it's ended
-          currentTime={currentTime}
-          source={url}
-          style={{ backgroundColor: 'black' }}
-          resizeMode={VideoPlayer.Constants.resizeMode.CONTAIN}
-          onChange={onVideoChange} // get Current time on every second
-          volume={rate}
-        />
+        <Layout style={{ flex: 1, paddingTop: Platform.isPad ? 10 : '30%', justifyContent: jc, alignItems: 'center' }}>
+          <Layout style={{ width: w, height: h }}>
+            <VideoPlayer
+              ref={videoPlayer}
+              startTime={startTime} // seconds
+              endTime={endTime} // seconds
+              play={play} // default false
+              replay={replay} // should player play video again if it's ended
+              currentTime={currentTime}
+              playerWidth={w}
+              playerHeight={h}
+              source={url}
+              style={{ backgroundColor: 'black' }}
+              resizeMode={VideoPlayer.Constants.resizeMode.CONTAIN}
+              onChange={onVideoChange} // get Current time on every second
+              volume={rate}
+            />
+          </Layout>
+        </Layout>
 
         <Layout style={styles.controlContainer}>
           <Layout
@@ -303,7 +336,7 @@ export const GifEditorScreen = ({ navigation, route }) => {
           <Trimmer
             source={url}
             height={60}
-            width={screenWidth - 8}
+            width={width}
             onTrackerMove={onTrackerMove} // iOS only
             currentTime={currentTimeTrimmer} // use this prop to set tracker position iOS only
             themeColor="#C3070B" // iOS only
@@ -336,7 +369,7 @@ const styles = StyleSheet.create({
   },
   image: { width: '100%', height: 210, backgroundColor: '#000' },
   pauseButton: {
-    marginRight: 8,
+    marginRight: 12,
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 0,
@@ -353,7 +386,7 @@ const styles = StyleSheet.create({
   },
   controlContainer: {
     position: 'absolute',
-    bottom: '18%',
+    bottom: Platform.isPad ? '5%' : '18%',
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',

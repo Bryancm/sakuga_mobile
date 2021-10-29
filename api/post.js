@@ -20,3 +20,20 @@ export const vote = async ({ id, score, user, password_hash }) => {
   const response = await fetch(url, options);
   return response.json();
 };
+
+export const updatePost = async ({
+  id = '',
+  tags = '',
+  parent_id = '',
+  user = '',
+  password_hash = '',
+  is_shown_in_index = 1,
+  old_tags = '',
+}) => {
+  const options = {
+    method: 'POST',
+  };
+  const url = `https://www.sakugabooru.com/post/update.json?id=${id}&post[tags]=${tags}&post[old_tags]=${old_tags}&post[parent_id]=${parent_id}&post[is_shown_in_index]=${is_shown_in_index}&login=${user}&password_hash=${password_hash}`;
+  const response = await fetch(url, options);
+  return response.json();
+};

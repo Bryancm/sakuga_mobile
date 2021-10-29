@@ -4,6 +4,7 @@ import { Divider, Layout, Text } from '@ui-kitten/components';
 import { getRelativeTime } from '../util/date';
 import FastImage from 'react-native-fast-image';
 import { PostMenu } from './postMenu';
+import { scale, verticalScale } from 'react-native-size-matters';
 
 export const CardSmall = ({ item, deleteAlert, navigateDetail }) => {
   const tags = item.tags;
@@ -21,7 +22,7 @@ export const CardSmall = ({ item, deleteAlert, navigateDetail }) => {
       style={styles.container}
       onPress={goToDetail}>
       <Layout style={styles.infoContainer}>
-        <FastImage style={styles.image} source={{ uri: item.preview_url }} resizeMode="cover" />
+        <FastImage style={styles.image} source={{ uri: item.preview_url }} resizeMode="contain" />
         <Layout style={styles.tagContainer}>
           <Text category="s1" style={{ marginBottom: 6 }} numberOfLines={1}>
             {title}
@@ -60,6 +61,8 @@ export const CardSmall = ({ item, deleteAlert, navigateDetail }) => {
 const styles = StyleSheet.create({
   container: {
     minHeight: 132,
+
+    alignItems: 'center',
   },
   infoContainer: {
     flexDirection: 'row',
@@ -67,11 +70,11 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   image: {
-    width: '40%',
-    height: 115,
+    width: '30%',
+    height: 130,
     marginRight: 8,
   },
-  tagContainer: { width: '60%' },
+  tagContainer: { width: '65%' },
   tagRow: {
     marginBottom: 2,
     flexDirection: 'row',

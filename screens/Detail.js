@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -7,7 +7,8 @@ import {
   Alert,
   TouchableOpacity,
   Platform,
-  Dimensions,
+  useWindowDimensions,
+  Linking,
 } from 'react-native';
 import { Divider, Icon, Layout, Input, Button, Text } from '@ui-kitten/components';
 import { DetailHeader } from '../components/detailHeader';
@@ -23,6 +24,10 @@ import RNFetchBlob from 'rn-fetch-blob';
 import FastImage from 'react-native-fast-image';
 import { RNFFmpeg } from 'react-native-ffmpeg';
 import RNFS from 'react-native-fs';
+import { verticalScale } from 'react-native-size-matters';
+import Orientation from 'react-native-orientation-locker';
+import { findTag } from '../api/tag';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const SortIcon = () => (
   <Icon
@@ -38,21 +43,28 @@ const SortIcon = () => (
 const ArrowDown = (props) => <Icon {...props} name="arrow-ios-downward-outline" fill="#D4D4D4" />;
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
 const SendIcon = (props) => <Icon {...props} name="corner-down-right-outline" />;
-const screenHeight = Dimensions.get('window').height;
-const videoHeight = 233;
 
-export const DetailsScreen = ({ navigation, route }) => {
+const videoHeight = Platform.isPad ? verticalScale(280) : verticalScale(232);
+
+export const DetailsScreen = React.memo(({ navigation, route }) => {
+  const { width, height } = useWindowDimensions();
+
   const mounted = useRef(true);
   const video = useRef();
   const commentList = useRef();
   const input = useRef();
-  const item = route.params.item;
+  const originalItem = route.params.item;
+  const [item, setItem] = useState(route.params.item);
   // const [item, setItem] = useState(route.params.item);
-  const title = route.params.title;
-  const tags = route.params.tags;
+  const title = item.title ? item.title : route.params.title;
+  // const tags = route.params.tags;
   const isVideo =
-    item.file_ext !== 'gif' && item.file_ext !== 'jpg' && item.file_ext !== 'jpeg' && item.file_ext !== 'png';
+    originalItem.file_ext !== 'gif' &&
+    originalItem.file_ext !== 'jpg' &&
+    originalItem.file_ext !== 'jpeg' &&
+    originalItem.file_ext !== 'png';
 
+  const [orientation, setOrientation] = useState(width < height ? 'PORTRAIT' : 'LANDSCAPE');
   const [inputIsFocused, setInputIsFocused] = useState(false);
   const [text, setText] = useState();
   const [comments, setComments] = useState([]);
@@ -65,13 +77,41 @@ export const DetailsScreen = ({ navigation, route }) => {
   const [loadingImage, setLoadingImage] = useState(true);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [commentSort, setCommentSort] = useState('Newest');
-  const [url, setUrl] = useState(converProxyUrl(item.file_url));
+  const [url, setUrl] = useState(converProxyUrl(originalItem.file_url));
+  const [tags, setTags] = useState(originalItem.tags);
 
-  const navigateLogin = () => {
+  useEffect(() => {
+    Orientation.addOrientationListener(setOrientation);
+    return () => {
+      Orientation.removeAllListeners();
+    };
+  }, []);
+
+  const getTagCount = useCallback(async (tags) => {
+    try {
+      var tagFetches = [];
+      var newTags = [];
+      for (const tag of tags) {
+        tagFetches.push(findTag({ name: tag.tag }));
+      }
+      const responses = await Promise.all(tagFetches);
+      for (let index = 0; index < responses.length; index++) {
+        const response = responses[index];
+        const responseTag = response.find((t) => t.name === tags[index].tag);
+        const newTag = { ...tags[index], count: responseTag.count };
+        newTags.push(newTag);
+      }
+      if (mounted.current) setTags(newTags);
+    } catch (error) {
+      console.log('GET_TAG_COUNT_ERROR: ', error);
+    }
+  }, []);
+
+  const navigateLogin = useCallback(() => {
     setPaused(true);
     clearLoading();
-    navigation.navigate('Login');
-  };
+    navigation.navigate('Login', { from: 'login' });
+  }, []);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
@@ -87,14 +127,14 @@ export const DetailsScreen = ({ navigation, route }) => {
     return unsubscribe;
   }, [navigation]);
 
-  const loadUser = async () => {
+  const loadUser = useCallback(async () => {
     let newUser = false;
     const currentUser = await getData('user');
     if (currentUser && currentUser.name !== user) newUser = currentUser.name;
     setUser(newUser);
-  };
+  }, []);
 
-  const updatePostHistory = async () => {
+  const updatePostHistory = useCallback(async () => {
     try {
       var newHistory = [item];
       const currentHistory = await getData('postHistory');
@@ -106,9 +146,9 @@ export const DetailsScreen = ({ navigation, route }) => {
     } catch (error) {
       console.log('ADD_TO_HISTORY_ERROR: ', error);
     }
-  };
+  }, []);
 
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     try {
       const data = await getComments({ id: item.id });
       setComments(data);
@@ -118,26 +158,27 @@ export const DetailsScreen = ({ navigation, route }) => {
       setComments([]);
       clearLoading();
     }
-  };
+  }, []);
 
-  const clearLoading = () => {
+  const clearLoading = useCallback(() => {
     setFetching(false);
     setRefetching(false);
     setCommentLoading(false);
-  };
+  }, []);
 
-  const refetchComments = () => {
+  const refetchComments = useCallback(() => {
     setRefetching(true);
     fetchComments();
-  };
+  }, []);
 
-  const addPostComment = async () => {
+  const addPostComment = useCallback(async () => {
     try {
       setCommentLoading(true);
       const user = await getData('user');
       if (!user) return navigateLogin();
 
       // const body = text.replace(/\n/g, '%0D%0A');
+
       const response = await addComment({
         id: item.id,
         body: text,
@@ -154,40 +195,44 @@ export const DetailsScreen = ({ navigation, route }) => {
       clearLoading();
       Toast.show('Error, please try again later :(');
     }
-  };
+  }, [text]);
 
-  const editPostComment = async (id) => {
-    try {
-      setCommentLoading(true);
-      const user = await getData('user');
-      if (!user) return navigateLogin();
-      const body = text.replace(/\n/g, '%0D%0A');
-      const response = await editComment({ id, body, user: user.name, password_hash: user.password_hash });
-      // console.log({ response });
-      fetchComments();
-      cancelInput();
-      // Toast.show('Comment edited');
-      Toast.showWithGravity(`Comment edited`, Toast.SHORT, Toast.CENTER);
-    } catch (error) {
-      console.log('EDIT COMMENT ERROR', error);
-      clearLoading();
-      Toast.show('Error, please try again later :(');
-    }
-  };
+  const editPostComment = useCallback(
+    async (id) => {
+      try {
+        setCommentLoading(true);
+        const user = await getData('user');
+        if (!user) return navigateLogin();
+        const body = text.replace(/\n/g, '%0D%0A');
+        const response = await editComment({ id, body, user: user.name, password_hash: user.password_hash });
+        // console.log({ response });
+        fetchComments();
+        cancelInput();
+        setEditId(false);
+        // Toast.show('Comment edited');
+        Toast.showWithGravity(`Comment edited`, Toast.SHORT, Toast.CENTER);
+      } catch (error) {
+        console.log('EDIT COMMENT ERROR', error);
+        clearLoading();
+        Toast.show('Error, please try again later :(');
+      }
+    },
+    [text],
+  );
 
-  const onCommentButtonPress = () => {
+  const onCommentButtonPress = useCallback(() => {
     if (!text || !text.trim()) return Toast.showWithGravity(`Please type a comment`, Toast.SHORT, Toast.CENTER);
     editId ? editPostComment(editId) : addPostComment();
-  };
+  }, [text, editId]);
 
-  const onEditCommentButtonPress = ({ id, body, isQuote }) => {
+  const onEditCommentButtonPress = useCallback(({ id, body, isQuote }) => {
     setEditId(false);
     if (!isQuote) setEditId(id);
     setText(body);
     input.current.focus();
-  };
+  }, []);
 
-  const deleteCommentAlert = (id) => {
+  const deleteCommentAlert = useCallback((id) => {
     Alert.alert('Delete', `Do you want to delete this comment ?`, [
       {
         text: 'Cancel',
@@ -195,9 +240,9 @@ export const DetailsScreen = ({ navigation, route }) => {
       },
       { text: 'Confirm', onPress: () => onDeleteComment(id), style: 'destructive' },
     ]);
-  };
+  }, []);
 
-  const onDeleteComment = async (id) => {
+  const onDeleteComment = useCallback(async (id) => {
     try {
       setFetching(true);
       setComments([]);
@@ -213,9 +258,9 @@ export const DetailsScreen = ({ navigation, route }) => {
       clearLoading();
       Toast.show('Error, please try again later :(');
     }
-  };
+  }, []);
 
-  const flagCommentAlert = (id) => {
+  const flagCommentAlert = useCallback((id) => {
     Alert.alert('Flag', `Do you want to flag for delete this comment ?`, [
       {
         text: 'Cancel',
@@ -223,9 +268,9 @@ export const DetailsScreen = ({ navigation, route }) => {
       },
       { text: 'Confirm', onPress: () => onFlagComment(id), style: 'destructive' },
     ]);
-  };
+  }, []);
 
-  const onFlagComment = async (id) => {
+  const onFlagComment = useCallback(async (id) => {
     try {
       setFetching(true);
       setComments([]);
@@ -241,7 +286,7 @@ export const DetailsScreen = ({ navigation, route }) => {
       clearLoading();
       Toast.show('Error, please try again later :(');
     }
-  };
+  }, []);
 
   useEffect(() => {
     mounted.current = true;
@@ -253,59 +298,66 @@ export const DetailsScreen = ({ navigation, route }) => {
     };
   }, []);
 
-  const cancelInput = () => {
+  useEffect(() => {
+    getTagCount(item.tags);
+  }, [item]);
+
+  const cancelInput = useCallback(() => {
     setText();
     setInputIsFocused(false);
     Keyboard.dismiss();
     commentList.current.scrollToOffset({ animated: true, offset: 0 });
-  };
+  }, []);
 
-  const CommentButtons = () => (
-    <Layout style={{ backgroundColor: 'transparent', flexDirection: 'row', alignItems: 'center' }}>
-      {inputIsFocused && !commentLoading && (
-        <Button
-          style={{ paddingHorizontal: 0, paddingVertical: 0, height: 10 }}
-          status="basic"
-          appearance="ghost"
-          accessoryRight={CloseIcon}
-          onPress={cancelInput}
-        />
-      )}
+  const CommentButtons = useCallback(
+    () => (
+      <Layout style={{ backgroundColor: 'transparent', flexDirection: 'row', alignItems: 'center' }}>
+        {inputIsFocused && !commentLoading && (
+          <Button
+            style={{ paddingHorizontal: 0, paddingVertical: 0, height: 10 }}
+            status="basic"
+            appearance="ghost"
+            accessoryRight={CloseIcon}
+            onPress={cancelInput}
+          />
+        )}
 
-      {inputIsFocused && !commentLoading && (
-        <Button
-          style={{ paddingHorizontal: 0, paddingVertical: 0, height: 10 }}
-          status="info"
-          appearance="ghost"
-          accessoryLeft={SendIcon}
-          onPress={onCommentButtonPress}
-        />
-      )}
+        {inputIsFocused && !commentLoading && (
+          <Button
+            style={{ paddingHorizontal: 0, paddingVertical: 0, height: 10 }}
+            status="info"
+            appearance="ghost"
+            accessoryLeft={SendIcon}
+            onPress={onCommentButtonPress}
+          />
+        )}
 
-      {commentLoading && <ActivityIndicator />}
-    </Layout>
+        {commentLoading && <ActivityIndicator />}
+      </Layout>
+    ),
+    [inputIsFocused, commentLoading, text, editId],
   );
 
-  const onInputFocus = () => {
+  const onInputFocus = useCallback(() => {
     commentList.current.scrollToOffset({ animated: true, offset: 185 });
     setInputIsFocused(true);
-  };
+  }, []);
 
-  const onChangeText = (text) => {
+  const onChangeText = useCallback((text) => {
     if (!text) cancelInput();
     setText(text);
-  };
+  }, []);
 
-  const onEnterFullscreen = () => {
+  const onEnterFullscreen = useCallback(() => {
     video.current.player.ref.presentFullscreenPlayer();
-  };
+  }, []);
 
-  const onFullscreenPlayerWillDismiss = () => {
+  const onFullscreenPlayerWillDismiss = useCallback(() => {
     video.current.methods.togglePlayPause();
     video.current.methods.toggleFullscreen();
-  };
+  }, []);
 
-  const download = async () => {
+  const download = useCallback(async () => {
     try {
       setLoadingImage(true);
       const {
@@ -346,15 +398,15 @@ export const DetailsScreen = ({ navigation, route }) => {
       console.log('download error: ', error);
       setLoadingImage(false);
     }
-  };
+  }, [item]);
 
-  const onImagePress = () => {
+  const onImagePress = useCallback(() => {
     download();
-  };
+  }, []);
 
-  const navigateBack = () => {
+  const navigateBack = useCallback(() => {
     navigation.goBack();
-  };
+  }, []);
 
   const onVideoError = (e) => {
     console.log('VIDEO_ERROR: ', e);
@@ -363,7 +415,7 @@ export const DetailsScreen = ({ navigation, route }) => {
     }
   };
 
-  const convertToMP4 = async () => {
+  const convertToMP4 = useCallback(async () => {
     try {
       const directory = `${RNFS.CachesDirectoryPath}/webmCache`;
       const exist = await RNFS.exists(directory);
@@ -379,81 +431,110 @@ export const DetailsScreen = ({ navigation, route }) => {
       console.log('CONVERT_TO_MP4_ERROR: ', error);
       // setUrl('format incompatible');
     }
-  };
+  }, [item]);
 
-  const seek = (seconds) => {
-    if (videoLoaded) video.current.player.ref.seek(seconds);
-  };
+  const seek = useCallback(
+    (seconds) => {
+      if (videoLoaded) video.current.player.ref.seek(seconds);
+    },
+    [videoLoaded],
+  );
 
-  const onLoad = () => {
+  const onLoad = useCallback(() => {
     setVideoLoaded(true);
-  };
+  }, []);
 
   const changeCommentSort = () => {
-    if (commentSort === 'Newest') return setCommentSort('Oldest');
-    setCommentSort('Newest');
+    if (commentSort === 'Newest') {
+      setComments((oldComments) => oldComments.reverse());
+      setCommentSort('Oldest');
+    } else {
+      setComments((oldComments) => oldComments.sort((a, b) => new Date(a.created_at) < new Date(b.created_at)));
+      setCommentSort('Newest');
+    }
   };
 
-  const sortComments = () => {
-    if (commentSort === 'Newest') return comments.sort((a, b) => new Date(a.created_at) < new Date(b.created_at));
-    return comments.reverse();
-  };
-
-  const sortedComments = sortComments(comments);
+  const isLandscape = width >= 592 && orientation.includes('LANDSCAPE');
 
   return (
     <Layout level="2" style={{ flex: 1 }}>
-      <SafeAreaView style={{ flex: 1 }}>
-        {!isVideo && (
-          <TouchableOpacity delayPressIn={0} delayPressOut={0} activeOpacity={0.7} onPress={onImagePress}>
-            <Button appearance="ghost" accessoryRight={ArrowDown} style={styles.closeButton} onPress={navigateBack} />
-            {loadingImage && (
-              <Layout
-                style={{
-                  ...styles.image,
-                  position: 'absolute',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  zIndex: 10,
-                  opacity: 0.7,
-                }}>
-                <ActivityIndicator />
-              </Layout>
+      <SafeAreaView style={{ flex: 1, flexDirection: isLandscape ? 'row' : 'column' }}>
+        <Layout level="2" style={{ width: isLandscape ? '65%' : '100%' }}>
+          {!isVideo && (
+            <TouchableOpacity delayPressIn={0} delayPressOut={0} activeOpacity={0.7} onPress={onImagePress}>
+              <Button appearance="ghost" accessoryRight={ArrowDown} style={styles.closeButton} onPress={navigateBack} />
+              {loadingImage && (
+                <Layout
+                  style={{
+                    ...styles.image,
+                    position: 'absolute',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    zIndex: 10,
+                    opacity: 0.7,
+                  }}>
+                  <ActivityIndicator />
+                </Layout>
+              )}
+              <FastImage
+                source={{ uri: item.file_url }}
+                style={styles.image}
+                resizeMode="contain"
+                onLoadEnd={() => setLoadingImage(false)}
+              />
+            </TouchableOpacity>
+          )}
+          {isVideo && (
+            <Layout style={styles.image}>
+              <VideoPlayer
+                ref={video}
+                paused={paused}
+                source={{ uri: url }}
+                navigator={navigation}
+                controlAnimationTiming={250}
+                controlTimeout={3000}
+                doubleTapTime={0}
+                scrubbing={1}
+                repeat={true}
+                muted={true}
+                disableVolume={true}
+                toggleResizeModeOnFullscreen={false}
+                controls={false}
+                seekColor="#C3070B"
+                onEnterFullscreen={onEnterFullscreen}
+                onFullscreenPlayerWillDismiss={onFullscreenPlayerWillDismiss}
+                // onError={onVideoError}
+                onLoad={onLoad}
+                // pictureInPicture={true}
+                playWhenInactive={true}
+                // tapAnywhereToPause={true}
+              />
+            </Layout>
+          )}
+          <ScrollView>
+            {isLandscape && (
+              <DetailHeader
+                title={title}
+                style={styles.titleContainer}
+                url={url}
+                file_ext={item.file_ext}
+                setPaused={setPaused}
+                id={item.id}
+                isVideo={isVideo}
+                item={item}
+                setItem={setItem}
+                setTags={setTags}
+              />
             )}
-            <FastImage
-              source={{ uri: item.file_url }}
-              style={styles.image}
-              resizeMode="contain"
-              onLoadEnd={() => setLoadingImage(false)}
-            />
-          </TouchableOpacity>
-        )}
-        {isVideo && (
-          <Layout style={styles.image}>
-            <VideoPlayer
-              ref={video}
-              paused={paused}
-              source={{ uri: url }}
-              navigator={navigation}
-              controlAnimationTiming={250}
-              controlTimeout={3000}
-              scrubbing={1}
-              repeat={true}
-              muted={true}
-              disableVolume={true}
-              toggleResizeModeOnFullscreen={false}
-              controls={false}
-              seekColor="#C3070B"
-              onEnterFullscreen={onEnterFullscreen}
-              onFullscreenPlayerWillDismiss={onFullscreenPlayerWillDismiss}
-              // onError={onVideoError}
-              onLoad={onLoad}
-            />
-          </Layout>
-        )}
+
+            {isLandscape && <TagList tags={tags} style={styles.tagContainer} loadCount={false} item={item} />}
+
+            {isLandscape && <DetailFooter item={item} style={styles.titleContainer} />}
+          </ScrollView>
+        </Layout>
         <CommentList
           commentList={commentList}
-          data={user === undefined ? [] : sortedComments}
+          data={user === undefined ? [] : comments}
           isFetching={isFetching}
           isRefetching={isRefetching}
           refetch={refetchComments}
@@ -464,18 +545,23 @@ export const DetailsScreen = ({ navigation, route }) => {
           seek={seek}
           header={
             <Layout level="2">
-              <DetailHeader
-                title={title}
-                style={styles.titleContainer}
-                url={url}
-                file_ext={item.file_ext}
-                setPaused={setPaused}
-                id={item.id}
-                isVideo={isVideo}
-              />
-              <TagList tags={tags} style={styles.tagContainer} loadCount={true} />
-              <DetailFooter item={item} style={styles.titleContainer} />
-              <Divider style={{ marginBottom: 12 }} />
+              {!isLandscape && (
+                <DetailHeader
+                  title={title}
+                  style={styles.titleContainer}
+                  url={url}
+                  file_ext={item.file_ext}
+                  setPaused={setPaused}
+                  id={item.id}
+                  isVideo={isVideo}
+                  item={item}
+                  setItem={setItem}
+                  setTags={setTags}
+                />
+              )}
+              {!isLandscape && <TagList tags={tags} style={styles.tagContainer} loadCount={true} />}
+              {!isLandscape && <DetailFooter item={item} style={styles.titleContainer} />}
+              {!isLandscape && <Divider style={{ marginBottom: 12 }} />}
               <Layout level="3" style={{ margin: 8, borderRadius: 2, padding: 0 }}>
                 <Input
                   ref={input}
@@ -518,7 +604,7 @@ export const DetailsScreen = ({ navigation, route }) => {
       </SafeAreaView>
     </Layout>
   );
-};
+});
 
 const styles = StyleSheet.create({
   tagContainer: {
@@ -549,4 +635,6 @@ const styles = StyleSheet.create({
     opacity: 0.7,
     zIndex: 10,
   },
+  url: { color: '#2980b9' },
+  text: { fontSize: 12, color: '#808080' },
 });

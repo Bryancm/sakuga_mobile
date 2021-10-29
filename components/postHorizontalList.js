@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { FlatList, ActivityIndicator, StyleSheet, Dimensions } from 'react-native';
 import { Layout, Text, Button, Icon } from '@ui-kitten/components';
 import { SmallCard } from './cardHorizontal';
 import { useNavigation } from '@react-navigation/native';
 import { getPosts } from '../api/post';
-import { tagStyles } from '../styles';
 import { getData } from '../util/storage';
+import { postWithDetails } from '../util/post';
 
 const PlusIcon = (props) => <Icon {...props} name="plus-circle-outline" />;
 const UmbrellaIcon = (props) => <Icon {...props} name="umbrella-outline" />;
@@ -15,65 +15,43 @@ const capitalize = (s) => {
   return s && s[0].toUpperCase() + s.slice(1);
 };
 
-export const PostHorizontalList = ({ search = '', title, tags, menuType, date, secondDate, from }) => {
+export const PostHorizontalList = forwardRef((props, ref) => {
+  const { itemSearch = '', title, tags, menuType, date, secondDate, from } = props;
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
+  const [search, setSearch] = useState('');
   const [message, setMessage] = useState('Nobody here but us chickens!');
   const navigation = useNavigation();
 
-  const postWithDetails = (tagsWithType, post, votes) => {
-    var artist = '';
-    var copyright = '';
-    var tags = [];
-    for (const tag in tagsWithType) {
-      if (Object.hasOwnProperty.call(tagsWithType, tag)) {
-        const type = tagsWithType[tag];
-        if (post.tags.includes(tag)) {
-          var style = tagStyles.artist_outline;
-          if (type === 'artist') artist = artist + ' ' + capitalize(tag);
-          if (type === 'copyright') {
-            style = tagStyles.copyright_outline;
-            copyright = tag;
-          }
-          if (type === 'terminology') style = tagStyles.terminology_outline;
-          if (type === 'meta') style = tagStyles.meta_outline;
-          if (type === 'general') style = tagStyles.general_outline;
-          tags.push({ type, tag, style });
-        }
-      }
-    }
-    const name =
-      artist.trim() && artist.trim() !== 'Artist_unknown'
-        ? artist.replace('Artist_unknown', '').trim()
-        : copyright.trim();
-    const title = name ? capitalize(name).replace(/_/g, ' ') : name;
-
-    var userScore = 0;
-    for (const post_id in votes) {
-      if (Object.hasOwnProperty.call(votes, post_id)) {
-        const vote = votes[post_id];
-        if (Number(post_id) === post.id) userScore = vote;
-      }
-    }
-
-    tags.sort((a, b) => a.type > b.type);
-    post.userScore = userScore;
-    post.tags = tags;
-    post.title = title;
-    return post;
-  };
+  useImperativeHandle(ref, () => ({
+    loadPosts() {
+      if (!search) setSearch(itemSearch);
+    },
+  }));
 
   const fetchPost = async (page, isFirst, search) => {
     try {
       if (!isFirst) setFetching(true);
+      if (!search) {
+        setData([]);
+        return clearLoading();
+      }
       var params = { search, page, include_tags: 1, include_votes: 1, limit: 8 };
       const user = await getData('user');
       if (user) params = { ...params, user: user.name, password_hash: user.password_hash };
       const response = await getPosts(params);
-      const postsWithTitle = response.posts.map((p) => postWithDetails(response.tags, p, response.votes));
-      const filteredPosts = postsWithTitle.filter((p) => !data.some((currentPost) => currentPost.id === p.id));
-      let newData = [...data, ...filteredPosts];
-      if (page === 1) newData = postsWithTitle;
+      var newData = [];
+      if (page === 1) {
+        newData = response.posts.map((p) => postWithDetails(response.tags, p, response.votes));
+      } else {
+        var newPosts = [];
+        for (const p of response.posts) {
+          const newPost = postWithDetails(response.tags, p, response.votes);
+          const index = data.findIndex((post) => post.id === newPost.id);
+          if (index === -1) newPosts.push(newPost);
+        }
+        newData = data.concat(newPosts);
+      }
       if (!message || message === 'Error, please try again later :(') setMessage('Nobody here but us chickens!');
       setData(newData);
       clearLoading();
@@ -168,9 +146,9 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType, date, s
           horizontal
           data={data}
           renderItem={renderItem}
-          windowSize={4}
-          initialNumToRender={2}
-          maxToRenderPerBatch={2}
+          windowSize={8}
+          initialNumToRender={8}
+          maxToRenderPerBatch={8}
           keyExtractor={keyExtractor}
           ListEmptyComponent={
             <Layout style={styles.center}>
@@ -190,7 +168,7 @@ export const PostHorizontalList = ({ search = '', title, tags, menuType, date, s
       )}
     </Layout>
   );
-};
+});
 
 const styles = StyleSheet.create({
   center: { alignItems: 'center', justifyContent: 'center', height: 244, width: screenWidth },
