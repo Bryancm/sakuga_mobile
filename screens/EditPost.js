@@ -345,7 +345,7 @@ export const EditPostScreen = ({ route }) => {
                   </Text>
                 </Button>
               )}
-              {loading && <ActivityIndicator />}
+              {loading && <ActivityIndicator color="#D4D4D4" />}
             </Layout>
           }
           ListHeaderComponent={

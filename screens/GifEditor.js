@@ -217,7 +217,11 @@ export const GifEditorScreen = ({ navigation, route }) => {
   const renderRightActions = useCallback(
     () => (
       <React.Fragment>
-        {loadingGIF ? <ActivityIndicator /> : <TopNavigationAction icon={GifIcon} onPress={onNextPressed} />}
+        {loadingGIF ? (
+          <ActivityIndicator color="#D4D4D4" />
+        ) : (
+          <TopNavigationAction icon={GifIcon} onPress={onNextPressed} />
+        )}
       </React.Fragment>
     ),
     [loadingGIF],
@@ -235,7 +239,7 @@ export const GifEditorScreen = ({ navigation, route }) => {
           />
           <Divider />
           <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <ActivityIndicator />
+            <ActivityIndicator color="#D4D4D4" />
           </Layout>
         </SafeAreaView>
       </Layout>

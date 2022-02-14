@@ -247,7 +247,7 @@ export const FramesEditorScreen = ({ navigation, route }) => {
           />
           <Divider />
           <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <ActivityIndicator />
+            <ActivityIndicator color="#D4D4D4" />
           </Layout>
         </SafeAreaView>
       </Layout>

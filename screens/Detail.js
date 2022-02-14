@@ -473,7 +473,7 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
                     zIndex: 10,
                     opacity: 0.7,
                   }}>
-                  <ActivityIndicator />
+                  <ActivityIndicator color="#D4D4D4" />
                 </Layout>
               )}
               <FastImage

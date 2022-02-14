@@ -55,7 +55,7 @@ export const CommentList = ({
         isFetching &&
         !isRefetching && (
           <Layout level="2" style={styles.center}>
-            <ActivityIndicator />
+            <ActivityIndicator color="#D4D4D4" />
           </Layout>
         )
       }

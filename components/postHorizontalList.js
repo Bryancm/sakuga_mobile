@@ -139,7 +139,7 @@ export const PostHorizontalList = forwardRef((props, ref) => {
 
       {isLoading ? (
         <Layout style={styles.center}>
-          <ActivityIndicator />
+          <ActivityIndicator color="#D4D4D4" />
         </Layout>
       ) : (
         <FlatList

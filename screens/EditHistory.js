@@ -165,7 +165,7 @@ export const EditHistory = ({ route }) => {
           contentContainerStyle={{ alignItems: Platform.isPad && width > 375 ? 'center' : 'stretch' }}
           ListEmptyComponent={
             <Layout style={{ justifyContent: 'center', alignItems: 'center', height: loading ? '100%' : '5%' }}>
-              {loading && <ActivityIndicator />}
+              {loading && <ActivityIndicator color="#D4D4D4" />}
             </Layout>
           }
         />

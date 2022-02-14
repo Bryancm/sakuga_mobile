@@ -72,7 +72,7 @@ export const TagVerticalList = ({ search = '', focus, order, type }) => {
   if (isLoading)
     return (
       <Layout style={{ ...styles.center, height: '100%' }}>
-        <ActivityIndicator />
+        <ActivityIndicator color="#D4D4D4" />
       </Layout>
     );
 

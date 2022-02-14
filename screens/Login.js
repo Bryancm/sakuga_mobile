@@ -51,7 +51,7 @@ export const LoginScreen = ({ route }) => {
   if (user === undefined)
     return (
       <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator />
+        <ActivityIndicator color="#D4D4D4" />
       </Layout>
     );
 

@@ -55,7 +55,7 @@ export const Card = forwardRef((props, ref) => {
       <Layout style={styles.imageContainer}>
         {loading && autoPlay && !error && (
           <Layout style={styles.loaderContainer}>
-            <ActivityIndicator />
+            <ActivityIndicator color="#D4D4D4" />
           </Layout>
         )}
         {!isVideo && (
