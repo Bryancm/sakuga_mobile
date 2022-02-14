@@ -269,9 +269,9 @@ export const PostVerticalList = ({
 
   const listProps = useCallback(() => {
     var props = {
-      initialNumToRender: 6,
-      maxToRenderPerBatch: 3,
-      windowSize: 9,
+      initialNumToRender: 9,
+      maxToRenderPerBatch: 9,
+      windowSize: 19,
       numColumns: 1,
     };
     if (layoutType === 'grid') {
@@ -286,15 +286,15 @@ export const PostVerticalList = ({
       props.getItemLayout = getItemLayout;
     }
     if (layoutType === 'large') {
-      props.initialNumToRender = 2;
-      props.maxToRenderPerBatch = 3;
-      props.windowSize = 5;
+      props.initialNumToRender = 3;
+      props.maxToRenderPerBatch = 6;
+      props.windowSize = 12;
       props.numColumns = 1;
     }
     if (width <= 507 && Platform.isPad) {
-      props.initialNumToRender = 6;
-      props.maxToRenderPerBatch = 3;
-      props.windowSize = 9;
+      props.initialNumToRender = 9;
+      props.maxToRenderPerBatch = 9;
+      props.windowSize = 12;
       props.numColumns = 1;
       delete props.columnWrapperStyle;
     }
