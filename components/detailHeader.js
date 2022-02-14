@@ -3,12 +3,30 @@ import { StyleSheet, Linking } from 'react-native';
 import { Icon, Layout, Text, Button, OverflowMenu, MenuItem } from '@ui-kitten/components';
 import { useNavigation } from '@react-navigation/native';
 import ParsedText from 'react-native-parsed-text';
-import { ProcessingManager } from 'react-native-video-processing';
+// import { ProcessingManager } from 'react-native-video-processing';
+import { RNFFprobe } from 'react-native-ffmpeg';
 
 const OptionsIcon = (props) => <Icon {...props} name="options-2-outline" />;
 const GridIcon = (props) => <Icon {...props} name="grid-outline" />;
 const EditIcon = (props) => <Icon {...props} name="edit-outline" />;
 const ImageIcon = (props) => <Icon {...props} name="image-outline" />;
+
+const round = (value, exp) => {
+  if (typeof exp === 'undefined' || +exp === 0) return Math.round(value);
+
+  value = +value;
+  exp = +exp;
+
+  if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) return NaN;
+
+  // Shift
+  value = value.toString().split('e');
+  value = Math.round(+(value[0] + 'e' + (value[1] ? +value[1] + exp : exp)));
+
+  // Shift back
+  value = value.toString().split('e');
+  return +(value[0] + 'e' + (value[1] ? +value[1] - exp : -exp));
+};
 
 export const DetailHeader = React.memo(
   ({ title, style, url, setPaused, file_ext, id, isVideo, item, setItem, setTags }) => {
@@ -20,9 +38,23 @@ export const DetailHeader = React.memo(
     }, []);
 
     const getFrameRate = async () => {
+      // if (!frameRate) {
+      //   const { frameRate } = await ProcessingManager.getVideoInfo(url);
+      //   setFrameRate(frameRate);
+      // }
       if (!frameRate) {
-        const { frameRate } = await ProcessingManager.getVideoInfo(url);
-        setFrameRate(frameRate);
+        try {
+          await RNFFprobe.getMediaInformation(url)
+            .then((info) => {
+              const allProperties = info.getAllProperties();
+              const splitFrameRate = allProperties.streams[0].avg_frame_rate.split('/');
+              const frameRate = splitFrameRate[0] / splitFrameRate[1];
+              setFrameRate(round(frameRate, 6));
+            })
+            .catch((e) => console.log('MEDIA_INFO_FRAMERATE_ERROR: ', e));
+        } catch (error) {
+          console.log('GET_FRAME_RATE_ERROR: ', error);
+        }
       }
     };
 
