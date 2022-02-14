@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Platform,
   useWindowDimensions,
+  PermissionsAndroid,
 } from 'react-native';
 import { Divider, Layout, TopNavigation, TopNavigationAction, Icon, Text } from '@ui-kitten/components';
 import FastImage from 'react-native-fast-image';
@@ -14,6 +15,7 @@ import RNFS from 'react-native-fs';
 import RNFetchBlob from 'rn-fetch-blob';
 import Share from 'react-native-share';
 import Toast from 'react-native-simple-toast';
+import ImageView from 'react-native-image-viewing';
 import { scale, verticalScale } from 'react-native-size-matters';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back-outline" />;
@@ -27,6 +29,7 @@ const CheckmarkIcon = (props) => (
 );
 const SelectIcon = () => <Text category="s2">Select</Text>;
 const DownloadIcon = (props) => <Icon {...props} name="download-outline" />;
+const ShareIcon = (props) => <Icon {...props} name="share-outline" />;
 
 const formatSeconds = (seconds) => {
   return new Date(seconds ? seconds * 1000 : 0).toISOString().substr(14, 8);
@@ -44,6 +47,9 @@ export const FramesListScreen = ({ navigation, route }) => {
   const [selectView, setSelectView] = useState(false);
   const [loading, setLoading] = useState(true);
   const [frames, setFrames] = useState([]);
+  const [visible, setIsVisible] = useState(false);
+  const [imageIndex, setImageIndex] = useState(0);
+  const [loadingImages, setLoadingImages] = useState(false);
 
   const { width } = useWindowDimensions();
 
@@ -95,12 +101,25 @@ export const FramesListScreen = ({ navigation, route }) => {
   };
   const renderBackAction = () => <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
 
-  const renderRightActions = () => (
-    <React.Fragment>
-      <TopNavigationAction icon={selectView ? CloseIcon : SelectIcon} onPress={toggleSelectView} />
-      {selectView && <TopNavigationAction icon={DownloadIcon} onPress={shareMultipleImages} />}
-    </React.Fragment>
-  );
+  const renderRightActions = () =>
+    loadingImages ? (
+      <React.Fragment>
+        <ActivityIndicator color="#D4D4D4" />
+      </React.Fragment>
+    ) : (
+      <React.Fragment>
+        <TopNavigationAction icon={selectView ? CloseIcon : SelectIcon} onPress={toggleSelectView} />
+        {selectView && (
+          <TopNavigationAction
+            icon={Platform.OS === 'android' ? ShareIcon : DownloadIcon}
+            onPress={shareMultipleImages}
+          />
+        )}
+        {selectView && Platform.OS === 'android' && (
+          <TopNavigationAction icon={DownloadIcon} onPress={downloadMultipleImages} />
+        )}
+      </React.Fragment>
+    );
 
   const clearSelectedItems = () => {
     const newFrames = frames.map((f) => ({ uri: f.uri, selected: false }));
@@ -109,6 +128,7 @@ export const FramesListScreen = ({ navigation, route }) => {
 
   const shareMultipleImages = async () => {
     try {
+      setLoadingImages(true);
       const urls = frames.filter((f) => f.selected).map((f) => f.uri);
       if (!urls || urls.length === 0) return Toast.show('Please select a image');
       const shareOptions = {
@@ -119,9 +139,44 @@ export const FramesListScreen = ({ navigation, route }) => {
         type: 'image/jpeg',
       };
       await Share.open(shareOptions);
+      setLoadingImages(false);
     } catch (error) {
+      setLoadingImages(false);
       Toast.show('Error, Please try again later :(');
       console.log('SHARE_MULTIPLE_ERROR: ', error);
+    }
+  };
+
+  const requestPermission = async () => {
+    const result = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
+    if (result === PermissionsAndroid.RESULTS.GRANTED) return true;
+    return false;
+  };
+
+  const downloadMultipleImages = async () => {
+    try {
+      setLoadingImages(true);
+      const checkPermission = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
+      if (!checkPermission) {
+        const granted = await requestPermission();
+        if (!granted) {
+          Toast.showWithGravity('Permission needed to download images or videos', Toast.SHORT, Toast.CENTER);
+          return setLoadingImages(false);
+        }
+      }
+
+      const fileName = title.replace(/\s/g, '_').replace(/:/g, '_');
+      const urls = frames.filter((f) => f.selected).map((f, i) => ({ uri: f.uri, name: `${fileName}_${id}_${i}` }));
+      for (const url of urls) {
+        const destPath = `${RNFS.DownloadDirectoryPath}/${url.name}.jpg`;
+        await RNFS.copyFile(url.uri, destPath);
+      }
+      Toast.showWithGravity('Success! Files downloaded', Toast.SHORT, Toast.CENTER);
+      setLoadingImages(false);
+    } catch (error) {
+      Toast.show('Error, Please try again later :(');
+      console.log('DOWNLOAD_MULTIPLE_ERROR: ', error);
+      setLoadingImages(false);
     }
   };
 
@@ -131,12 +186,14 @@ export const FramesListScreen = ({ navigation, route }) => {
     setFrames(newFrames);
   };
 
-  const openImage = (path) => {
-    RNFetchBlob.ios.openDocument(path);
+  const openImage = ({ item, index }) => {
+    if (Platform.OS === 'ios') return RNFetchBlob.ios.openDocument(item.uri);
+    setImageIndex(index);
+    setIsVisible(true);
   };
 
   const onItemPress = ({ item, index }) => {
-    selectView ? selectItem(index) : openImage(item.uri);
+    selectView ? selectItem(index) : openImage({ item, index });
   };
 
   const renderItem = ({ item, index }) => (
@@ -157,6 +214,8 @@ export const FramesListScreen = ({ navigation, route }) => {
   );
 
   const keyExtractor = (item) => item.uri;
+
+  const closeImageView = () => setIsVisible(false);
 
   if (loading)
     return (
@@ -179,6 +238,15 @@ export const FramesListScreen = ({ navigation, route }) => {
   return (
     <Layout style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
+        {Platform.OS === 'android' && (
+          <ImageView
+            images={frames}
+            imageIndex={imageIndex}
+            visible={visible}
+            onRequestClose={closeImageView}
+            swipeToCloseEnabled={false}
+          />
+        )}
         <TopNavigation
           title="Frames"
           subtitle={`${formatSeconds(startTime)} ~ ${formatSeconds(endTime)}`}

@@ -13,7 +13,7 @@ import {
 } from '@ui-kitten/components';
 import { RNFFprobe, RNFFmpegConfig } from 'react-native-ffmpeg';
 import VideoPlayer from 'react-native-video-controls';
-import { Slider } from '../components/slider';
+import { Slider } from '../../components/slider';
 import RNFS from 'react-native-fs';
 
 const CloseIcon = (props) => <Icon {...props} name="close-outline" />;
