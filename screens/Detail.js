@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Platform,
   useWindowDimensions,
-  Linking,
+  BackHandler,
 } from 'react-native';
 import { Divider, Icon, Layout, Input, Button, Text } from '@ui-kitten/components';
 import { DetailHeader } from '../components/detailHeader';
@@ -28,6 +28,7 @@ import { verticalScale } from 'react-native-size-matters';
 import Orientation from 'react-native-orientation-locker';
 import { findTag } from '../api/tag';
 import { ScrollView } from 'react-native-gesture-handler';
+import ImageView from 'react-native-image-viewing';
 
 const SortIcon = () => (
   <Icon
@@ -79,6 +80,21 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
   const [commentSort, setCommentSort] = useState('Newest');
   const [url, setUrl] = useState(converProxyUrl(originalItem.file_url));
   const [tags, setTags] = useState(originalItem.tags);
+  const [fullScreen, setFullScreen] = useState(false);
+  const [visible, setIsVisible] = useState(false);
+
+  const lockToPortrait = useCallback(() => {
+    if (fullScreen) {
+      onExitFullScreen();
+      return true;
+    }
+    return false;
+  }, [fullScreen]);
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', lockToPortrait);
+    return () => backHandler.remove();
+  }, [fullScreen]);
 
   useEffect(() => {
     Orientation.addOrientationListener(setOrientation);
@@ -332,7 +348,7 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
           />
         )}
 
-        {commentLoading && <ActivityIndicator />}
+        {commentLoading && <ActivityIndicator color="#D4D4D4" />}
       </Layout>
     ),
     [inputIsFocused, commentLoading, text, editId],
@@ -349,12 +365,22 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
   }, []);
 
   const onEnterFullscreen = useCallback(() => {
+    setFullScreen(true);
     video.current.player.ref.presentFullscreenPlayer();
+    Orientation.unlockAllOrientations();
+  }, []);
+
+  const onExitFullScreen = useCallback(() => {
+    setFullScreen(false);
+    video.current.player.ref.dismissFullscreenPlayer();
+    Orientation.lockToPortrait();
   }, []);
 
   const onFullscreenPlayerWillDismiss = useCallback(() => {
-    video.current.methods.togglePlayPause();
-    video.current.methods.toggleFullscreen();
+    if (Platform.OS === 'ios') {
+      video.current.methods.togglePlayPause();
+      video.current.methods.toggleFullscreen();
+    }
   }, []);
 
   const download = useCallback(async () => {
@@ -400,9 +426,9 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
     }
   }, [item]);
 
-  const onImagePress = useCallback(() => {
-    download();
-  }, []);
+  const onImagePress = useCallback(() => setIsVisible(true), []);
+
+  const closeImageView = useCallback(() => setIsVisible(false), []);
 
   const navigateBack = useCallback(() => {
     navigation.goBack();
@@ -459,6 +485,15 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
   return (
     <Layout level="2" style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1, flexDirection: isLandscape ? 'row' : 'column' }}>
+        {!isVideo && (
+          <ImageView
+            images={[{ uri: item.file_url }]}
+            imageIndex={0}
+            visible={visible}
+            onRequestClose={closeImageView}
+            swipeToCloseEnabled={false}
+          />
+        )}
         <Layout level="2" style={{ width: isLandscape ? '65%' : '100%' }}>
           {!isVideo && (
             <TouchableOpacity delayPressIn={0} delayPressOut={0} activeOpacity={0.7} onPress={onImagePress}>
@@ -485,7 +520,7 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
             </TouchableOpacity>
           )}
           {isVideo && (
-            <Layout style={styles.image}>
+            <Layout style={fullScreen && Platform.OS === 'android' ? styles.fullScreen : styles.image}>
               <VideoPlayer
                 ref={video}
                 paused={paused}
@@ -502,12 +537,15 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
                 controls={false}
                 seekColor="#C3070B"
                 onEnterFullscreen={onEnterFullscreen}
+                onExitFullscreen={onExitFullScreen}
                 onFullscreenPlayerWillDismiss={onFullscreenPlayerWillDismiss}
                 // onError={onVideoError}
                 onLoad={onLoad}
                 // pictureInPicture={true}
                 playWhenInactive={true}
                 // tapAnywhereToPause={true}
+                fullscreen={fullScreen}
+                disableBack={fullScreen}
               />
             </Layout>
           )}
@@ -622,6 +660,10 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
   },
   image: { width: '100%', height: videoHeight },
+  fullScreen: {
+    width: '100%',
+    height: '100%',
+  },
   closeButton: {
     position: 'absolute',
     justifyContent: 'center',

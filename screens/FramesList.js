@@ -102,7 +102,7 @@ export const FramesListScreen = ({ navigation, route }) => {
   const renderBackAction = () => <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
 
   const renderRightActions = () =>
-    loadingImages ? (
+    loadingImages && Platform.OS === 'android' ? (
       <React.Fragment>
         <ActivityIndicator color="#D4D4D4" />
       </React.Fragment>
