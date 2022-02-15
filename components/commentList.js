@@ -50,7 +50,15 @@ export const CommentList = ({
       maxToRenderPerBatch={4}
       ListHeaderComponent={header}
       contentContainerStyle={{ minHeight: screenHeight * 0.87 }}
-      refreshControl={<RefreshControl onRefresh={refetch} refreshing={isRefetching} />}
+      refreshControl={
+        <RefreshControl
+          onRefresh={refetch}
+          refreshing={isRefetching}
+          colors={['#D4D4D4']}
+          tintColor="#D4D4D4"
+          progressBackgroundColor="#141414"
+        />
+      }
       ListFooterComponent={
         isFetching &&
         !isRefetching && (

@@ -333,7 +333,15 @@ export const PostVerticalList = ({
       keyExtractor={keyExtractor}
       onScroll={onScroll}
       onViewableItemsChanged={onViewableItemsChanged}
-      refreshControl={<RefreshControl onRefresh={refetch} refreshing={isRefetching} />}
+      refreshControl={
+        <RefreshControl
+          onRefresh={refetch}
+          refreshing={isRefetching}
+          colors={['#D4D4D4']}
+          tintColor="#D4D4D4"
+          progressBackgroundColor="#141414"
+        />
+      }
       ListFooterComponent={
         isFetching &&
         !isRefetching && (

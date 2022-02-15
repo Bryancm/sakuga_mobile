@@ -92,8 +92,10 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
   }, [fullScreen]);
 
   useEffect(() => {
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', lockToPortrait);
-    return () => backHandler.remove();
+    if (Platform.OS === 'android') {
+      const backHandler = BackHandler.addEventListener('hardwareBackPress', lockToPortrait);
+      return () => backHandler.remove();
+    }
   }, [fullScreen]);
 
   useEffect(() => {
@@ -365,15 +367,17 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
   }, []);
 
   const onEnterFullscreen = useCallback(() => {
-    setFullScreen(true);
+    if (Platform.OS === 'android') setFullScreen(true);
     video.current.player.ref.presentFullscreenPlayer();
-    Orientation.unlockAllOrientations();
+    if (Platform.OS === 'android') Orientation.unlockAllOrientations();
   }, []);
 
   const onExitFullScreen = useCallback(() => {
-    setFullScreen(false);
-    video.current.player.ref.dismissFullscreenPlayer();
-    Orientation.lockToPortrait();
+    if (Platform.OS === 'android') {
+      setFullScreen(false);
+      video.current.player.ref.dismissFullscreenPlayer();
+      Orientation.lockToPortrait();
+    }
   }, []);
 
   const onFullscreenPlayerWillDismiss = useCallback(() => {

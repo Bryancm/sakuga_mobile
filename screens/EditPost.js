@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {
   SafeAreaView,
-  ScrollView,
   ActivityIndicator,
   StyleSheet,
   Platform,
@@ -16,7 +15,6 @@ import {
   TopNavigation,
   TopNavigationAction,
   Input,
-  Toggle,
   Text,
   OverflowMenu,
   MenuItem,
@@ -269,7 +267,11 @@ export const EditPostScreen = ({ route }) => {
   var renderRightActions = () => (
     <React.Fragment>
       <TopNavigationAction icon={EditHistoryIcon} onPress={navigateHitory} />
-      {editLoading ? <ActivityIndicator /> : <TopNavigationAction icon={SaveIcon} onPress={editPostData} />}
+      {editLoading ? (
+        <ActivityIndicator color="#D4D4D4" />
+      ) : (
+        <TopNavigationAction icon={SaveIcon} onPress={editPostData} />
+      )}
     </React.Fragment>
   );
 
