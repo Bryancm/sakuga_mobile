@@ -307,6 +307,13 @@ export const EditPostScreen = ({ route }) => {
 
   const keyExtractor = (item) => item.name;
 
+  let top = Platform.isPad ? 230 : 230;
+  let h = '34%';
+  if (Platform.OS === 'android') {
+    top = 200;
+    h = '46%';
+  }
+
   return (
     <Layout style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>

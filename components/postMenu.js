@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, Platform } from 'react-native';
+import { ActivityIndicator, Platform, PermissionsAndroid } from 'react-native';
 import { Icon, Layout, Text, Button, OverflowMenu, MenuItem } from '@ui-kitten/components';
 import { storeData, getData } from '../util/storage';
 import { getPosts, vote } from '../api/post';
@@ -145,10 +145,27 @@ export const PostMenu = React.memo(
       Toast.showWithGravity(`Link copied`, Toast.SHORT, Toast.CENTER);
     };
 
+    const requestPermission = async () => {
+      const result = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
+      if (result === PermissionsAndroid.RESULTS.GRANTED) return true;
+      return false;
+    };
+
     const download = async () => {
       try {
         toggleMenu2();
         setLoadingDownload(item.id);
+        if (Platform.OS === 'android') {
+          const checkPermission = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
+          if (!checkPermission) {
+            const granted = await requestPermission();
+            if (!granted) {
+              Toast.showWithGravity('Permission needed to download images or videos', Toast.SHORT, Toast.CENTER);
+              return setLoadingImages(false);
+            }
+          }
+        }
+
         const {
           dirs: { DownloadDir, DocumentDir },
         } = RNFetchBlob.fs;
@@ -158,10 +175,10 @@ export const PostMenu = React.memo(
         });
         const fileExt = item.file_ext;
         const isIOS = Platform.OS === 'ios';
-        const fileName = `${item.title}_${item.id}.${fileExt}`;
-        const filePath = `${directoryPath}/${fileName}`;
+        const fileName = item.title.replace(/\s/g, '_').replace(/:/g, '_');
+        const filePath = `${directoryPath}/${fileName}_${item.id}.${fileExt}`;
         const isVideo = fileExt !== 'gif' && fileExt !== 'jpg' && fileExt !== 'jpeg' && fileExt !== 'png';
-        const mimeType = isVideo ? 'video/*' : 'image/*';
+        const mimeType = isVideo ? `video/${fileExt}` : `image/${fileExt}`;
         const configOptions = Platform.select({
           ios: {
             fileCache: true,
@@ -177,13 +194,13 @@ export const PostMenu = React.memo(
               title: item.title,
               mediaScannable: true,
               notification: true,
+              path: filePath,
             },
           },
         });
         const response = await RNFetchBlob.config(configOptions).fetch('GET', item.file_url);
-
         if (isIOS) RNFetchBlob.ios.previewDocument(response.path());
-
+        Toast.showWithGravity('Download complete', Toast.SHORT, Toast.CENTER);
         setLoadingDownload(false);
       } catch (error) {
         Toast.show('Error, please try again later :(');

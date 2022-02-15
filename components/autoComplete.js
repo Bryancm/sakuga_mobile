@@ -61,12 +61,19 @@ export const AutoComplete = ({ data, onPress, deleteItemFromHistory, top, height
 
   const keyStractor = (item) => item.id.toString();
 
+  let t = top ? top : screenHeight > 736 && !Platform.isPad ? 90 : 70;
+  let h = height ? height : '58%';
+  if (Platform.OS === 'android') {
+    t = top ? top : 45;
+    h = height ? height : '90%';
+  }
+
   return (
     <Layout
       style={{
         ...styles.container,
-        top: top ? top : screenHeight > 736 && !Platform.isPad ? 90 : 70,
-        height: height ? height : '58%',
+        top: t,
+        height: h,
       }}>
       <Layout
         style={{
@@ -93,7 +100,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '58%',
     position: 'absolute',
-    top: screenHeight > 736 && !Platform.isPad ? 90 : 70,
     left: 0,
     zIndex: 10,
   },
