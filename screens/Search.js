@@ -58,7 +58,7 @@ export const SearchScreen = ({ navigation }) => {
       }
     } else {
       setAutoPlay(Platform.isPad ? false : true);
-      setLayoutType(Platform.isPad ? 'grid' : 'large');
+      setLayoutType(Platform.isPad ? 'grid' : 'small');
     }
   };
 
