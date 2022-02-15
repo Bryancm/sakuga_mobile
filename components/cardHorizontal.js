@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 8,
     marginVertical: 8,
-    height: Platform.isPad ? verticalScale(200) : verticalScale(Platform.OS === 'android' ? 220 : 210),
+    height: Platform.isPad ? verticalScale(200) : verticalScale(Platform.OS === 'android' ? 220 : 240),
   },
   infoContainer: {
     flexDirection: 'row',
