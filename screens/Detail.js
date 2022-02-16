@@ -430,7 +430,10 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
     }
   }, [item]);
 
-  const onImagePress = useCallback(() => setIsVisible(true), []);
+  const onImagePress = useCallback(() => {
+    if (Platform.OS === 'android') return setIsVisible(true);
+    download();
+  }, []);
 
   const closeImageView = useCallback(() => setIsVisible(false), []);
 
@@ -484,12 +487,12 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
     }
   };
 
-  const isLandscape = width >= 592 && orientation.includes('LANDSCAPE');
+  const isLandscape = width >= 592 && orientation.includes('LANDSCAPE') && Platform.isPad;
 
   return (
     <Layout level="2" style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1, flexDirection: isLandscape ? 'row' : 'column' }}>
-        {!isVideo && (
+        {!isVideo && Platform.OS === 'android' && (
           <ImageView
             images={[{ uri: item.file_url }]}
             imageIndex={0}

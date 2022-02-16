@@ -38,7 +38,7 @@ export default () => {
   };
 
   const removeFiles = async (directory) => {
-    const cache_file_limit = 10;
+    const cache_file_limit = 5;
     const exist = await RNFS.exists(directory);
     if (exist) {
       const dir = await RNFS.readDir(directory);
@@ -56,7 +56,7 @@ export default () => {
   const cleanCache = async () => {
     try {
       if (Platform.OS === 'android') {
-        const dir = `/storage/emulated/0/Android/data/com.sakugamobile/cache/video-cache`;
+        const dir = `/storage/emulated/0/Android/data/com.sakugabo/cache/video-cache`;
         removeFiles(dir);
       } else {
         const video_dir = `${RNFS.DocumentDirectoryPath}/KTVHTTPCache`;
@@ -79,8 +79,8 @@ export default () => {
 
   useEffect(() => {
     AppState.addEventListener('change', handleAppState);
-    RNFFmpegConfig.disableLogs();
     if (!Platform.isPad) Orientation.lockToPortrait();
+    RNFFmpegConfig.disableLogs();
     SplashScreen.hide();
     return () => {
       AppState.removeEventListener('change', handleAppState);

@@ -63,19 +63,26 @@ export const Card = forwardRef((props, ref) => {
             <ImageIcon style={{ width: 20, height: 20 }} fill="#fff" />
           </Layout>
         )}
-        <FastImage style={styles.image} source={{ uri: item.preview_url }} resizeMode="contain" />
-        {isVideo && !paused && autoPlay && (
+        {paused && <FastImage style={styles.image} source={{ uri: item.preview_url }} resizeMode="contain" />}
+        {isVideo && autoPlay && (
           <VideoPlayer
             paused={paused}
             repeat={true}
             muted={true}
             source={{ uri: converProxyUrl(item.file_url) }}
-            // poster={item.preview_url}
+            poster={item.preview_url}
+            posterResizeMode="contain"
             style={styles.image}
             onLoad={onLoad}
             onLoadStart={onLoadStart}
             resizeMode="contain"
             onError={onError}
+            bufferConfig={{
+              minBufferMs: 3000,
+              maxBufferMs: 180000,
+              bufferForPlaybackMs: 1500,
+              bufferForPlaybackAfterRebufferMs: 2000,
+            }}
           />
         )}
       </Layout>

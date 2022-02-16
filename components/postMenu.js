@@ -200,7 +200,7 @@ export const PostMenu = React.memo(
         });
         const response = await RNFetchBlob.config(configOptions).fetch('GET', item.file_url);
         if (isIOS) RNFetchBlob.ios.previewDocument(response.path());
-        Toast.showWithGravity('Download complete', Toast.SHORT, Toast.CENTER);
+        if (!isIOS) Toast.showWithGravity('Download complete', Toast.SHORT, Toast.CENTER);
         setLoadingDownload(false);
       } catch (error) {
         Toast.show('Error, please try again later :(');

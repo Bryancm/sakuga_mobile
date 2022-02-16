@@ -67,9 +67,9 @@ export const ExploreScreen = ({ navigation }) => {
             data={data}
             renderItem={renderItem}
             initialNumToRender={2}
-            maxToRenderPerBatch={2}
+            maxToRenderPerBatch={3}
             windowSize={21}
-            // updateCellsBatchingPeriod={100}
+            updateCellsBatchingPeriod={100}
             getItemLayout={getItemLayout}
             keyExtractor={keyExtractor}
             contentContainerStyle={{
