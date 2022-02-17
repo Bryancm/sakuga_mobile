@@ -478,13 +478,9 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
   }, []);
 
   const changeCommentSort = () => {
-    if (commentSort === 'Newest') {
-      setComments((oldComments) => oldComments.reverse());
-      setCommentSort('Oldest');
-    } else {
-      setComments((oldComments) => oldComments.sort((a, b) => new Date(a.created_at) < new Date(b.created_at)));
-      setCommentSort('Newest');
-    }
+    if (commentSort === 'Newest') setCommentSort('Oldest');
+    if (commentSort === 'Oldest') setCommentSort('Newest');
+    setComments((oldComments) => oldComments.reverse());
   };
 
   const isLandscape = width >= 592 && orientation.includes('LANDSCAPE') && Platform.isPad;
