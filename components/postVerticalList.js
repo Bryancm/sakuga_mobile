@@ -286,9 +286,9 @@ export const PostVerticalList = ({
       props.getItemLayout = getItemLayout;
     }
     if (layoutType === 'large') {
-      props.initialNumToRender = 6;
-      props.maxToRenderPerBatch = 9;
-      props.windowSize = 19;
+      props.initialNumToRender = 3;
+      props.maxToRenderPerBatch = 6;
+      props.windowSize = 12;
       props.numColumns = 1;
     }
     if (width <= 507 && Platform.isPad) {
@@ -323,8 +323,8 @@ export const PostVerticalList = ({
       onEndReachedThreshold={0.5}
       updateCellsBatchingPeriod={100}
       viewabilityConfig={{
-        minimumViewTime: 200,
-        viewAreaCoveragePercentThreshold: 70,
+        minimumViewTime: 300,
+        viewAreaCoveragePercentThreshold: 90,
       }}
       contentContainerStyle={{
         paddingBottom: 10,

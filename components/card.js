@@ -21,6 +21,7 @@ export const Card = forwardRef((props, ref) => {
   const [paused, setPaused] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [hideImage, setHideImage] = useState(false);
 
   useImperativeHandle(ref, () => ({
     playVideo() {
@@ -36,12 +37,17 @@ export const Card = forwardRef((props, ref) => {
     navigateDetail(item, title, tags);
   };
 
-  const onLoad = () => setLoading(false);
+  const onReadyForDisplay = () => {
+    setHideImage(true);
+    setLoading(false);
+  };
   const onLoadStart = () => setLoading(true);
   const onError = (e) => {
-    console.log('VIDEO_ERROR: ', e);
+    console.log('VIDEO_ERROR_CARD_NAME: ', title);
+    console.log('VIDEO_ERROR_CARD: ', e);
     setError(true);
   };
+
   return (
     <TouchableOpacity
       delayPressIn={0}
@@ -58,30 +64,27 @@ export const Card = forwardRef((props, ref) => {
             <ActivityIndicator color="#D4D4D4" />
           </Layout>
         )}
-        {!isVideo && (
-          <Layout style={styles.loaderContainer}>
-            <ImageIcon style={{ width: 20, height: 20 }} fill="#fff" />
-          </Layout>
-        )}
-        <FastImage style={styles.image} source={{ uri: item.preview_url }} resizeMode="contain" />
+
         {isVideo && !paused && autoPlay && (
           <VideoPlayer
             paused={paused}
             repeat={true}
             muted={true}
             source={{ uri: converProxyUrl(item.file_url) }}
-            // poster={item.preview_url}
-            // posterResizeMode="contain"
             style={styles.image}
-            onLoad={onLoad}
+            onReadyForDisplay={onReadyForDisplay}
             onLoadStart={onLoadStart}
             resizeMode="contain"
             onError={onError}
             bufferConfig={{
-              bufferForPlaybackMs: 1000,
+              minBufferMs: 10000,
+              maxBufferMs: 30000,
+              bufferForPlaybackMs: 500,
+              bufferForPlaybackAfterRebufferMs: 1000,
             }}
           />
         )}
+        {!hideImage && <FastImage style={styles.image} source={{ uri: item.preview_url }} resizeMode="contain" />}
       </Layout>
 
       <TagList tags={tags} style={styles.tagContainer} level="1" setPaused={setPaused} />
@@ -108,7 +111,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 2,
     bottom: 2,
-    zIndex: 12,
+    zIndex: 15,
   },
   imageContainer: {
     width: '100%',

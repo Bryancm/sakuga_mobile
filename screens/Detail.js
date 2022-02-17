@@ -442,10 +442,11 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
   }, []);
 
   const onVideoError = (e) => {
+    console.log('VIDEO_ERROR_NAME: ', title);
     console.log('VIDEO_ERROR: ', e);
-    if (e.error.code === -11828) {
-      convertToMP4();
-    }
+    // if (e.error.code === -11828) {
+    //   convertToMP4();
+    // }
   };
 
   const convertToMP4 = useCallback(async () => {
@@ -542,7 +543,7 @@ export const DetailsScreen = React.memo(({ navigation, route }) => {
                 onEnterFullscreen={onEnterFullscreen}
                 onExitFullscreen={onExitFullScreen}
                 onFullscreenPlayerWillDismiss={onFullscreenPlayerWillDismiss}
-                // onError={onVideoError}
+                onError={onVideoError}
                 onLoad={onLoad}
                 // pictureInPicture={true}
                 playWhenInactive={true}
