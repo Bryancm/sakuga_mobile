@@ -28,6 +28,7 @@ export const Card = forwardRef((props, ref) => {
       setPaused(false);
     },
     pauseVideo() {
+      setHideImage(false);
       setPaused(true);
     },
   }));
@@ -77,10 +78,10 @@ export const Card = forwardRef((props, ref) => {
             resizeMode="contain"
             onError={onError}
             bufferConfig={{
-              minBufferMs: 10000,
-              maxBufferMs: 30000,
-              bufferForPlaybackMs: 500,
-              bufferForPlaybackAfterRebufferMs: 1000,
+              minBufferMs: 20000,
+              maxBufferMs: 90000,
+              bufferForPlaybackMs: 100,
+              bufferForPlaybackAfterRebufferMs: 500,
             }}
           />
         )}

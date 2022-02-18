@@ -324,7 +324,7 @@ export const PostVerticalList = ({
       updateCellsBatchingPeriod={100}
       viewabilityConfig={{
         minimumViewTime: 300,
-        viewAreaCoveragePercentThreshold: 90,
+        viewAreaCoveragePercentThreshold: 70,
       }}
       contentContainerStyle={{
         paddingBottom: 10,
